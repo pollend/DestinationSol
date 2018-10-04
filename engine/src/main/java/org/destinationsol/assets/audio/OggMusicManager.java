@@ -16,6 +16,7 @@
 package org.destinationsol.assets.audio;
 
 import com.badlogic.gdx.audio.Music;
+import org.destinationsol.ApplicationScope;
 import org.destinationsol.GameOptions;
 import org.destinationsol.ModuleManager;
 import org.destinationsol.assets.Assets;
@@ -32,6 +33,7 @@ import java.util.Map;
  * This class does not rely on external updates; once a music set is set to be played, it will play, even looping,
  * until another is chosen. By default, music does not play concurrently.
  */
+@ApplicationScope
 public class OggMusicManager {
     public static final String MENU_MUSIC_SET = "menu";
     public static final String GAME_MUSIC_SET = "game";
