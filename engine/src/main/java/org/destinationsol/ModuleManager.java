@@ -35,6 +35,7 @@ import org.terasology.module.ModuleRegistry;
 import org.terasology.module.TableModuleRegistry;
 import org.terasology.module.sandbox.StandardPermissionProviderFactory;
 
+import javax.inject.Inject;
 import java.net.URI;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -46,6 +47,7 @@ public class ModuleManager {
     private ModuleEnvironment environment;
     private ModuleRegistry registry;
 
+    @Inject
     public ModuleManager() {
         try {
             URI engineClasspath = getClass().getProtectionDomain().getCodeSource().getLocation().toURI();

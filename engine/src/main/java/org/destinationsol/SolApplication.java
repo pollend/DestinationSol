@@ -48,7 +48,7 @@ public class SolApplication implements ApplicationListener {
     private static final Logger logger = LoggerFactory.getLogger(SolApplication.class);
 
     @SuppressWarnings("FieldCanBeLocal")
-    private ModuleManager moduleManager;
+    @Inject ModuleManager moduleManager;
 
     @Inject
     OggMusicManager musicManager;
@@ -75,14 +75,11 @@ public class SolApplication implements ApplicationListener {
         // Initiate Box2D to make sure natives are loaded early enough
         Box2D.init();
         applicationComponent = DaggerSolApplicationComponent.builder().build();
-        applicationComponent.inject(this);
-
-
     }
 
     @Override
     public void create() {
-
+        applicationComponent.inject(this);
         context = new ContextImpl();
         context.put(SolApplication.class, this);
         worldConfig = new WorldConfig();
@@ -91,8 +88,6 @@ public class SolApplication implements ApplicationListener {
             DebugOptions.read(null);
         }
         options = new GameOptions(isMobile(), null);
-
-        moduleManager = new ModuleManager();
 
         logger.info("\n\n ------------------------------------------------------------ \n");
         moduleManager.printAvailableModules();
