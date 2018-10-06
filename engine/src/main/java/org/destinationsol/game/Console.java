@@ -26,7 +26,7 @@ import org.destinationsol.common.SolColor;
 import org.destinationsol.common.SolException;
 import org.destinationsol.game.console.ConsoleInputHandler;
 import org.destinationsol.game.console.ShellInputHandler;
-import org.destinationsol.game.drawables.CommonDrawer;
+import org.destinationsol.CommonDrawer;
 import org.destinationsol.ui.SolInputManager;
 import org.destinationsol.ui.SolUiControl;
 import org.destinationsol.ui.SolUiScreen;

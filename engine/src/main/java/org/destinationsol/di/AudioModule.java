@@ -20,6 +20,8 @@ import dagger.Provides;
 import org.destinationsol.GameOptions;
 import org.destinationsol.assets.audio.OggMusicManager;
 import org.destinationsol.assets.audio.OggSoundManager;
+import org.destinationsol.assets.audio.SpecialSounds;
+import org.destinationsol.di.scopes.GameScope;
 
 import javax.inject.Singleton;
 
@@ -39,4 +41,10 @@ public class AudioModule {
         return new OggSoundManager(gameOptions);
     }
 
+
+    @Provides
+    @GameScope
+    SpecialSounds provideSpecialSounds(OggSoundManager soundManager){
+        return new SpecialSounds(soundManager);
+    }
 }

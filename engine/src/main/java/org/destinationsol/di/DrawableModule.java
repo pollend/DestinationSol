@@ -18,7 +18,8 @@ package org.destinationsol.di;
 import dagger.Module;
 import dagger.Provides;
 import org.destinationsol.di.scopes.GameScope;
-import org.destinationsol.game.drawables.CommonDrawer;
+import org.destinationsol.CommonDrawer;
+import org.destinationsol.game.drawables.DrawableManager;
 import org.destinationsol.game.drawables.GameDrawer;
 
 import javax.inject.Singleton;
@@ -36,4 +37,12 @@ public class DrawableModule {
     public GameDrawer provideGameDrawer(CommonDrawer commonDrawer){
         return new GameDrawer(commonDrawer);
     }
+
+    @Provides
+    @GameScope
+    public DrawableManager provideDrawableManager(GameDrawer gameDrawer){
+        return new DrawableManager(gameDrawer);
+    }
+
+
 }

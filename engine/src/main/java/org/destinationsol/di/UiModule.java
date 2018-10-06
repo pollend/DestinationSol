@@ -17,7 +17,7 @@ package org.destinationsol.di;
 
 import dagger.Module;
 import dagger.Provides;
-import org.destinationsol.game.drawables.CommonDrawer;
+import org.destinationsol.CommonDrawer;
 import org.destinationsol.ui.UiDrawer;
 
 import javax.inject.Singleton;

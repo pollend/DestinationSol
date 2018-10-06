@@ -35,7 +35,6 @@ import org.destinationsol.game.DebugOptions;
 import org.destinationsol.game.SaveManager;
 import org.destinationsol.game.SolGame;
 import org.destinationsol.game.WorldConfig;
-import org.destinationsol.game.drawables.CommonDrawer;
 import org.destinationsol.di.DrawableModule;
 import org.destinationsol.menu.MenuScreens;
 import org.destinationsol.ui.DebugCollector;

@@ -15,19 +15,5 @@
  */
 package org.destinationsol.di;
 
-import com.badlogic.gdx.Application;
-import com.badlogic.gdx.Gdx;
-import dagger.Module;
-import dagger.Provides;
-
-import javax.inject.Named;
-
-@Module
-public class CommonModule {
-
-    @Provides
-    @Named("isMobile")
-    public boolean provideIsMobile() {
-        return Gdx.app.getType() == Application.ApplicationType.Android || Gdx.app.getType() == Application.ApplicationType.iOS;
-    }
+public class EffectModule {
 }

@@ -15,19 +15,14 @@
  */
 package org.destinationsol.di;
 
-import com.badlogic.gdx.Application;
-import com.badlogic.gdx.Gdx;
 import dagger.Module;
 import dagger.Provides;
-
-import javax.inject.Named;
+import org.destinationsol.game.chunk.ChunkManager;
 
 @Module
-public class CommonModule {
-
+public class ChunkModule {
     @Provides
-    @Named("isMobile")
-    public boolean provideIsMobile() {
-        return Gdx.app.getType() == Application.ApplicationType.Android || Gdx.app.getType() == Application.ApplicationType.iOS;
+    public ChunkManager provideChunkManager(){
+        return new ChunkManager();
     }
 }
