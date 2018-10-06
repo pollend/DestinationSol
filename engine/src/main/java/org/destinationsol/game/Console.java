@@ -26,6 +26,7 @@ import org.destinationsol.common.SolColor;
 import org.destinationsol.common.SolException;
 import org.destinationsol.game.console.ConsoleInputHandler;
 import org.destinationsol.game.console.ShellInputHandler;
+import org.destinationsol.game.drawables.CommonDrawer;
 import org.destinationsol.ui.SolInputManager;
 import org.destinationsol.ui.SolUiControl;
 import org.destinationsol.ui.SolUiScreen;
@@ -90,7 +91,7 @@ public class Console implements SolUiScreen {
      */
     private final List<String> linesOfOutput;
     /**
-     * Basically the same font as {@link org.destinationsol.CommonDrawer#font}.
+     * Basically the same font as {@link CommonDrawer#font}.
      *
      * Required for figuring out char widths.
      */

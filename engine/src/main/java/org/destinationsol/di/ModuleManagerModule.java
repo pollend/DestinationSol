@@ -13,11 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.destinationsol;
+package org.destinationsol.di;
 
 import com.google.common.collect.Sets;
 import dagger.Module;
 import dagger.Provides;
+import org.destinationsol.ModuleManager;
 import org.destinationsol.assets.Assets;
 import org.destinationsol.game.DebugOptions;
 import org.terasology.module.ModuleEnvironment;
@@ -34,10 +35,10 @@ import java.nio.file.Paths;
 import java.util.Set;
 
 @Module
-public class ModuleManagerProvider {
+public class ModuleManagerModule {
 
 
-    public ModuleManagerProvider(){
+    public ModuleManagerModule(){
     }
 
 

@@ -17,21 +17,40 @@
 package org.destinationsol.game.ship;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.Fixture;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
+import com.badlogic.gdx.physics.box2d.Shape;
+import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.physics.box2d.joints.PrismaticJoint;
+import com.badlogic.gdx.physics.box2d.joints.PrismaticJointDef;
+import com.badlogic.gdx.utils.JsonValue;
+import com.google.auto.factory.AutoFactory;
+import org.destinationsol.assets.Assets;
+import org.destinationsol.assets.json.Json;
+import org.destinationsol.common.SolColor;
 import org.destinationsol.common.SolMath;
 import org.destinationsol.common.SolRandom;
 import org.destinationsol.game.AbilityCommonConfig;
+import org.destinationsol.game.CollisionMeshLoader;
 import org.destinationsol.game.DmgType;
+import org.destinationsol.game.Faction;
 import org.destinationsol.game.RemoveController;
 import org.destinationsol.game.SolGame;
 import org.destinationsol.game.SolObject;
 import org.destinationsol.game.drawables.Drawable;
+import org.destinationsol.game.drawables.DrawableLevel;
+import org.destinationsol.game.drawables.RectSprite;
 import org.destinationsol.game.gun.GunMount;
 import org.destinationsol.game.input.Pilot;
 import org.destinationsol.game.item.Armor;
+import org.destinationsol.game.item.Clip;
 import org.destinationsol.game.item.Engine;
 import org.destinationsol.game.item.Gun;
 import org.destinationsol.game.item.ItemContainer;
@@ -41,13 +60,17 @@ import org.destinationsol.game.item.MoneyItem;
 import org.destinationsol.game.item.RepairItem;
 import org.destinationsol.game.item.Shield;
 import org.destinationsol.game.item.SolItem;
+import org.destinationsol.game.item.TradeConfig;
 import org.destinationsol.game.item.TradeContainer;
 import org.destinationsol.game.particle.DSParticleEmitter;
+import org.destinationsol.game.particle.LightSource;
 import org.destinationsol.game.ship.hulls.Hull;
 import org.destinationsol.game.ship.hulls.HullConfig;
 import org.destinationsol.assets.audio.OggSoundManager;
 import org.destinationsol.assets.audio.SpecialSounds;
 
+import javax.inject.Inject;
+import java.util.ArrayList;
 import java.util.List;
 
 public class SolShip implements SolObject {
@@ -656,4 +679,7 @@ public class SolShip implements SolObject {
     public MercItem getMerc() {
         return this.mercItem;
     }
+
+
+
 }

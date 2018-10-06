@@ -13,10 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.destinationsol.game;
+package org.destinationsol.di;
 
-import javax.inject.Scope;
+import com.badlogic.gdx.Application;
+import com.badlogic.gdx.Gdx;
+import dagger.Module;
+import dagger.Provides;
+import org.destinationsol.GameOptions;
+import org.destinationsol.SolFileReader;
+import org.destinationsol.game.drawables.CommonDrawer;
 
-@Scope
-public @interface GameScope {
+import javax.inject.Named;
+import javax.inject.Singleton;
+
+@Module
+public class CommonModule {
+
+    @Provides
+    @Named("isMobile")
+    public boolean provideIsMobile() {
+        return Gdx.app.getType() == Application.ApplicationType.Android || Gdx.app.getType() == Application.ApplicationType.iOS;
+    }
 }

@@ -27,7 +27,7 @@ import org.destinationsol.game.DmgType;
 import org.destinationsol.game.Faction;
 import org.destinationsol.game.FactionManager;
 import org.destinationsol.game.FarObject;
-import org.destinationsol.game.GameDrawer;
+import org.destinationsol.game.drawables.GameDrawer;
 import org.destinationsol.game.SolGame;
 import org.destinationsol.game.SolObject;
 import org.destinationsol.game.drawables.Drawable;

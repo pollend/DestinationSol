@@ -20,7 +20,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import org.destinationsol.CommonDrawer;
+import org.destinationsol.game.drawables.CommonDrawer;
 import org.destinationsol.assets.Assets;
 
 public class UiDrawer {

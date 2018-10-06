@@ -27,7 +27,7 @@ import org.destinationsol.common.NotNull;
 import org.destinationsol.common.SolMath;
 import org.destinationsol.common.SolRandom;
 import org.destinationsol.game.GameColors;
-import org.destinationsol.game.GameDrawer;
+import org.destinationsol.game.drawables.GameDrawer;
 import org.destinationsol.game.SolGame;
 import org.destinationsol.game.SolObject;
 import org.destinationsol.game.drawables.Drawable;

@@ -46,7 +46,7 @@ public class OggMusicManager {
      * TODO Make music registerable from modules, and then register this music through the new way.
      */
     @Inject
-    OggMusicManager() {
+    public OggMusicManager() {
 //        this.assets = assets;
         musicMap = new HashMap<>();
         registerMusic(MENU_MUSIC_SET, "engine:dreadnaught");

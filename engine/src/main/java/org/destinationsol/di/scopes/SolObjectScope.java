@@ -13,22 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.destinationsol;
+package org.destinationsol.di.scopes;
 
-import dagger.Module;
-import dagger.Provides;
+import dagger.Reusable;
 
-@Module
-public class GameOptionsProvider {
-    private boolean mobile;
-    private SolFileReader solFileReader;
-    public GameOptionsProvider(boolean mobile, SolFileReader solFileReader){
-        this.mobile = mobile;
-        this.solFileReader = solFileReader;
-    }
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
-    @Provides
-    public GameOptions provideGameOptions(){
-        return new GameOptions(mobile,solFileReader);
-    }
+@Reusable
+@Retention(RetentionPolicy.RUNTIME)
+public @interface SolObjectScope {
 }

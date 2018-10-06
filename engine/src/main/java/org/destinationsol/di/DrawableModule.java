@@ -13,28 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.destinationsol.game.context.internal;
+package org.destinationsol.di;
 
-import com.google.common.collect.Maps;
-import org.destinationsol.game.context.Context;
+import dagger.Module;
+import dagger.Provides;
+import org.destinationsol.di.scopes.GameScope;
+import org.destinationsol.game.drawables.CommonDrawer;
+import org.destinationsol.game.drawables.GameDrawer;
 
-import java.util.Map;
+import javax.inject.Singleton;
 
-public class ContextImpl implements Context {
-
-    private final Map<Class<?>, Object> map = Maps.newConcurrentMap();
-
-    @Override
-    public <T> T get(Class<? extends T> type) {
-        if (type == Context.class) {
-            return type.cast(this);
-        }
-        return type.cast(map.get(type));
+@Module
+public class DrawableModule {
+    @Provides
+    @Singleton
+    public CommonDrawer provideCommonDrawer(){
+        return new CommonDrawer();
     }
 
-    @Override
-    public <T, U extends T> void put(Class<T> type, U object)  {
-        map.put(type, object);
+    @Provides
+    @GameScope
+    public GameDrawer provideGameDrawer(CommonDrawer commonDrawer){
+        return new GameDrawer(commonDrawer);
     }
-
 }

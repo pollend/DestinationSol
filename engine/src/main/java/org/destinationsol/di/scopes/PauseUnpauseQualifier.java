@@ -13,28 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.destinationsol.assets.audio;
+package org.destinationsol.di.scopes;
 
-import dagger.Module;
-import dagger.Provides;
-import org.destinationsol.GameOptions;
-
-import javax.inject.Singleton;
-
-@Module
-public class AudioProvider {
-
-    @Provides
-    @Singleton
-    OggMusicManager  proivdeOggMusicManager(){
-        return new OggMusicManager();
-    }
-
-
-    @Provides
-    @Singleton
-    OggSoundManager  proivdeOggSoundManager(GameOptions gameOptions){
-        return new OggSoundManager(gameOptions);
-    }
-
+public @interface PauseUnpauseQualifier {
 }

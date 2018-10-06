@@ -25,6 +25,7 @@ import org.destinationsol.common.SolMath;
 import org.destinationsol.game.drawables.Drawable;
 import org.destinationsol.game.drawables.DrawableManager;
 import org.destinationsol.game.drawables.FarDrawable;
+import org.destinationsol.game.drawables.GameDrawer;
 import org.destinationsol.game.ship.FarShip;
 
 import java.util.ArrayList;

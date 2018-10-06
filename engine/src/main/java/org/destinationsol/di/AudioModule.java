@@ -13,25 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.destinationsol.game;
+package org.destinationsol.di;
 
-import dagger.Component;
-import dagger.Subcomponent;
-import org.destinationsol.SolApplicationComponent;
-import org.destinationsol.assets.Assets;
+import dagger.Module;
+import dagger.Provides;
+import org.destinationsol.GameOptions;
 import org.destinationsol.assets.audio.OggMusicManager;
 import org.destinationsol.assets.audio.OggSoundManager;
-import org.destinationsol.game.chunk.ChunkManager;
-import org.destinationsol.game.chunk.ChunkProvider;
 
-import javax.inject.Scope;
+import javax.inject.Singleton;
 
-@Component(dependencies = {SolApplicationComponent.class},modules = {ChunkProvider.class})
-@GameScope
-public interface SolGameComponent {
+@Module
+public class AudioModule {
 
-//    Assets assets();
-    OggSoundManager soundManager();
-    OggMusicManager musicManager();
-    ChunkManager chunkManager();
+    @Provides
+    @Singleton
+    OggMusicManager proivdeOggMusicManager(){
+        return new OggMusicManager();
+    }
+
+
+    @Provides
+    @Singleton
+    OggSoundManager proivdeOggSoundManager(GameOptions gameOptions){
+        return new OggSoundManager(gameOptions);
+    }
+
 }

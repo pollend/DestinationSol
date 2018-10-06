@@ -19,6 +19,7 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
 import org.destinationsol.assets.Assets;
 import org.destinationsol.common.SolColor;
+import org.destinationsol.game.drawables.GameDrawer;
 import org.destinationsol.game.ship.SolShip;
 
 public class MountDetectDrawer implements UpdateAwareSystem{

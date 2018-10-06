@@ -17,7 +17,7 @@ package org.destinationsol.game.chunk;
 
 import dagger.Module;
 import dagger.Provides;
-import org.destinationsol.game.GameScope;
+import org.destinationsol.di.scopes.GameScope;
 
 @Module
 public class ChunkProvider {

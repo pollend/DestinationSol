@@ -24,7 +24,6 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.OrderedMap;
 import org.destinationsol.common.DebugCol;
 import org.destinationsol.game.DebugOptions;
-import org.destinationsol.game.GameDrawer;
 import org.destinationsol.game.MapDrawer;
 import org.destinationsol.game.ObjectManager;
 import org.destinationsol.game.SolCam;

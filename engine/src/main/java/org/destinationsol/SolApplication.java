@@ -15,27 +15,32 @@
  */
 package org.destinationsol;
 
-import com.badlogic.gdx.Application;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.physics.box2d.Box2D;
 import org.destinationsol.assets.Assets;
-import org.destinationsol.assets.audio.AudioProvider;
+import org.destinationsol.di.CommonModule;
+import org.destinationsol.di.AudioModule;
 import org.destinationsol.assets.audio.OggMusicManager;
 import org.destinationsol.assets.audio.OggSoundManager;
 import org.destinationsol.common.SolColor;
 import org.destinationsol.common.SolMath;
 import org.destinationsol.common.SolRandom;
+import org.destinationsol.di.ConfigModule;
+import org.destinationsol.di.ModuleManagerModule;
+import org.destinationsol.di.components.DaggerSolApplicationComponent;
+import org.destinationsol.di.components.SolApplicationComponent;
 import org.destinationsol.game.DebugOptions;
 import org.destinationsol.game.SaveManager;
 import org.destinationsol.game.SolGame;
 import org.destinationsol.game.WorldConfig;
-import org.destinationsol.game.context.Context;
+import org.destinationsol.game.drawables.CommonDrawer;
+import org.destinationsol.di.DrawableModule;
 import org.destinationsol.menu.MenuScreens;
 import org.destinationsol.ui.DebugCollector;
 import org.destinationsol.ui.FontSize;
-import org.destinationsol.ui.InputProvider;
+import org.destinationsol.di.InputModule;
 import org.destinationsol.ui.SolInputManager;
 import org.destinationsol.ui.SolLayouts;
 import org.destinationsol.ui.UiDrawer;
@@ -43,6 +48,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
@@ -59,6 +65,9 @@ public class SolApplication implements ApplicationListener {
     SolInputManager inputManager;
     @Inject
     GameOptions options;
+    @Inject
+    @Named("isMobile")
+    boolean isMobile;
 
     private UiDrawer uiDrawer;
     private MenuScreens menuScreens;
@@ -68,11 +77,9 @@ public class SolApplication implements ApplicationListener {
     private String fatalErrorMsg;
     private String fatalErrorTrace;
     private SolGame solGame;
-    private Context context;
 
     private WorldConfig worldConfig;
     private float timeAccumulator = 0;
-    private boolean isMobile;
 
     private SolApplicationComponent applicationComponent;
 
@@ -84,28 +91,27 @@ public class SolApplication implements ApplicationListener {
 
     @Override
     public void create() {
-
-        isMobile = Gdx.app.getType() == Application.ApplicationType.Android || Gdx.app.getType() == Application.ApplicationType.iOS;
-        if (isMobile) {
-            DebugOptions.read(null);
-        }
-
         this.applicationComponent = DaggerSolApplicationComponent.builder()
-                .audioProvider(new AudioProvider())
-                .gameOptionsProvider(new GameOptionsProvider(isMobile,null ))
-                .inputProvider(new InputProvider())
-                .moduleManagerProvider(new ModuleManagerProvider())
+                .commonModule(new CommonModule())
+                .configModule(new ConfigModule(null))
+                .audioModule(new AudioModule())
+                .inputModule(new InputModule())
+                .moduleManagerModule(new ModuleManagerModule())
+                .drawableModule(new DrawableModule())
                 .build();
         Assets.initialize(applicationComponent.moduleEnviroment());
         applicationComponent.inject(this);
 
+
+        if (isMobile) {
+            DebugOptions.read(null);
+        }
 
         logger.info("\n\n ------------------------------------------------------------ \n");
         moduleManager.printAvailableModules();
         worldConfig = new WorldConfig();
         musicManager.playMusic(OggMusicManager.MENU_MUSIC_SET, options);
 
-        commonDrawer = new CommonDrawer();
         uiDrawer = new UiDrawer(commonDrawer);
         layouts = new SolLayouts(uiDrawer.r);
         menuScreens = new MenuScreens(layouts, isMobile(), uiDrawer.r, options);
@@ -213,7 +219,7 @@ public class SolApplication implements ApplicationListener {
             beforeLoadGame();
         }
 
-        solGame = new SolGame(shipName, tut, isNewGame, commonDrawer, context, worldConfig);
+        solGame = new SolGame(shipName, tut, isNewGame, commonDrawer, worldConfig);
         inputManager.setScreen(this, solGame.getScreens().mainGameScreen);
         musicManager.playMusic(OggMusicManager.GAME_MUSIC_SET, options);
     }

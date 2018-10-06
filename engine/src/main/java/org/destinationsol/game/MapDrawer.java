@@ -25,6 +25,7 @@ import org.destinationsol.assets.Assets;
 import org.destinationsol.common.Nullable;
 import org.destinationsol.common.SolColor;
 import org.destinationsol.common.SolMath;
+import org.destinationsol.game.drawables.GameDrawer;
 import org.destinationsol.game.maze.Maze;
 import org.destinationsol.game.maze.MazeBuilder;
 import org.destinationsol.game.planet.FarTileObject;

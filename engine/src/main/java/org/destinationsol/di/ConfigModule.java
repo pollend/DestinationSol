@@ -13,28 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.destinationsol.game.context.internal;
+package org.destinationsol.di;
 
-import com.google.common.collect.Maps;
-import org.destinationsol.game.context.Context;
+import dagger.Module;
+import dagger.Provides;
+import org.destinationsol.GameOptions;
+import org.destinationsol.SolFileReader;
 
-import java.util.Map;
+import javax.inject.Named;
+import javax.inject.Singleton;
 
-public class ContextImpl implements Context {
+@Module
+public class ConfigModule {
 
-    private final Map<Class<?>, Object> map = Maps.newConcurrentMap();
+    private SolFileReader solFileReader;
 
-    @Override
-    public <T> T get(Class<? extends T> type) {
-        if (type == Context.class) {
-            return type.cast(this);
-        }
-        return type.cast(map.get(type));
+    public ConfigModule(SolFileReader solFileReader) {
+        this.solFileReader = solFileReader;
     }
 
-    @Override
-    public <T, U extends T> void put(Class<T> type, U object)  {
-        map.put(type, object);
+    @Provides
+    @Singleton
+    public GameOptions provideGameOptions(@Named("isMobile") boolean mobile) {
+        return new GameOptions(mobile, solFileReader);
     }
 
 }

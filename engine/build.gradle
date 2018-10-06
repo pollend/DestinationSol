@@ -16,6 +16,7 @@ dependencies {
     compile "org.terasology:gestalt-asset-core:6.0.0"
     compile "org.terasology:gestalt-entity-system:6.0.0"
     compile 'com.google.dagger:dagger:2.17'
+    compile group: 'com.google.auto.factory', name: 'auto-factory', version: '1.0-beta5'
     apt 'com.google.dagger:dagger-compiler:2.17'
     //annotationProcessor 'com.google.dagger:dagger-compiler:2.9'
 

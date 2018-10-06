@@ -22,8 +22,12 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.google.auto.factory.AutoFactory;
+import com.google.auto.factory.Provided;
+import dagger.Provides;
 import org.destinationsol.Const;
 import org.destinationsol.assets.Assets;
+import org.destinationsol.assets.audio.OggMusicManager;
 import org.destinationsol.common.SolColor;
 import org.destinationsol.common.SolRandom;
 import org.destinationsol.game.CollisionMeshLoader;
@@ -33,6 +37,7 @@ import org.destinationsol.game.drawables.Drawable;
 import org.destinationsol.game.drawables.DrawableLevel;
 import org.destinationsol.game.drawables.RectSprite;
 
+import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,7 +53,7 @@ public class AsteroidBuilder {
         textures = Assets.listTexturesMatching("engine:asteroid_.*");
     }
 
-    public static Body buildBall(SolGame game, Vector2 position, float angle, float rad, float density, boolean sensor) {
+    public Body buildBall(SolGame game, Vector2 position, float angle, float rad, float density, boolean sensor) {
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.DynamicBody;
         bodyDef.angle = angle * MathUtils.degRad;

@@ -24,16 +24,14 @@ import org.destinationsol.common.Nullable;
 import org.destinationsol.common.SolMath;
 import org.destinationsol.common.SolRandom;
 import org.destinationsol.game.DebugOptions;
-import org.destinationsol.game.GameDrawer;
+import org.destinationsol.game.drawables.GameDrawer;
 import org.destinationsol.game.Hero;
 import org.destinationsol.game.SolGame;
 import org.destinationsol.game.SolObject;
 import org.destinationsol.game.UpdateAwareSystem;
 import org.destinationsol.game.planet.Planet;
 import org.destinationsol.game.sound.DebugHintDrawer;
-import org.terasology.assets.Asset;
 
-import javax.inject.Inject;
 import java.util.HashMap;
 import java.util.Map;
 

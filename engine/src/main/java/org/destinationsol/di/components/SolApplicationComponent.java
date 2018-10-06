@@ -13,23 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.destinationsol;
+package org.destinationsol.di.components;
 
 import dagger.Component;
-import org.destinationsol.assets.AssetProvider;
-import org.destinationsol.assets.audio.AudioProvider;
+import org.destinationsol.SolApplication;
+import org.destinationsol.di.CommonModule;
+import org.destinationsol.di.AudioModule;
 import org.destinationsol.assets.audio.OggMusicManager;
 import org.destinationsol.assets.audio.OggSoundManager;
-import org.destinationsol.game.SolGameComponent;
-import org.destinationsol.ui.InputProvider;
+import org.destinationsol.di.ConfigModule;
+import org.destinationsol.di.ModuleManagerModule;
+import org.destinationsol.di.DrawableModule;
+import org.destinationsol.di.InputModule;
 import org.destinationsol.ui.SolInputManager;
 import org.terasology.module.ModuleEnvironment;
 
+import javax.inject.Named;
 import javax.inject.Singleton;
 
 
 @Singleton
-@Component(modules = {InputProvider.class,ModuleManagerProvider.class, AudioProvider.class,GameOptionsProvider.class, AssetProvider.class})
+@Component(modules = {InputModule.class, ModuleManagerModule.class, ConfigModule.class, DrawableModule.class, AudioModule.class, CommonModule.class})
 public interface SolApplicationComponent {
     void inject(SolApplication solApplication);
 
@@ -37,5 +41,7 @@ public interface SolApplicationComponent {
     SolInputManager inputModule();
     OggSoundManager soundManager();
     OggMusicManager musicManager();
+    @Named("isMobile")
+    boolean isMobile();
 
 }

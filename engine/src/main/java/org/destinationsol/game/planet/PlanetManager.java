@@ -24,7 +24,7 @@ import org.destinationsol.common.SolMath;
 import org.destinationsol.files.HullConfigManager;
 import org.destinationsol.game.DebugOptions;
 import org.destinationsol.game.GameColors;
-import org.destinationsol.game.GameDrawer;
+import org.destinationsol.game.drawables.GameDrawer;
 import org.destinationsol.game.SolCam;
 import org.destinationsol.game.SolGame;
 import org.destinationsol.game.SolNames;

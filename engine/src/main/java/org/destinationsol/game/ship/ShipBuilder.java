@@ -29,6 +29,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.joints.PrismaticJoint;
 import com.badlogic.gdx.physics.box2d.joints.PrismaticJointDef;
 import com.badlogic.gdx.utils.JsonValue;
+import com.google.auto.factory.AutoFactory;
 import org.destinationsol.assets.Assets;
 import org.destinationsol.assets.json.Json;
 import org.destinationsol.common.SolColor;
@@ -56,6 +57,7 @@ import org.destinationsol.game.particle.LightSource;
 import org.destinationsol.game.ship.hulls.Hull;
 import org.destinationsol.game.ship.hulls.HullConfig;
 
+import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -66,11 +68,13 @@ public class ShipBuilder {
 
     private final CollisionMeshLoader myCollisionMeshLoader;
 
+
+    @Inject
     public ShipBuilder() {
         myCollisionMeshLoader = new CollisionMeshLoader();
     }
 
-    private static Fixture getBase(boolean hasBase, Body body) {
+    private Fixture getBase(boolean hasBase, Body body) {
         if (!hasBase) {
             return null;
         }

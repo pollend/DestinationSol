@@ -17,10 +17,11 @@ package org.destinationsol.game;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
-import org.destinationsol.CommonDrawer;
+import org.destinationsol.SolApplication;
+import org.destinationsol.game.context.internal.ContextImpl;
+import org.destinationsol.game.drawables.CommonDrawer;
 import org.destinationsol.Const;
 import org.destinationsol.GameOptions;
-import org.destinationsol.SolApplication;
 import org.destinationsol.assets.audio.OggSoundManager;
 import org.destinationsol.assets.audio.SpecialSounds;
 import org.destinationsol.common.DebugCol;
@@ -32,6 +33,7 @@ import org.destinationsol.game.chunk.ChunkManager;
 import org.destinationsol.game.context.Context;
 import org.destinationsol.game.drawables.DrawableDebugger;
 import org.destinationsol.game.drawables.DrawableManager;
+import org.destinationsol.game.drawables.GameDrawer;
 import org.destinationsol.game.farBg.FarBackgroundManagerOld;
 import org.destinationsol.game.item.ItemContainer;
 import org.destinationsol.game.item.ItemManager;
@@ -66,7 +68,6 @@ public class SolGame {
     private final GameScreens gameScreens;
     private final SolCam camera;
     private final ObjectManager objectManager;
-    private final SolApplication solApplication;
     private final DrawableManager drawableManager;
     private final PlanetManager planetManager;
     private final ChunkManager chunkManager;
@@ -100,8 +101,11 @@ public class SolGame {
     private List<UpdateAwareSystem> onPausedUpdateSystems = new ArrayList<>();
     private List<UpdateAwareSystem> updateSystems = new ArrayList<>();
 
-    public SolGame(String shipName, boolean tut, boolean isNewGame, CommonDrawer commonDrawer, Context context, WorldConfig worldConfig) {
-        solApplication = context.get(SolApplication.class);
+    public SolGame(String shipName, boolean tut, boolean isNewGame, CommonDrawer commonDrawer, WorldConfig worldConfig) {
+
+        SolApplication solApplication = new SolApplication();
+        ContextImpl context = new ContextImpl();
+
         GameDrawer drawer = new GameDrawer(commonDrawer);
         gameColors = new GameColors();
         soundManager = addUpdateSystem(solApplication.getSoundManager());
