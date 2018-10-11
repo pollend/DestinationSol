@@ -36,9 +36,11 @@ import org.destinationsol.ui.TutorialManager;
 import java.util.Optional;
 import java.util.Set;
 
+/**
+ * provides the set of systems that the engine updates
+ */
 @Module
 public class SystemsModule {
-
     @OnUpdate
     @Provides
     @ElementsIntoSet
@@ -63,7 +65,7 @@ public class SystemsModule {
         systems.add(mapDrawer);
         systems.add(soundManager);
         systems.add(beaconHandler);
-        systems.add(drawableDebugger );
+        systems.add(drawableDebugger);
         tutorialManager.ifPresent(systems::add);
         return systems;
     }
@@ -71,7 +73,7 @@ public class SystemsModule {
     @OnPauseUpdate
     @Provides
     @ElementsIntoSet
-    public static Set<UpdateAwareSystem> provideUpdatePauseSystems(MapDrawer mapDrawer, SolCam solCam){
-        return Sets.newHashSet(mapDrawer,solCam);
+    public static Set<UpdateAwareSystem> provideUpdatePauseSystems(MapDrawer mapDrawer, SolCam solCam) {
+        return Sets.newHashSet(mapDrawer, solCam);
     }
 }

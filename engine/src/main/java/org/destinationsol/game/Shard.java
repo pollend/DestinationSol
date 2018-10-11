@@ -32,7 +32,7 @@ public class Shard implements SolObject {
 
     private float angle;
 
-    Shard(Body body, ArrayList<Drawable> drawables) {
+    public Shard(Body body, ArrayList<Drawable> drawables) {
         this.drawables = drawables;
         this.body = body;
         position = new Vector2();

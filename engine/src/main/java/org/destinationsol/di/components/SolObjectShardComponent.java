@@ -17,32 +17,26 @@ package org.destinationsol.di.components;
 
 import com.badlogic.gdx.math.Vector2;
 import dagger.BindsInstance;
-import dagger.Component;
 import dagger.Subcomponent;
-import org.destinationsol.di.LootModule;
+import org.destinationsol.di.ShareModule;
 import org.destinationsol.di.scope.SolObjectScope;
-import org.destinationsol.game.item.Loot;
-import org.destinationsol.game.item.SolItem;
-import org.destinationsol.game.ship.SolShip;
+import org.destinationsol.game.Shard;
 
 import javax.inject.Named;
 
 /**
- * component for creating a loot object
+ * component for creating shard objects
  */
 @SolObjectScope
-@Subcomponent(modules = LootModule.class)
-public interface SolObjectLootComponent {
-    Loot loot();
+@Subcomponent(modules = ShareModule.class)
+public interface SolObjectShardComponent {
+    Shard shard();
 
     @Subcomponent.Builder
     interface Builder{
         SolObjectLootComponent build();
-        @BindsInstance Builder position(@Named("position") Vector2 position);
-        @BindsInstance Builder solItem(SolItem solItem);
-        @BindsInstance Builder speed(@Named("speed") Vector2 speed);
-        @BindsInstance Builder life(@Named("life") int life);
-        @BindsInstance Builder rotationSpeed(@Named("rotationSpeed") float rotationSpeed);
-        @BindsInstance Builder shipOwnder(SolShip solShip);
+        @BindsInstance SolObjectLootComponent.Builder position(@Named("position") Vector2 position);
+        @BindsInstance SolObjectLootComponent.Builder speed(@Named("speed") Vector2 speed);
+        @BindsInstance SolObjectLootComponent.Builder rotationSpeed(@Named("size") float sise);
     }
 }

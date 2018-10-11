@@ -62,6 +62,9 @@ import org.destinationsol.ui.TutorialManager;
 import java.util.Optional;
 import java.util.Set;
 
+/**
+ * base scope for the game
+ */
 @GameScope
 @Component(dependencies = SolApplicationComponent.class,modules = {GameModule.class, SystemsModule.class})
 public interface SolGameComponent {
@@ -99,6 +102,7 @@ public interface SolGameComponent {
     SolGame game();
 
     SolObjectLootComponent.Builder loot();
+    SolObjectShardComponent.Builder shard();
 
     @OnUpdate
     Set<UpdateAwareSystem> updateSystems();
