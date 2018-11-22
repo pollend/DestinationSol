@@ -80,8 +80,12 @@ public class MapDrawer implements UpdateAwareSystem{
     private float skullTime;
     private float areaSkullTime;
 
+    // inject
 
-    public MapDrawer() {
+    private GridDrawer gridDrawer;
+
+
+    public MapDrawer(GridDrawer gridDrawer) {
         DisplayDimensions displayDimensions = SolApplication.displayDimensions;
 
         zoom = MAX_ZOOM / MUL_FACTOR / MUL_FACTOR;
@@ -131,7 +135,7 @@ public class MapDrawer implements UpdateAwareSystem{
         float heroDmgCap = hero.isTranscendent() ? Float.MAX_VALUE : HardnessCalc.getShipDmgCap(hero.getShip());
 
         drawer.updateMatrix(game);
-        game.getGridDrawer().draw(drawer, cam, GRID_SZ, lineTexture);
+        gridDrawer.draw(drawer, cam, GRID_SZ, lineTexture);
         drawPlanets(drawer, game, viewDist, np, camPos, heroDmgCap, camAngle);
         drawMazes(drawer, game, viewDist, np, camPos, heroDmgCap, camAngle);
         drawStarNodes(drawer, game, viewDist, camPos, starNodeW);
@@ -424,7 +428,7 @@ public class MapDrawer implements UpdateAwareSystem{
     }
 
     @Override
-    public void update(SolGame game, float timeStep) {
+    public void update(float timeStep) {
         skullTime += timeStep;
         if (skullTime > MAX_SKULL_TIME) {
             skullTime = -MAX_SKULL_TIME;

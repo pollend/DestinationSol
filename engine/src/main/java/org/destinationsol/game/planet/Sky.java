@@ -110,7 +110,7 @@ public class Sky implements SolObject {
     }
 
     @Override
-    public boolean shouldBeRemoved(SolGame game) {
+    public boolean shouldBeRemoved() {
         return false;
     }
 

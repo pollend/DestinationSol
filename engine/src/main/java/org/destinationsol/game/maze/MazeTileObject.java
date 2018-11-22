@@ -58,7 +58,7 @@ public class MazeTileObject implements SolObject {
     }
 
     @Override
-    public boolean shouldBeRemoved(SolGame game) {
+    public boolean shouldBeRemoved() {
         return false;
     }
 
@@ -143,7 +143,7 @@ public class MazeTileObject implements SolObject {
         }
 
         @Override
-        public boolean shouldBeRemoved(SolGame game) {
+        public boolean shouldBeRemoved() {
             return false;
         }
 

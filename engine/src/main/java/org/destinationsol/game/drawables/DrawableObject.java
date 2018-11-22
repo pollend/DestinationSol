@@ -54,7 +54,7 @@ public class DrawableObject implements SolObject {
     }
 
     @Override
-    public void update(SolGame game) {
+    public void update() {
         moveDifference.set(speed);
         float timeStep = game.getTimeStep();
         moveDifference.scl(timeStep);
@@ -92,7 +92,7 @@ public class DrawableObject implements SolObject {
     }
 
     @Override
-    public boolean shouldBeRemoved(SolGame game) {
+    public boolean shouldBeRemoved() {
         if (maxFadeTime > 0 && fadeTime <= 0) {
             return true;
         }
@@ -112,11 +112,11 @@ public class DrawableObject implements SolObject {
     }
 
     @Override
-    public void onRemove(SolGame game) {
+    public void onRemove() {
     }
 
     @Override
-    public void receiveDmg(float dmg, SolGame game, Vector2 position, DmgType dmgType) {
+    public void receiveDmg(float dmg,  Vector2 position, DmgType dmgType) {
     }
 
     @Override
@@ -154,8 +154,7 @@ public class DrawableObject implements SolObject {
     }
 
     @Override
-    public void handleContact(SolObject other, float absImpulse,
-                              SolGame game, Vector2 collPos) {
+    public void handleContact(SolObject other, float absImpulse, Vector2 collPos) {
     }
 
     @Override

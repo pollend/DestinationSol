@@ -332,7 +332,7 @@ public class SolShip implements SolObject {
     }
 
     @Override
-    public boolean shouldBeRemoved(SolGame game) {
+    public boolean shouldBeRemoved() {
         return myHull.life <= 0 || myRemoveController != null && myRemoveController.shouldRemove(myHull.getPosition());
     }
 

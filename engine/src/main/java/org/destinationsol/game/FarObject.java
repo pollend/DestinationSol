@@ -34,20 +34,18 @@ public interface FarObject {
      * This method should return false if the object is meant to persist for the whole game, like for instance
      * {@link StarPort}. Otherwise, it usually checks for its {@link RemoveController} as to whether it should be removed.
      *
-     * @param game Game this object belongs to.
      * @return Boolean denoting whether the object should be removed.
      */
-    boolean shouldBeRemoved(SolGame game);
+    boolean shouldBeRemoved();
 
     /**
      * Creates a new {@link SolObject} similar to the one used for creation of this object by call to {@link SolObject#toFarObject()}
      * <p>
      * The created object should be by all terms similar or same as the {@code SolObject} that created this object.
      *
-     * @param game Game this object belongs to.
      * @return SolObject representation of this object.
      */
-    SolObject toObject(SolGame game);
+    SolObject toObject();
 
     /**
      * Called on every game's frame, allows for handling of object-specific runtime needs.
@@ -55,9 +53,8 @@ public interface FarObject {
      * This method should be much simpler than the {@link SolObject#update(SolGame)}. It can be used for instance for
      * sort of simplified movement for ships.
      *
-     * @param game Game this object belongs to.
      */
-    void update(SolGame game);
+    void update();
 
     /**
      * Returns the approximate radius the object is taking up, computed from the point returned by {@link #getPosition()}.

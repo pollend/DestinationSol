@@ -24,9 +24,12 @@ import org.destinationsol.game.item.Engine;
 import org.destinationsol.game.item.Gun;
 import org.destinationsol.game.planet.Planet;
 import org.destinationsol.game.planet.PlanetBind;
+import org.destinationsol.game.planet.PlanetManager;
 import org.destinationsol.game.ship.FarShip;
 import org.destinationsol.game.ship.SolShip;
 import org.destinationsol.game.ship.hulls.HullConfig;
+
+import javax.inject.Inject;
 
 public class AiPilot implements Pilot {
 
@@ -51,6 +54,9 @@ public class AiPilot implements Pilot {
     private float myBindAwait;
     private PlanetBind myPlanetBind;
     private float myReEquipAwait;
+
+    @Inject
+    PlanetManager planetManager;
 
     public AiPilot(MoveDestProvider destProvider, boolean collectsItems, Faction faction,
                    boolean shootAtObstacles, String mapHint, float detectionDist) {
@@ -228,7 +234,7 @@ public class AiPilot implements Pilot {
                 if (myBindAwait > 0) {
                     myBindAwait -= ts;
                 } else {
-                    myPlanetBind = PlanetBind.tryBind(game, shipPos, angle);
+                    myPlanetBind = PlanetBind.tryBind(planetManager, shipPos, angle);
                     myBindAwait = MAX_BIND_AWAIT;
                 }
             }

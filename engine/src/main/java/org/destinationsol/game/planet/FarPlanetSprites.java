@@ -46,7 +46,7 @@ public class FarPlanetSprites implements FarObject {
     }
 
     @Override
-    public boolean shouldBeRemoved(SolGame game) {
+    public boolean shouldBeRemoved() {
         return false;
     }
 

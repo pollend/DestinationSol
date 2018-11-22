@@ -159,7 +159,7 @@ public class Asteroid implements SolObject {
     }
 
     @Override
-    public boolean shouldBeRemoved(SolGame game) {
+    public boolean shouldBeRemoved() {
         return life <= 0 || removeController != null && removeController.shouldRemove(position);
     }
 

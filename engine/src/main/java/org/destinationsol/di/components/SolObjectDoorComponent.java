@@ -13,9 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.destinationsol.game;
+package org.destinationsol.di.components;
 
-public interface UpdateAwareSystem {
+import dagger.Subcomponent;
+import org.destinationsol.di.DoorModule;
+import org.destinationsol.di.scope.SolObjectScope;
+import org.destinationsol.game.ship.Door;
 
-    void update(float timeStep);
+
+@SolObjectScope
+@Subcomponent(modules = DoorModule.class)
+public interface SolObjectDoorComponent {
+    Door door();
+
+    @Subcomponent.Builder
+    interface Builder{
+        SolObjectDoorComponent build();
+    }
 }

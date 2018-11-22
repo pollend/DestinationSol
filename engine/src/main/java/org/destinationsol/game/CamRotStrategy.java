@@ -19,21 +19,27 @@ import com.badlogic.gdx.math.Vector2;
 import org.destinationsol.Const;
 import org.destinationsol.common.SolMath;
 import org.destinationsol.game.planet.Planet;
+import org.destinationsol.game.planet.PlanetManager;
 import org.destinationsol.game.planet.SolSystem;
 
 public interface CamRotStrategy {
-    float getRotation(Vector2 position, SolGame game);
+    float getRotation(Vector2 position);
 
     class Static implements CamRotStrategy {
-        public float getRotation(Vector2 position, SolGame game) {
+        public float getRotation(Vector2 position) {
             return 0;
         }
     }
 
     class ToPlanet implements CamRotStrategy {
 
-        public float getRotation(Vector2 position, SolGame game) {
-            Planet np = game.getPlanetManager().getNearestPlanet();
+        private final PlanetManager planetManager;
+        public ToPlanet(PlanetManager planetManager){
+            this.planetManager = planetManager;
+        }
+
+        public float getRotation(Vector2 position) {
+            Planet np = planetManager.getNearestPlanet();
             if (np == null) {
                 return 0;
             }
@@ -42,7 +48,7 @@ public interface CamRotStrategy {
             if (npPos.dst(position) < fh) {
                 return SolMath.angle(position, npPos) - 90;
             }
-            SolSystem sys = game.getPlanetManager().getNearestSystem(position);
+            SolSystem sys = planetManager.getNearestSystem(position);
             Vector2 sysPos = sys.getPosition();
             if (sysPos.dst(position) < Const.SUN_RADIUS) {
                 return SolMath.angle(position, sysPos) - 90;

@@ -21,6 +21,7 @@ import com.badlogic.gdx.math.Vector2;
 import org.destinationsol.game.GameDrawer;
 import org.destinationsol.game.SolGame;
 import org.destinationsol.game.SolObject;
+import org.destinationsol.game.UpdateSystem;
 
 /**
  * Wrapper for {@link TextureAtlas.AtlasRegion}.
@@ -49,10 +50,9 @@ public interface Drawable {
     /**
      * Called on every game's frame, allows for handling of object-specific runtime needs.
      *
-     * @param game Game this drawable belongs to.
      * @param o Object against which it is drawn
      */
-    void update(SolGame game, SolObject o);
+    void update(UpdateSystem updateSystem, SolObject o);
 
     /**
      * Called before every draw of this drawable.

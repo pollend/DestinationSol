@@ -13,9 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.destinationsol.game;
+package org.destinationsol.di.components;
 
-public interface UpdateAwareSystem {
-
-    void update(float timeStep);
+public interface ParticleEmitterComponent {
 }

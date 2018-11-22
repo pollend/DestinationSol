@@ -45,6 +45,7 @@ import org.destinationsol.game.StarPort;
 import org.destinationsol.game.UpdateAwareSystem;
 import org.destinationsol.game.WorldConfig;
 import org.destinationsol.game.asteroid.AsteroidBuilder;
+import org.destinationsol.game.chunk.ChunkFiller;
 import org.destinationsol.game.chunk.ChunkManager;
 import org.destinationsol.game.drawables.DrawableDebugger;
 import org.destinationsol.game.drawables.DrawableManager;
@@ -104,6 +105,8 @@ public interface SolGameComponent {
     Set<UpdateAwareSystem> updateSystems();
     @OnPauseUpdate
     Set<UpdateAwareSystem> onPausedUpdateSystems();
+
+    ChunkFiller chunkFiller();
 
     @Component.Builder
     interface Builder{

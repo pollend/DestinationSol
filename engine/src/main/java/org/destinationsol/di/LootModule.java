@@ -59,11 +59,6 @@ public class LootModule {
         return loot;
     }
 
-    @Provides
-    @SolObjectScope
-    static Color provideLoots(){
-        return  null;
-    }
     private static Body buildBody(SolGame game, Vector2 position, float sz) {
         BodyDef bd = new BodyDef();
         bd.type = BodyDef.BodyType.DynamicBody;

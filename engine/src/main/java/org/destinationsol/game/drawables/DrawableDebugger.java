@@ -21,11 +21,13 @@ import com.badlogic.gdx.math.Vector2;
 import org.destinationsol.common.DebugCol;
 import org.destinationsol.common.SolColor;
 import org.destinationsol.game.DebugOptions;
+import org.destinationsol.game.SolCam;
 import org.destinationsol.game.SolGame;
 import org.destinationsol.game.UpdateAwareSystem;
 import org.destinationsol.ui.FontSize;
 import org.destinationsol.ui.UiDrawer;
 
+import javax.inject.Inject;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -34,26 +36,31 @@ public class DrawableDebugger implements UpdateAwareSystem {
     private static final float GAP = 0.01f;
     private final Set<TextureAtlas.AtlasRegion> textures;
 
+    @Inject
+    SolCam solCam;
+    @Inject
+    DrawableManager drawableManager;
+
     public DrawableDebugger() {
         textures = new HashSet<>();
     }
 
     @Override
-    public void update(SolGame game, float timeStep) {
+    public void update(float timeStep) {
         if (!DebugOptions.TEX_INFO) {
             return;
         }
-        maybeCollectTextures(game);
+        maybeCollectTextures();
     }
 
-    private void maybeCollectTextures(SolGame game) {
+    private void maybeCollectTextures() {
         if (!Gdx.input.isTouched()) {
             return;
         }
         textures.clear();
         Vector2 cursorPosition = new Vector2(Gdx.input.getX(), Gdx.input.getY());
-        game.getCam().screenToWorld(cursorPosition);
-        game.getDrawableManager().collectTextures(textures, cursorPosition);
+        solCam.screenToWorld(cursorPosition);
+        drawableManager.collectTextures(textures, cursorPosition);
     }
 
     public void draw(UiDrawer uiDrawer) {

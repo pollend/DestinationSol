@@ -23,6 +23,8 @@ import org.destinationsol.SolApplication;
 import org.destinationsol.assets.audio.OggSoundManager;
 import org.destinationsol.assets.audio.SpecialSounds;
 import org.destinationsol.di.Qualifier.NewGame;
+import org.destinationsol.di.Qualifier.OnPauseUpdate;
+import org.destinationsol.di.Qualifier.OnUpdate;
 import org.destinationsol.di.Qualifier.ShipName;
 import org.destinationsol.di.Qualifier.Tutorial;
 import org.destinationsol.di.components.SolGameComponent;
@@ -43,6 +45,8 @@ import org.destinationsol.game.SolCam;
 import org.destinationsol.game.SolContactListener;
 import org.destinationsol.game.SolGame;
 import org.destinationsol.game.StarPort;
+import org.destinationsol.game.UpdateAwareSystem;
+import org.destinationsol.game.UpdateSystem;
 import org.destinationsol.game.asteroid.AsteroidBuilder;
 import org.destinationsol.game.chunk.ChunkManager;
 import org.destinationsol.game.context.Context;
@@ -60,6 +64,7 @@ import org.destinationsol.game.ship.ShipBuilder;
 import org.destinationsol.ui.TutorialManager;
 
 import java.util.Optional;
+import java.util.Set;
 
 @Module
 public class GameModule {
@@ -194,8 +199,8 @@ public class GameModule {
 
     @GameScope
     @Provides
-    static MapDrawer provideMapDrawer() {
-        return new MapDrawer();
+    static MapDrawer provideMapDrawer(GridDrawer gridDrawer) {
+        return new MapDrawer(gridDrawer);
     }
 
     @GameScope
@@ -236,8 +241,8 @@ public class GameModule {
 
     @GameScope
     @Provides
-    static DrawableManager provideDrawableManager(GameDrawer gameDrawer) {
-        return new DrawableManager(gameDrawer);
+    static DrawableManager provideDrawableManager(GameDrawer gameDrawer,OggSoundManager oggSoundManager) {
+        return new DrawableManager(gameDrawer,oggSoundManager);
     }
 
     @GameScope
@@ -256,6 +261,13 @@ public class GameModule {
     @Provides
     static SpecialEffects provideSpecialEffects(EffectTypes effectTypes, GameColors colors) {
         return new SpecialEffects(effectTypes, colors);
+    }
+
+    @GameScope
+    @Provides
+    static UpdateSystem provideUpdateSystem(){
+        return new UpdateSystem();
+
     }
 
 }

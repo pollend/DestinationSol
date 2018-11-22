@@ -22,14 +22,17 @@ import org.destinationsol.assets.Assets;
 import org.destinationsol.common.SolMath;
 import org.destinationsol.game.drawables.Drawable;
 import org.destinationsol.game.drawables.DrawableLevel;
+import org.destinationsol.game.drawables.DrawableManager;
 import org.destinationsol.game.drawables.DrawableObject;
 import org.destinationsol.game.drawables.FarDrawable;
 import org.destinationsol.game.drawables.RectSprite;
 import org.destinationsol.game.input.Pilot;
 import org.destinationsol.game.planet.PlanetBind;
+import org.destinationsol.game.planet.PlanetManager;
 import org.destinationsol.game.ship.FarShip;
 import org.destinationsol.game.ship.SolShip;
 
+import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,6 +56,13 @@ public class BeaconHandler implements UpdateAwareSystem{
     private Vector2 speed;
     private boolean isInitialized;
 
+    @Inject
+    ObjectManager objectManager;
+    @Inject
+    PlanetManager planetManager;
+    @Inject
+    DrawableManager drawableManager;
+
     public BeaconHandler() {
         TextureAtlas.AtlasRegion attackTexture = Assets.getAtlasRegion("engine:uiBeaconAttack");
         attackSprite = new RectSprite(attackTexture, TEX_SZ, 0, 0, new Vector2(), DrawableLevel.PART_FG_0, 0, ROT_SPD, new Color(1, 1, 1, 0), true);
@@ -75,22 +85,22 @@ public class BeaconHandler implements UpdateAwareSystem{
     }
 
     @Override
-    public void update(SolGame game, float timeStep) {
+    public void update(float timeStep) {
         if (!isInitialized) {
             return;
         }
-        updateD(game);
+        updateD();
         speed.set(0, 0);
-        if (maybeUpdateTargetPos(game)) {
+        if (maybeUpdateTargetPos()) {
             return;
         }
-        maybeUpdatePlanetPos(game);
+        maybeUpdatePlanetPos();
     }
 
-    private void maybeUpdatePlanetPos(SolGame game) {
+    private void maybeUpdatePlanetPos() {
         Vector2 beaconPos = getPos0();
         if (planetBind == null) {
-            planetBind = PlanetBind.tryBind(game, beaconPos, 0);
+            planetBind = PlanetBind.tryBind(planetManager, beaconPos, 0);
             return;
         }
         Vector2 vec = SolMath.getVec();
@@ -100,8 +110,8 @@ public class BeaconHandler implements UpdateAwareSystem{
         planetBind.getPlanet().calculateSpeedAtPosition(speed, beaconPos);
     }
 
-    private boolean maybeUpdateTargetPos(SolGame game) {
-        updateTarget(game);
+    private boolean maybeUpdateTargetPos() {
+        updateTarget();
         if (targetPilot == null) {
             return false;
         }
@@ -115,13 +125,12 @@ public class BeaconHandler implements UpdateAwareSystem{
         return true;
     }
 
-    private void updateTarget(SolGame game) {
+    private void updateTarget() {
         if (targetPilot == null) {
             return;
         }
-        ObjectManager om = game.getObjectManager();
-        List<SolObject> objs = om.getObjects();
-        List<FarShip> farShips = om.getFarShips();
+        List<SolObject> objs = objectManager.getObjects();
+        List<FarShip> farShips = objectManager.getFarShips();
         if (target != null) {
             if (objs.contains(target)) {
                 return;
@@ -140,7 +149,7 @@ public class BeaconHandler implements UpdateAwareSystem{
         if (farTarget == null) {
             throw new AssertionError("Far target does not exist!");
         }
-        if (om.getFarShips().contains(farTarget)) {
+        if (objectManager.getFarShips().contains(farTarget)) {
             return;
         }
         farTarget = null;
@@ -157,10 +166,9 @@ public class BeaconHandler implements UpdateAwareSystem{
         applyAction(Action.MOVE);
     }
 
-    private void updateD(SolGame game) {
-        ObjectManager om = game.getObjectManager();
-        List<SolObject> objs = om.getObjects();
-        List<FarObjData> farObjs = om.getFarObjs();
+    private void updateD() {
+        List<SolObject> objs = objectManager.getObjects();
+        List<FarObjData> farObjs = objectManager.getFarObjs();
 
         if (drawable != null) {
             if (objs.contains(drawable)) {
@@ -188,7 +196,7 @@ public class BeaconHandler implements UpdateAwareSystem{
         if (farDrawable == null) {
             throw new AssertionError("Far drawable does not exist!");
         }
-        if (om.containsFarObj(farDrawable)) {
+        if (objectManager.containsFarObj(farDrawable)) {
             return;
         }
         farDrawable = null;

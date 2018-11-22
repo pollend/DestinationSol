@@ -43,7 +43,7 @@ public class FarAsteroid implements FarObject {
     }
 
     @Override
-    public boolean shouldBeRemoved(SolGame game) {
+    public boolean shouldBeRemoved() {
         return removeController != null && removeController.shouldRemove(position);
     }
 

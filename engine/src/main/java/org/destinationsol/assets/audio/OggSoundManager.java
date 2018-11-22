@@ -83,15 +83,17 @@ public class OggSoundManager implements UpdateAwareSystem {
      */
     private float myLoopAwait;
 
-    final GameOptions gameOptions;
-//    final Assets assets;
+    private final GameOptions gameOptions;
+    private final SolGame solGame;
 
-    public OggSoundManager(GameOptions gameOptions) {
+
+    public OggSoundManager(GameOptions gameOptions,SolGame solGame) {
 //        this.assets = assets;
         soundMap = new HashMap<>();
         loopedSoundMap = new HashMap<>();
         debugHintDrawer = new DebugHintDrawer();
         this.gameOptions= gameOptions;
+        this.solGame = solGame;
     }
 
     /**
@@ -130,13 +132,12 @@ public class OggSoundManager implements UpdateAwareSystem {
      * {@code source} must not be null if the sound is specified to loop, and at least one of {@code source} or
      * {@code position} must be specified.
      *
-     * @param game     Game to play the sound in.
      * @param sound    The sound to play
      * @param position Position to play the sound at. If null, source.getPosition() will be used.
      * @param source   Bearer of a sound. Must not be null for looped sounds or when {@code position} is null.
      */
-    public void play(SolGame game, PlayableSound sound, @Nullable Vector2 position, @Nullable SolObject source) {
-        play(game, sound, position, source, 1f);
+    public void play( PlayableSound sound, @Nullable Vector2 position, @Nullable SolObject source) {
+        play( sound, position, source, 1f);
     }
 
     /**
@@ -145,13 +146,12 @@ public class OggSoundManager implements UpdateAwareSystem {
      * {@code source} must not be null if the sound is specified to loop, and at least one of {@code source} or
      * {@code position} must be specified.
      *
-     * @param game             Game to play the sound in.
      * @param playableSound    The sound to play
      * @param position         Position to play the sound at. If null, source.getPosition() will be used.
      * @param source           Bearer of a sound. Must not be null for looped sounds or when {@code position} is null.
      * @param volumeMultiplier Multiplier for sound volume.
      */
-    public void play(SolGame game, PlayableSound playableSound, @Nullable Vector2 position, @Nullable SolObject source, float volumeMultiplier) {
+    public void play(PlayableSound playableSound, @Nullable Vector2 position, @Nullable SolObject source, float volumeMultiplier) {
         if (playableSound == null) {
             return;
         }
@@ -169,16 +169,16 @@ public class OggSoundManager implements UpdateAwareSystem {
             position = source.getPosition();
         }
 
-        float volume = getVolume(game, position, volumeMultiplier, sound);
+        float volume = getVolume(position, volumeMultiplier, sound);
 
         if (volume <= 0) {
             return;
         }
 
         // Calculate the pitch for the sound
-        float pitch = SolRandom.randomFloat(.97f, 1.03f) * game.getTimeFactor() * playableSound.getBasePitch();
+        float pitch = SolRandom.randomFloat(.97f, 1.03f) * solGame.getTimeFactor() * playableSound.getBasePitch();
 
-        if (skipLooped(source, sound, game.getTime())) {
+        if (skipLooped(source, sound, solGame.getTime())) {
             return;
         }
 
@@ -196,17 +196,16 @@ public class OggSoundManager implements UpdateAwareSystem {
      * (aka distance to atmosphere of a planet), distance to player, sound's volume multiplier, and volume multiplier
      * passed in as an argument to the method.
      *
-     * @param game             Game to play this sound in.
      * @param position         Position to play the sound at.
      * @param volumeMultiplier Special multiplier to multiply the resulting volume by.
      * @param sound            Sound to be played with the calculated volume.
      * @return Volume the sound should play at.
      */
-    private float getVolume(SolGame game, Vector2 position, float volumeMultiplier, OggSound sound) {
+    private float getVolume( Vector2 position, float volumeMultiplier, OggSound sound) {
         float globalVolumeMultiplier = gameOptions.sfxVolume.getVolume();
 
-        Vector2 cameraPosition = game.getCam().getPosition();
-        Planet nearestPlanet = game.getPlanetManager().getNearestPlanet();
+        Vector2 cameraPosition = solGame.getCam().getPosition();
+        Planet nearestPlanet = solGame.getPlanetManager().getNearestPlanet();
 
         float airPercentage = 0;
         if (nearestPlanet.getConfig().skyConfig != null) {
@@ -219,7 +218,7 @@ public class OggSoundManager implements UpdateAwareSystem {
 
         float maxSoundDist = 1 + 1.5f * Const.CAM_VIEW_DIST_GROUND * airPercentage;
 
-        Hero hero = game.getHero();
+        Hero hero = solGame.getHero();
         float soundRadius = hero.isTranscendent() ? 0 : hero.getHull().config.getApproxRadius();
         float distance = position.dst(cameraPosition) - soundRadius;
         float distanceMultiplier = SolMath.clamp(1 - distance / maxSoundDist);
@@ -275,18 +274,17 @@ public class OggSoundManager implements UpdateAwareSystem {
     /**
      * Updates drawer used in {@link #drawDebug(GameDrawer, SolGame)} and removes unnecessary objects.
      *
-     * @param game Game currently in progress.
      */
     @Override
-    public void update(SolGame game, float timeStep) {
+    public void update(float timeStep) {
         if (DebugOptions.SOUND_INFO) {
-            debugHintDrawer.update(game);
+            debugHintDrawer.update();
         }
 
         myLoopAwait -= timeStep;
         if (myLoopAwait <= 0) {
             myLoopAwait = 30;
-            cleanLooped(game);
+            cleanLooped();
         }
     }
 
@@ -297,8 +295,8 @@ public class OggSoundManager implements UpdateAwareSystem {
      *
      * @param game Game currently in progress.
      */
-    private void cleanLooped(SolGame game) {
-        loopedSoundMap.keySet().removeIf(o -> o.shouldBeRemoved(game));
+    private void cleanLooped() {
+        loopedSoundMap.keySet().removeIf(o -> o.shouldBeRemoved());
     }
 
     /**

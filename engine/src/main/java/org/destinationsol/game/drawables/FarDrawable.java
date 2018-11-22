@@ -43,17 +43,17 @@ public class FarDrawable implements FarObject {
     }
 
     @Override
-    public boolean shouldBeRemoved(SolGame game) {
+    public boolean shouldBeRemoved() {
         return removeController != null && removeController.shouldRemove(position);
     }
 
     @Override
-    public SolObject toObject(SolGame game) {
+    public SolObject toObject() {
         return new DrawableObject(drawables, position, speed, removeController, false, hideOnPlanet);
     }
 
     @Override
-    public void update(SolGame game) {
+    public void update() {
     }
 
     @Override

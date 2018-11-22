@@ -22,6 +22,7 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.OrderedMap;
+import org.destinationsol.assets.audio.OggSoundManager;
 import org.destinationsol.common.DebugCol;
 import org.destinationsol.game.DebugOptions;
 import org.destinationsol.game.GameDrawer;
@@ -43,7 +44,11 @@ public class DrawableManager {
     private final Set<Drawable> visibleDrawables = new HashSet<>();
     private final GameDrawer drawer;
 
-    public DrawableManager(GameDrawer drawer) {
+    private final OggSoundManager oggSoundManager;
+
+
+    public DrawableManager(GameDrawer drawer, OggSoundManager oggSoundManager) {
+        this.oggSoundManager = oggSoundManager;
         drawableLevels = DrawableLevel.values();
         this.drawer = drawer;
         drawables = new ArrayList<>();
@@ -185,7 +190,7 @@ public class DrawableManager {
             }
         }
 
-        game.getSoundManager().drawDebug(drawer, game);
+        oggSoundManager.drawDebug(drawer, game);
         drawer.maybeChangeAdditive(false);
     }
 

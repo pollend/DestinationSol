@@ -56,7 +56,7 @@ public class DebugHint {
         myMsg = sb.toString();
     }
 
-    public void update(SolGame game) {
+    public void update() {
         if (myOwner != null) {
             if (myOwner.shouldBeRemoved(game)) {
                 myOwner = null;

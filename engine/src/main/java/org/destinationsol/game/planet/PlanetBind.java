@@ -32,8 +32,8 @@ public class PlanetBind {
         relativeAngle = angle - planetAngle;
     }
 
-    public static PlanetBind tryBind(SolGame game, Vector2 position, float angle) {
-        Planet planet = game.getPlanetManager().getNearestPlanet(position);
+    public static PlanetBind tryBind(PlanetManager planetManager,Vector2 position, float angle) {
+        Planet planet = planetManager.getNearestPlanet(position);
         if (!planet.isNearGround(position)) {
             return null;
         }

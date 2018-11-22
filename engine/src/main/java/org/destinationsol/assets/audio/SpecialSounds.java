@@ -46,7 +46,10 @@ public class SpecialSounds {
     public final PlayableSound burning;
     public final PlayableSound transcendentMove;
 
+    private final OggSoundManager oggSoundManager;
+
     public SpecialSounds(OggSoundManager soundManager) {
+        this.oggSoundManager = soundManager;
         // OggSound
         metalColl = soundManager.getSound("core:metalCollision");
         metalEnergyHit = soundManager.getSound("core:empty");
@@ -93,7 +96,7 @@ public class SpecialSounds {
         if (sound == null) {
             return;
         }
-        game.getSoundManager().play(game, sound, position, o);
+        oggSoundManager.play(game, sound, position, o);
     }
 
     public void playColl(SolGame game, float absImpulse, SolObject o, Vector2 position) {
@@ -104,6 +107,6 @@ public class SpecialSounds {
         if (metal == null) {
             return;
         }
-        game.getSoundManager().play(game, metal ? metalColl : rockColl, position, o, absImpulse * Const.IMPULSE_TO_COLL_VOL);
+        oggSoundManager.play(game, metal ? metalColl : rockColl, position, o, absImpulse * Const.IMPULSE_TO_COLL_VOL);
     }
 }

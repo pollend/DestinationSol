@@ -19,6 +19,7 @@ package org.destinationsol.game.item;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
+import org.destinationsol.assets.audio.OggSoundManager;
 import org.destinationsol.common.SolMath;
 import org.destinationsol.game.DmgType;
 import org.destinationsol.game.FarObject;
@@ -28,6 +29,7 @@ import org.destinationsol.game.drawables.Drawable;
 import org.destinationsol.game.particle.LightSource;
 import org.destinationsol.game.ship.SolShip;
 
+import javax.inject.Inject;
 import java.util.List;
 
 public class Loot implements SolObject {
@@ -50,6 +52,9 @@ public class Loot implements SolObject {
     private float ownerAwait;
     private int life;
     private float angle;
+
+    @Inject
+    OggSoundManager soundManager;
 
     public Loot(SolItem item, Body body, int life, List<Drawable> drawables, LightSource ls, SolShip owner) {
         this.body = body;
@@ -106,7 +111,7 @@ public class Loot implements SolObject {
     }
 
     @Override
-    public boolean shouldBeRemoved(SolGame game) {
+    public boolean shouldBeRemoved() {
         return life <= 0;
     }
 
@@ -222,6 +227,6 @@ public class Loot implements SolObject {
         speed.scl(1 / fadeTime);
         speed.add(ship.getSpeed());
         game.getPartMan().blip(game, position, angle, item.getItemType().sz, fadeTime, speed, item.getIcon(game));
-        game.getSoundManager().play(game, item.getItemType().pickUpSound, null, this);
+        soundManager.play(item.getItemType().pickUpSound, null, this);
     }
 }

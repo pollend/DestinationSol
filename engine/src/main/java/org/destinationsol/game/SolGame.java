@@ -385,13 +385,9 @@ public class SolGame {
         return component.starPortBuilder();
     }
 
-    public GridDrawer getGridDrawer() {
-        return component.gridDrawer();
-    }
-
-    public OggSoundManager getSoundManager() {
-        return component.soundManager();
-    }
+//    public OggSoundManager getSoundManager() {
+//        return component.soundManager();
+//    }
 
     public float getTime() {
         return time;

@@ -22,6 +22,7 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import org.destinationsol.Const;
 import org.destinationsol.assets.Assets;
+import org.destinationsol.assets.audio.OggSoundManager;
 import org.destinationsol.common.Bound;
 import org.destinationsol.common.SolColor;
 import org.destinationsol.common.SolMath;
@@ -37,6 +38,7 @@ import org.destinationsol.game.ship.FarShip;
 import org.destinationsol.game.ship.ForceBeacon;
 import org.destinationsol.game.ship.SolShip;
 
+import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,6 +55,10 @@ public class StarPort implements SolObject {
     private final ArrayList<Drawable> drawables;
     private final boolean isSecondary;
     private float angle;
+
+
+    @Inject
+    OggSoundManager soundManager;
 
     StarPort(Planet from, Planet to, Body body, ArrayList<Drawable> drawables, boolean secondary, ArrayList<LightSource> lights) {
         this.fromPlanet = from;
@@ -127,7 +133,7 @@ public class StarPort implements SolObject {
             ObjectManager objectManager = game.getObjectManager();
             objectManager.addObjDelayed(transcendent);
             blip(game, ship);
-            game.getSoundManager().play(game, game.getSpecialSounds().transcendentCreated, null, transcendent);
+            soundManager.play(game.getSpecialSounds().transcendentCreated, null, transcendent);
             objectManager.removeObjDelayed(ship);
         }
         for (LightSource light : lightSources) {
@@ -141,7 +147,7 @@ public class StarPort implements SolObject {
     }
 
     @Override
-    public boolean shouldBeRemoved(SolGame game) {
+    public boolean shouldBeRemoved() {
         return false;
     }
 
@@ -283,7 +289,7 @@ public class StarPort implements SolObject {
         }
 
         @Override
-        public boolean shouldBeRemoved(SolGame game) {
+        public boolean shouldBeRemoved() {
             return false;
         }
 
@@ -368,7 +374,7 @@ public class StarPort implements SolObject {
             drawables = new ArrayList<>();
             drawables.add(s);
             EffectConfig eff = game.getSpecialEffects().transcendentWork;
-            effect = new DSParticleEmitter(eff, TRAN_SZ, DrawableLevel.PART_BG_0, new Vector2(), true, game, position, Vector2.Zero, 0);
+            effect = new DSParticleEmitter(eff, TRAN_SZ, DrawableLevel.PART_BG_0, new Vector2(), true, game, position, Vector2.Zero, 0, soundManager);
             effect.setWorking(true);
             drawables.addAll(effect.getDrawables());
             lightSource = new LightSource(.6f * TRAN_SZ, true, .5f, new Vector2(), eff.tint);
@@ -420,7 +426,7 @@ public class StarPort implements SolObject {
         }
 
         @Override
-        public boolean shouldBeRemoved(SolGame game) {
+        public boolean shouldBeRemoved() {
             return false;
         }
 

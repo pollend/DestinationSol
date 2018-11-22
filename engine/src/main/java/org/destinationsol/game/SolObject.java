@@ -42,9 +42,8 @@ public interface SolObject {
      * This method can be used for instance for handling pull of loot towards ships, flickering of lights, aiming
      * crosses for ships and stuff alike.
      *
-     * @param game Game this object belongs to.
      */
-    void update(SolGame game);
+    void update();
 
     /**
      * Denotes whether the object, in its current state, should be removed.
@@ -54,10 +53,9 @@ public interface SolObject {
      * far away, unless the object is specifically designed to exist only in close proximity of player, like some sort
      * of kinetic defense. Removal for optimization purposes is handled in {@link #toFarObject()}.
      *
-     * @param game Game this object belongs to.
      * @return Boolean denoting whether the object should be removed.
      */
-     boolean shouldBeRemoved(SolGame game);
+     boolean shouldBeRemoved();
 
     /**
      * Called whenever an object is due to be removed from game.
@@ -69,9 +67,8 @@ public interface SolObject {
      * specific to removal of object due to its destruction, you need to explicitly check that the object is really
      * being removed due to destruction.
      *
-     * @param game Game this object belongs to.
      */
-    void onRemove(SolGame game);
+    void onRemove();
 
     /**
      * Inflicts object with certain amount of damage of specific type.
@@ -81,11 +78,10 @@ public interface SolObject {
      * be freely left blank.
      *
      * @param dmg      Damage the object receives.
-     * @param game     Game this object belongs to.
      * @param position Position the object was hit at, if hit by point-based damage. Null if not applicable, such as fire.
      * @param dmgType  Type of the damage object receives.
      */
-    void receiveDmg(float dmg, SolGame game, @Nullable Vector2 position, DmgType dmgType);
+    void receiveDmg(float dmg, @Nullable Vector2 position, DmgType dmgType);
 
     /**
      * Denotes whether this object is affected by gravity.
@@ -164,10 +160,9 @@ public interface SolObject {
      *
      * @param other      Object this object touches.
      * @param absImpulse Impulse the objects apply to each other.
-     * @param game       Game this object belongs to.
      * @param collPos    Position where the two objects touch.
      */
-    void handleContact(SolObject other, float absImpulse, SolGame game, Vector2 collPos);
+    void handleContact(SolObject other, float absImpulse, Vector2 collPos);
 
     /**
      * Used for retrieval of object's debug string, comprising of list of its debug-useful properties.

@@ -18,6 +18,7 @@ package org.destinationsol.game.gun;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
+import org.destinationsol.assets.audio.OggSoundManager;
 import org.destinationsol.common.SolColor;
 import org.destinationsol.common.SolMath;
 import org.destinationsol.common.SolRandom;
@@ -36,6 +37,7 @@ import org.destinationsol.game.projectile.Projectile;
 import org.destinationsol.game.projectile.ProjectileConfig;
 import org.destinationsol.game.ship.SolShip;
 
+import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,6 +49,9 @@ public class SolGun {
     private final List<Drawable> myDrawables;
     private float myCoolDown;
     private float myCurrAngleVar;
+
+    @Inject
+    OggSoundManager soundManager;
 
     public SolGun(Gun item, Vector2 relPos, boolean underShip) {
         myItem = item;
@@ -101,7 +106,7 @@ public class SolGun {
         }
         myCoolDown += myItem.config.timeBetweenShots;
         myItem.ammo--;
-        game.getSoundManager().play(game, myItem.config.shootSound, muzzlePos, creator);
+        soundManager.play( myItem.config.shootSound, muzzlePos, creator);
     }
 
     public void update(ItemContainer itemContainer, SolGame game, float gunAngle, SolObject creator, boolean shouldShoot, Faction faction, SolShip ship) {
@@ -121,7 +126,7 @@ public class SolGun {
         if (myItem.ammo <= 0 && myItem.reloadAwait <= 0) {
             if (myItem.config.clipConf.infinite || itemContainer != null && itemContainer.tryConsumeItem(myItem.config.clipConf.example)) {
                 myItem.reloadAwait = myItem.config.reloadTime + .0001f;
-                game.getSoundManager().play(game, myItem.config.reloadSound, null, creator);
+                soundManager.play( myItem.config.reloadSound, null, creator);
             }
         } else if (myItem.reloadAwait > 0) {
             myItem.reloadAwait -= ts;

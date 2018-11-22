@@ -48,7 +48,7 @@ public class LightObject implements SolObject {
     }
 
     @Override
-    public boolean shouldBeRemoved(SolGame game) {
+    public boolean shouldBeRemoved() {
         return lightSource.isFinished();
     }
 

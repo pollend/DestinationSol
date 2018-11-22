@@ -36,7 +36,7 @@ public class MountDetectDrawer implements UpdateAwareSystem{
     }
 
     @Override
-    public void update(SolGame game, float timeStep) {
+    public void update( float timeStep) {
         myShouldDraw = false;
         myAnimPercentage += timeStep / 2f;
         if (myAnimPercentage > 1) {

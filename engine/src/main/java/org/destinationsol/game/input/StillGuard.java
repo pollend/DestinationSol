@@ -21,8 +21,11 @@ import org.destinationsol.common.SolMath;
 import org.destinationsol.game.ShipConfig;
 import org.destinationsol.game.SolGame;
 import org.destinationsol.game.planet.PlanetBind;
+import org.destinationsol.game.planet.PlanetManager;
 import org.destinationsol.game.ship.SolShip;
 import org.destinationsol.game.ship.hulls.HullConfig;
+
+import javax.inject.Inject;
 
 public class StillGuard implements MoveDestProvider {
 
@@ -31,9 +34,12 @@ public class StillGuard implements MoveDestProvider {
     private Vector2 myDest;
     private Vector2 myDestSpeed;
 
-    public StillGuard(Vector2 target, SolGame game, ShipConfig sc) {
+    private  final PlanetManager planetManager;
+
+    public StillGuard(PlanetManager planetManager,Vector2 target, ShipConfig sc) {
+        this.planetManager = planetManager;
         myDest = new Vector2(target);
-        myPlanetBind = PlanetBind.tryBind(game, myDest, 0);
+        myPlanetBind = PlanetBind.tryBind(planetManager,myDest, 0);
         myDesiredSpeedLen = sc.hull.getType() == HullConfig.Type.BIG ? Const.BIG_AI_SPD : Const.DEFAULT_AI_SPD;
         myDestSpeed = new Vector2();
     }

@@ -23,6 +23,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.BoundingBox;
 import com.badlogic.gdx.utils.JsonValue;
 import com.google.common.base.Preconditions;
+import org.destinationsol.assets.audio.OggSoundManager;
 import org.destinationsol.assets.audio.OggSoundSet;
 import org.destinationsol.common.NotNull;
 import org.destinationsol.common.SolMath;
@@ -72,7 +73,9 @@ public class DSParticleEmitter {
     private LightSource light;
     private SolGame game;
 
-    public DSParticleEmitter(@NotNull Vector2 position, @NotNull String trigger, float angleOffset, boolean hasLight, JsonValue effectConfigNode, List<String> sounds) {
+    private final OggSoundManager soundManager;
+
+    public DSParticleEmitter(@NotNull Vector2 position, @NotNull String trigger, float angleOffset, boolean hasLight, JsonValue effectConfigNode,OggSoundManager soundManager, List<String> sounds) {
         Preconditions.checkNotNull(position, "position cannot be null");
         this.position = new Vector2(position);
         this.trigger = Preconditions.checkNotNull(trigger, "trigger cannot be null");
@@ -89,16 +92,19 @@ public class DSParticleEmitter {
         originalRelativePosition = null;
         relativeAngle = 0f;
         game = null;
+        this.soundManager = soundManager;
     }
 
-    public DSParticleEmitter(SolGame game, DSParticleEmitter particleEmitter, SolShip ship) {
+    public DSParticleEmitter(OggSoundManager soundManager, DSParticleEmitter particleEmitter, SolShip ship) {
+        this.soundManager = soundManager;
+
         this.angleOffset = particleEmitter.getAngleOffset();
         this.hasLight = particleEmitter.getHasLight();
         this.trigger = particleEmitter.getTrigger();
         this.position = particleEmitter.getPosition();
         this.config = particleEmitter.getEffectConfig();
         if (!particleEmitter.getWorkSounds().isEmpty()) {
-            this.workSoundSet = new OggSoundSet(game.getSoundManager(), particleEmitter.getWorkSounds());
+            this.workSoundSet = new OggSoundSet(soundManager, particleEmitter.getWorkSounds());
         } else {
             this.workSoundSet = null;
         }
@@ -110,7 +116,8 @@ public class DSParticleEmitter {
 
     public DSParticleEmitter(EffectConfig config, float size, DrawableLevel drawableLevel, Vector2 relativePosition,
                              boolean inheritsSpeed, SolGame game, Vector2 basePosition, Vector2 baseSpeed,
-                             float relativeAngle) {
+                             float relativeAngle, OggSoundManager soundManager) {
+        this.soundManager = soundManager;
         initialiseEmitter(config, size, drawableLevel, relativePosition, inheritsSpeed, game, basePosition, baseSpeed,
                 relativeAngle, false);
     }
@@ -238,7 +245,7 @@ public class DSParticleEmitter {
 
     public void setWorking(boolean working, SolShip ship) {
         if (working && workSoundSet != null) {
-            game.getSoundManager().play(game, workSoundSet, position, ship);
+            soundManager.play(game, workSoundSet, position, ship);
         }
         light.update(working, relativeAngle, game);
 

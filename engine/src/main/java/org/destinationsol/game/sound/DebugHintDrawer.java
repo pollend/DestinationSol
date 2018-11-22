@@ -44,15 +44,15 @@ public class DebugHintDrawer {
         dh.add(value);
     }
 
-    public void update(SolGame game) {
-        updateEach(game, myTracedNotes.values().iterator());
-        updateEach(game, myFreeNotes.values().iterator());
+    public void update() {
+        updateEach(myTracedNotes.values().iterator());
+        updateEach( myFreeNotes.values().iterator());
     }
 
-    private void updateEach(SolGame game, Iterator<DebugHint> it) {
+    private void updateEach( Iterator<DebugHint> it) {
         while (it.hasNext()) {
             DebugHint n = it.next();
-            n.update(game);
+            n.update();
             if (n.shouldRemove()) {
                 it.remove();
             }

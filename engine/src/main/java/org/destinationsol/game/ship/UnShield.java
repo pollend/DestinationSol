@@ -86,7 +86,7 @@ public class UnShield implements ShipAbility {
             }
             oShip.receiveDmg(amount, game, ownerPos, DmgType.ENERGY);
         }
-        DSParticleEmitter src = new DSParticleEmitter(config.cc.effect, MAX_RADIUS, DrawableLevel.PART_BG_0, new Vector2(), true, game, ownerPos, Vector2.Zero, 0);
+        DSParticleEmitter src = new DSParticleEmitter(config.cc.effect, MAX_RADIUS, DrawableLevel.PART_BG_0, new Vector2(), true, game, ownerPos, Vector2.Zero, 0, soundManager);
         game.getPartMan().finish(game, src, ownerPos);
         return true;
     }

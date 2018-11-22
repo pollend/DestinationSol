@@ -97,7 +97,7 @@ public class Projectile implements SolObject {
         if (ec == null) {
             return null;
         }
-        DSParticleEmitter res = new DSParticleEmitter(ec, -1, drawableLevel, new Vector2(), inheritsSpeed, game, position, body.getSpeed(), 0);
+        DSParticleEmitter res = new DSParticleEmitter(ec, -1, drawableLevel, new Vector2(), inheritsSpeed, game, position, body.getSpeed(), 0, soundManager);
         if (res.isContinuous()) {
             res.setWorking(true);
             drawables.addAll(res.getDrawables());
@@ -165,7 +165,7 @@ public class Projectile implements SolObject {
     }
 
     @Override
-    public boolean shouldBeRemoved(SolGame game) {
+    public boolean shouldBeRemoved() {
         return shouldBeRemoved;
     }
 

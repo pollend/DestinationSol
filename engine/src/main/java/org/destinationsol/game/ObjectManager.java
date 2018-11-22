@@ -27,6 +27,7 @@ import org.destinationsol.game.drawables.DrawableManager;
 import org.destinationsol.game.drawables.FarDrawable;
 import org.destinationsol.game.ship.FarShip;
 
+import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -48,6 +49,15 @@ public class ObjectManager implements UpdateAwareSystem{
     private float myFarBeginDist;
     private float myRadiusRecalcAwait;
 
+    @Inject
+    SolCam solCam;
+    @Inject
+    SolGame solGame;
+    @Inject
+    UpdateSystem updateSystem;
+
+
+    @Inject
     public ObjectManager(SolContactListener contactListener, FactionManager factionManager) {
         myObjs = new ArrayList<>();
         myToRemove = new ArrayList<>();
@@ -72,14 +82,13 @@ public class ObjectManager implements UpdateAwareSystem{
     }
 
     @Override
-    public void update(SolGame game, float timeStep) {
-        addRemove(game);
+    public void update(float timeStep) {
+        addRemove();
 
         myWorld.step(timeStep, 6, 2);
 
-        SolCam cam = game.getCam();
-        Vector2 camPos = cam.getPosition();
-        myFarEndDist = 1.5f * cam.getViewDistance();
+        Vector2 camPos = solCam.getPosition();
+        myFarEndDist = 1.5f * solCam.getViewDistance();
         myFarBeginDist = 1.33f * myFarEndDist;
 
         boolean recalcRad = false;
@@ -91,15 +100,15 @@ public class ObjectManager implements UpdateAwareSystem{
         }
 
         for (SolObject o : myObjs) {
-            o.update(game);
+            o.update();
             SolMath.checkVectorsTaken(o);
             List<Drawable> drawables = o.getDrawables();
             for (Drawable drawable : drawables) {
-                drawable.update(game, o);
+                drawable.update(updateSystem,o);
             }
 
-            final Hero hero = game.getHero();
-            if (o.shouldBeRemoved(game)) {
+            final Hero hero = solGame.getHero();
+            if (o.shouldBeRemoved()) {
                 removeObjDelayed(o);
                 if (hero.isAlive() && hero.isNonTranscendent() && o == hero.getShip()) {
                     hero.die();
@@ -124,24 +133,24 @@ public class ObjectManager implements UpdateAwareSystem{
         for (Iterator<FarObjData> it = myFarObjs.iterator(); it.hasNext(); ) {
             FarObjData fod = it.next();
             FarObject fo = fod.fo;
-            fo.update(game);
+            fo.update();
             SolMath.checkVectorsTaken(fo);
-            if (fo.shouldBeRemoved(game)) {
+            if (fo.shouldBeRemoved()) {
                 removeFo(it, fo);
                 continue;
             }
             if (isNear(fod, camPos, timeStep)) {
-                SolObject o = fo.toObject(game);
+                SolObject o = fo.toObject();
                 // Ensure that StarPorts are added straight away so that we can see if they overlap
                 if (o instanceof StarPort) {
-                    addObjNow(game, o);
+                    addObjNow( o);
                 } else {
                     addObjDelayed(o);
                 }
                 removeFo(it, fo);
             }
         }
-        addRemove(game);
+        addRemove();
     }
 
     private void removeFo(Iterator<FarObjData> it, FarObject fo) {
@@ -172,26 +181,26 @@ public class ObjectManager implements UpdateAwareSystem{
         return res;
     }
 
-    private void addRemove(SolGame game) {
+    private void addRemove() {
         for (SolObject o : myToRemove) {
-            removeObjNow(game, o);
+            removeObjNow( o);
         }
         myToRemove.clear();
 
         for (SolObject o : myToAdd) {
-            addObjNow(game, o);
+            addObjNow( o);
         }
         myToAdd.clear();
     }
 
-    private void removeObjNow(SolGame game, SolObject o) {
+    private void removeObjNow(SolObject o) {
         myObjs.remove(o);
         myRadii.remove(o);
-        o.onRemove(game);
+        o.onRemove();
         game.getDrawableManager().removeObject(o);
     }
 
-    public void addObjNow(SolGame game, SolObject o) {
+    public void addObjNow(SolObject o) {
         if (DebugOptions.ASSERTIONS && myObjs.contains(o)) {
             throw new AssertionError("This object is already contained in the list of objects to add now!");
         }
