@@ -13,18 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.destinationsol.di.components;
+package org.destinationsol.di;
 
-import dagger.Subcomponent;
-import org.destinationsol.di.LootModule;
-import org.destinationsol.di.scope.SolObjectScope;
 
-@SolObjectScope
-@Subcomponent(modules = LootModule.class)
-public interface DrawableObjectComponent {
+import dagger.Module;
+import org.destinationsol.game.ObjectManager;
+import org.destinationsol.game.maze.MazeBuilder;
+import org.destinationsol.game.ship.ShipBuilder;
 
-    @Subcomponent.Builder
-    interface Builder {
-        DrawableObjectComponent build();
+@Module
+public class SolObjectBuilderModule {
+
+    public static MazeBuilder provideMazeBuilder(ObjectManager objectManager){
+        return new MazeBuilder(objectManager);
+    }
+
+    public static ShipBuilder provideShipBuilder(){
+        return new ShipBuilder();
     }
 }

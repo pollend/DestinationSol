@@ -16,15 +16,15 @@
 package org.destinationsol.di.components;
 
 import dagger.Subcomponent;
-import org.destinationsol.di.LootModule;
 import org.destinationsol.di.scope.SolObjectScope;
 
 @SolObjectScope
-@Subcomponent(modules = LootModule.class)
-public interface DrawableObjectComponent {
+@Subcomponent()
+
+public interface MazeComponent {
 
     @Subcomponent.Builder
     interface Builder {
-        DrawableObjectComponent build();
+        MazeComponent build();
     }
 }

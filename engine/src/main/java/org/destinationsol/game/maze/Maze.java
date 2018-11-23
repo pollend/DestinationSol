@@ -36,8 +36,7 @@ public class Maze {
         damagePerSecond = HardnessCalc.getMazeDps(config);
     }
 
-    public void update(SolGame game) {
-        SolCam cam = game.getCam();
+    public void update() {
         Vector2 camPos = cam.getPosition();
         if (!areObjectsCreated && camPos.dst(position) < radius + Const.CAM_VIEW_DIST_JOURNEY * 2) {
             new MazeBuilder().build(game, this);

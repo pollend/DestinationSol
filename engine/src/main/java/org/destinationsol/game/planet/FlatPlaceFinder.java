@@ -20,11 +20,18 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.RayCastCallback;
 import org.destinationsol.common.SolMath;
 import org.destinationsol.common.SolRandom;
+import org.destinationsol.game.ObjectManager;
 import org.destinationsol.game.SolGame;
 
 public class FlatPlaceFinder {
     private final Vector2 vector = new Vector2();
     private float deviation;
+
+    private final ObjectManager objectManager;
+
+    public FlatPlaceFinder(ObjectManager objectManager){
+        this.objectManager = objectManager;
+    }
 
     private final RayCastCallback myRayBack = new RayCastCallback() {
         @Override
@@ -38,7 +45,7 @@ public class FlatPlaceFinder {
         }
     };
 
-    public Vector2 find(SolGame game, Planet planet, ConsumedAngles takenAngles, float objHalfWidth) {
+    public Vector2 find(Planet planet, ConsumedAngles takenAngles, float objHalfWidth) {
         Vector2 pPos = planet.getPosition();
 
         Vector2 result = new Vector2(pPos);
@@ -54,7 +61,7 @@ public class FlatPlaceFinder {
             deviation = angle;
             SolMath.fromAl(vector, angle, planet.getFullHeight());
             vector.add(pPos);
-            game.getObjectManager().getWorld().rayCast(myRayBack, vector, pPos);
+            objectManager.getWorld().rayCast(myRayBack, vector, pPos);
             if (deviation < minDeviation) {
                 result.set(vector);
                 minDeviation = deviation;

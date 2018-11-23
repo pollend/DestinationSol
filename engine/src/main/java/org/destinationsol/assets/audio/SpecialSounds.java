@@ -96,7 +96,7 @@ public class SpecialSounds {
         if (sound == null) {
             return;
         }
-        oggSoundManager.play(game, sound, position, o);
+        oggSoundManager.play(sound, position, o);
     }
 
     public void playColl(SolGame game, float absImpulse, SolObject o, Vector2 position) {
@@ -107,6 +107,6 @@ public class SpecialSounds {
         if (metal == null) {
             return;
         }
-        oggSoundManager.play(game, metal ? metalColl : rockColl, position, o, absImpulse * Const.IMPULSE_TO_COLL_VOL);
+        oggSoundManager.play(metal ? metalColl : rockColl, position, o, absImpulse * Const.IMPULSE_TO_COLL_VOL);
     }
 }

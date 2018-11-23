@@ -58,15 +58,15 @@ public class PlanetObjectsBuilder {
     private static final float DECO_PACK_SZ = 5f;
     private static final float DECO_PACK_ANGULAR_WIDTH = 360 * DECO_PACK_SZ / (2 * MathUtils.PI * Const.MAX_GROUND_HEIGHT);
 
-    public float createPlanetObjs(SolGame game, Planet planet) {
+    public float createPlanetObjs(Planet planet) {
         if (DebugOptions.NO_OBJS) {
             return 0;
         }
         float minRadius = createGround(game, planet);
-        createClouds(game, planet);
-        createDecorations(game, planet);
+        createClouds(planet);
+        createDecorations( planet);
         if (planet.getConfig().skyConfig != null) {
-            Sky sky = new Sky(game, planet);
+            Sky sky = new Sky( planet);
             game.getObjectManager().addObjDelayed(sky);
         }
         createShips(game, planet);
@@ -75,7 +75,6 @@ public class PlanetObjectsBuilder {
 
     private void createShips(SolGame game, Planet planet) {
         ConsumedAngles takenAngles = new ConsumedAngles();
-
         ShipConfig stationConfig = planet.getConfig().stationConfig;
         if (stationConfig != null) {
             FarShip station = buildGroundShip(game, planet, stationConfig, planet.getConfig().tradeConfig, Faction.LAANI, takenAngles, "Station");

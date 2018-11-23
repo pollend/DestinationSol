@@ -37,7 +37,7 @@ import javax.inject.Singleton;
 @Component(modules = {AppModule.class})
 public interface SolApplicationComponent {
     void inject(SolApplication solApplication);
-    SolApplication solApplication();
+
     ModuleEnvironment moduleEnviroment();
     SolInputManager inputModule();
     OggSoundManager soundManager();
@@ -49,6 +49,9 @@ public interface SolApplicationComponent {
 
     WorldConfig worldConfig();
     Context context();
+
+    SolApplication solApplication();
+
 
     @Mobile
     boolean isMobile();

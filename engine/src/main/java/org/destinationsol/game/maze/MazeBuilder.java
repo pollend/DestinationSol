@@ -22,6 +22,7 @@ import org.destinationsol.Const;
 import org.destinationsol.common.SolMath;
 import org.destinationsol.common.SolRandom;
 import org.destinationsol.game.Faction;
+import org.destinationsol.game.ObjectManager;
 import org.destinationsol.game.ShipConfig;
 import org.destinationsol.game.SolGame;
 import org.destinationsol.game.input.AiPilot;
@@ -40,17 +41,23 @@ public class MazeBuilder {
     private float mazeAngle;
     private float innerRadius;
 
-    public void build(SolGame game, Maze maze) {
+    private final ObjectManager objectManager;
+
+    public MazeBuilder(ObjectManager objectManager){
+        this.objectManager = objectManager;
+    }
+
+    public void build(Maze maze) {
         innerRadius = maze.getRadius() - BORDER;
         size = (int) (innerRadius * 2 / TILE_SZ);
         mazePosition = maze.getPos();
         mazeAngle = SolRandom.seededRandomFloat(180);
 
-        MazeLayout layout = buildMaze(game, maze);
-        buildEnemies(game, maze, layout);
+        MazeLayout layout = buildMaze(maze);
+        buildEnemies(maze, layout);
     }
 
-    private MazeLayout buildMaze(SolGame game, Maze maze) {
+    private MazeLayout buildMaze(Maze maze) {
         MazeLayout layout = new MazeLayoutBuilder(size).build();
         new MazeTileObject.Builder();
         MazeConfig config = maze.getConfig();
@@ -74,7 +81,7 @@ public class MazeBuilder {
                     }
                     MazeTile tile = SolRandom.seededRandomElement(tiles);
                     MazeTileObject.MyFar mto = new MazeTileObject.MyFar(tile, tileAngle, new Vector2(tilePos), SolRandom.test(.5f));
-                    game.getObjectManager().addFarObjNow(mto);
+                    objectManager.addFarObjNow(mto);
                 }
 
                 boolean dInner = col > 0 && row < size - 1 && layout.inners[col][row + 1];
@@ -94,7 +101,7 @@ public class MazeBuilder {
                     }
                     MazeTile tile = SolRandom.seededRandomElement(tiles);
                     MazeTileObject.MyFar mto = new MazeTileObject.MyFar(tile, tileAngle, new Vector2(tilePos), SolRandom.test(.5f));
-                    game.getObjectManager().addFarObjNow(mto);
+                    objectManager.addFarObjNow(mto);
                 }
             }
         }
@@ -108,7 +115,7 @@ public class MazeBuilder {
         return res;
     }
 
-    private void buildEnemies(SolGame game, Maze maze, MazeLayout layout) {
+    private void buildEnemies(Maze maze, MazeLayout layout) {
         MazeConfig config = maze.getConfig();
         float dist = maze.getRadius() - BORDER / 2;
         float circleLen = dist * MathUtils.PI * 2;
@@ -118,7 +125,7 @@ public class MazeBuilder {
                 Vector2 position = new Vector2();
                 SolMath.fromAl(position, SolRandom.randomFloat(180), dist);
                 position.add(mazePosition);
-                buildEnemy(position, game, enemy, false);
+                buildEnemy(position, enemy, false);
             }
         }
 
@@ -129,13 +136,13 @@ public class MazeBuilder {
             for (int i = 0; i < count; i++) {
                 Vector2 position = getFreeCellPos(occupiedCells);
                 if (position != null) {
-                    buildEnemy(position, game, e, true);
+                    buildEnemy(position, e, true);
                 }
             }
         }
         ShipConfig bossConfig = SolRandom.randomElement(config.bosses);
         Vector2 position = cellPos(size / 2, size / 2, 0f, 0f);
-        buildEnemy(position, game, bossConfig, true);
+        buildEnemy(position,  bossConfig, true);
     }
 
     private Vector2 getFreeCellPos(boolean[][] occupiedCells) {
@@ -155,7 +162,7 @@ public class MazeBuilder {
         return null;
     }
 
-    private void buildEnemy(Vector2 position, SolGame game, ShipConfig e, boolean inner) {
+    private void buildEnemy(Vector2 position, ShipConfig e, boolean inner) {
         float angle = SolRandom.randomFloat(180);
         ShipBuilder sb = game.getShipBuilder();
         float viewDist = Const.AI_DET_DIST;
@@ -165,7 +172,7 @@ public class MazeBuilder {
         Pilot pilot = new AiPilot(new StillGuard(position, game, e), false, Faction.EHAR, true, null, viewDist);
         int money = e.money;
         FarShip s = sb.buildNewFar(game, position, new Vector2(), angle, 0, pilot, e.items, e.hull, null, false, money, null, true);
-        game.getObjectManager().addFarObjNow(s);
+        objectManager.addFarObjNow(s);
     }
 
 }

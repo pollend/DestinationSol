@@ -22,14 +22,7 @@ import org.destinationsol.Const;
 import org.destinationsol.common.SolColor;
 import org.destinationsol.common.SolMath;
 import org.destinationsol.files.HullConfigManager;
-import org.destinationsol.game.DebugOptions;
-import org.destinationsol.game.GameColors;
-import org.destinationsol.game.GameDrawer;
-import org.destinationsol.game.SolCam;
-import org.destinationsol.game.SolGame;
-import org.destinationsol.game.SolNames;
-import org.destinationsol.game.SolObject;
-import org.destinationsol.game.UpdateAwareSystem;
+import org.destinationsol.game.*;
 import org.destinationsol.game.item.ItemManager;
 import org.destinationsol.game.maze.Maze;
 import org.destinationsol.game.maze.MazeConfigs;
@@ -37,6 +30,7 @@ import org.destinationsol.game.ship.SolShip;
 import org.destinationsol.game.ship.hulls.Hull;
 import org.destinationsol.game.ship.hulls.HullConfig;
 
+import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,10 +45,14 @@ public class PlanetManager implements UpdateAwareSystem {
     private final SunSingleton sunSingleton;
     private final SysConfigs sysConfigs;
     private final PlanetCoreSingleton planetCoreSingleton;
+    private final SolCam solCam;
+    private final ObjectManager objectManager;
     private Planet nearestPlanet;
 
-    public PlanetManager(HullConfigManager hullConfigs, GameColors cols,
-                            ItemManager itemManager) {
+
+    public PlanetManager(ObjectManager objectManager, HullConfigManager hullConfigs, GameColors cols, ItemManager itemManager, SolCam solCam) {
+        this.solCam = solCam;
+        this.objectManager = objectManager;
         planetConfigs = new PlanetConfigs(hullConfigs, cols, itemManager);
         sysConfigs = new SysConfigs(hullConfigs, itemManager);
         mazeConfigs = new MazeConfigs(hullConfigs, itemManager);
@@ -73,19 +71,19 @@ public class PlanetManager implements UpdateAwareSystem {
     }
 
     @Override
-    public void update(SolGame game, float timeStep) {
-        Vector2 camPos = game.getCam().getPosition();
+    public void update(float timeStep) {
+        Vector2 camPos = solCam.getPosition();
         for (Planet planet : planets) {
-            planet.update(game, timeStep);
+            planet.update(timeStep);
         }
         for (Maze maze : mazes) {
-            maze.update(game);
+            maze.update();
         }
 
         nearestPlanet = getNearestPlanet(camPos);
 
         SolSystem nearestSys = getNearestSystem(camPos);
-        applyGrav(game, nearestSys);
+        applyGrav(nearestSys);
     }
 
     public Planet getNearestPlanet(Vector2 position) {
@@ -220,9 +218,9 @@ public class PlanetManager implements UpdateAwareSystem {
         return systems;
     }
 
-    public Vector2 findFlatPlace(SolGame game, Planet planet, ConsumedAngles takenAngles,
+    public Vector2 findFlatPlace(Planet planet, ConsumedAngles takenAngles,
                                  float objHalfWidth) {
-        return flatPlaceFinder.find(game, planet, takenAngles, objHalfWidth);
+        return flatPlaceFinder.find(planet, takenAngles, objHalfWidth);
     }
 
     public ArrayList<Maze> getMazes() {

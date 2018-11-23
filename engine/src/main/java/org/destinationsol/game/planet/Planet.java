@@ -21,8 +21,10 @@ import org.destinationsol.common.Bound;
 import org.destinationsol.common.SolMath;
 import org.destinationsol.common.SolRandom;
 import org.destinationsol.game.HardnessCalc;
+import org.destinationsol.game.SolCam;
 import org.destinationsol.game.SolGame;
 
+import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,6 +47,11 @@ public class Planet {
     private float angle;
     private float minGroundHeight;
     private Vector2 speed;
+
+    @Inject
+    PlanetManager planetManager;
+    @Inject
+    SolCam solCam;
 
     public Planet(SolSystem sys, float angleToSys, float dist, float angle, float toSysRotationSpeed, float rotationSpeed,
                   float groundHeight, boolean objsCreated, PlanetConfig config, String name) {
@@ -69,15 +76,15 @@ public class Planet {
         setSecondaryParams();
     }
 
-    public void update(SolGame game, float timeStep) {
+    public void update(float timeStep) {
         angleInSystem += rotationSpeedInSystem * timeStep;
         angle += rotationSpeed * timeStep;
 
         setSecondaryParams();
-        Vector2 camPos = game.getCam().getPosition();
+        Vector2 camPos = solCam.getPosition();
         if (!areObjectsCreated && camPos.dst(position) < getGroundHeight() + Const.MAX_SKY_HEIGHT_FROM_GROUND) {
-            minGroundHeight = new PlanetObjectsBuilder().createPlanetObjs(game, this);
-            fillLangingPlaces(game);
+            minGroundHeight = new PlanetObjectsBuilder().createPlanetObjs(this);
+            fillLangingPlaces();
             areObjectsCreated = true;
         }
     }
@@ -90,9 +97,9 @@ public class Planet {
         SolMath.fromAl(speed, speedAngle, speedLen);
     }
 
-    private void fillLangingPlaces(SolGame game) {
+    private void fillLangingPlaces() {
         for (int i = 0; i < 10; i++) {
-            Vector2 landingPlace = game.getPlanetManager().findFlatPlace(game, this, null, 0);
+            Vector2 landingPlace = planetManager.findFlatPlace(game, this, null, 0);
             landingPlaces.add(landingPlace);
         }
     }

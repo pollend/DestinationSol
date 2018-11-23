@@ -43,19 +43,12 @@ import org.destinationsol.game.drawables.DrawableLevel;
 import org.destinationsol.game.drawables.RectSprite;
 import org.destinationsol.game.gun.GunMount;
 import org.destinationsol.game.input.Pilot;
-import org.destinationsol.game.item.Armor;
-import org.destinationsol.game.item.Clip;
-import org.destinationsol.game.item.Engine;
-import org.destinationsol.game.item.Gun;
-import org.destinationsol.game.item.ItemContainer;
-import org.destinationsol.game.item.Shield;
-import org.destinationsol.game.item.SolItem;
-import org.destinationsol.game.item.TradeConfig;
-import org.destinationsol.game.item.TradeContainer;
+import org.destinationsol.game.item.*;
 import org.destinationsol.game.particle.LightSource;
 import org.destinationsol.game.ship.hulls.Hull;
 import org.destinationsol.game.ship.hulls.HullConfig;
 
+import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -66,7 +59,10 @@ public class ShipBuilder {
 
     private final CollisionMeshLoader myCollisionMeshLoader;
 
-    public ShipBuilder() {
+    private final ItemManager itemManager;
+
+    public ShipBuilder(ItemManager itemManager) {
+        this.itemManager = itemManager;
         myCollisionMeshLoader = new CollisionMeshLoader();
     }
 
@@ -96,7 +92,7 @@ public class ShipBuilder {
         return base;
     }
 
-    public FarShip buildNewFar(SolGame game, Vector2 position, Vector2 speed, float angle, float rotationSpeed, Pilot pilot,
+    public FarShip buildNewFar(Vector2 position, Vector2 speed, float angle, float rotationSpeed, Pilot pilot,
                                String items, HullConfig hullConfig,
                                RemoveController removeController,
                                boolean hasRepairer, float money, TradeConfig tradeConfig, boolean giveAmmo) {
@@ -105,7 +101,7 @@ public class ShipBuilder {
             speed = new Vector2();
         }
         ItemContainer itemContainer = new ItemContainer();
-        game.getItemMan().fillContainer(itemContainer, items);
+        itemManager.fillContainer(itemContainer, items);
         Engine.Config ec = hullConfig.getEngineConfig();
         Engine ei = ec == null ? null : ec.exampleEngine.copy();
         TradeContainer tc = tradeConfig == null ? null : new TradeContainer(tradeConfig);
