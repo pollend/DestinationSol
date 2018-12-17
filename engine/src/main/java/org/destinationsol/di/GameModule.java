@@ -23,31 +23,14 @@ import org.destinationsol.SolApplication;
 import org.destinationsol.assets.audio.OggSoundManager;
 import org.destinationsol.assets.audio.SpecialSounds;
 import org.destinationsol.di.Qualifier.NewGame;
-import org.destinationsol.di.Qualifier.OnPauseUpdate;
-import org.destinationsol.di.Qualifier.OnUpdate;
 import org.destinationsol.di.Qualifier.ShipName;
 import org.destinationsol.di.Qualifier.Tutorial;
 import org.destinationsol.di.components.SolGameComponent;
 import org.destinationsol.di.scope.GameScope;
 import org.destinationsol.files.HullConfigManager;
-import org.destinationsol.game.AbilityCommonConfigs;
-import org.destinationsol.game.BeaconHandler;
-import org.destinationsol.game.FactionManager;
-import org.destinationsol.game.GalaxyFiller;
-import org.destinationsol.game.GameColors;
-import org.destinationsol.game.GameDrawer;
-import org.destinationsol.game.GridDrawer;
-import org.destinationsol.game.MapDrawer;
-import org.destinationsol.game.MountDetectDrawer;
-import org.destinationsol.game.ObjectManager;
-import org.destinationsol.game.ShardBuilder;
-import org.destinationsol.game.SolCam;
-import org.destinationsol.game.SolContactListener;
-import org.destinationsol.game.SolGame;
-import org.destinationsol.game.StarPort;
-import org.destinationsol.game.UpdateAwareSystem;
-import org.destinationsol.game.UpdateSystem;
+import org.destinationsol.game.*;
 import org.destinationsol.game.asteroid.AsteroidBuilder;
+import org.destinationsol.game.chunk.ChunkFiller;
 import org.destinationsol.game.chunk.ChunkManager;
 import org.destinationsol.game.context.Context;
 import org.destinationsol.game.drawables.DrawableDebugger;
@@ -64,7 +47,6 @@ import org.destinationsol.game.ship.ShipBuilder;
 import org.destinationsol.ui.TutorialManager;
 
 import java.util.Optional;
-import java.util.Set;
 
 @Module
 public class GameModule {
@@ -111,8 +93,8 @@ public class GameModule {
 
     @GameScope
     @Provides
-    static PlanetManager providePlanetManager(HullConfigManager hullConfigs, GameColors cols, ItemManager itemManager) {
-        return new PlanetManager(hullConfigs, cols, itemManager);
+    static PlanetManager providePlanetManager(ObjectManager objectManager,HullConfigManager hullConfigs, GameColors cols, ItemManager itemManager,SolCam cam) {
+        return new PlanetManager(objectManager,hullConfigs, cols, itemManager,cam);
     }
 
     @GameScope
@@ -151,8 +133,8 @@ public class GameModule {
 
     @GameScope
     @Provides
-    static ChunkManager provideChunkManager() {
-        return new ChunkManager();
+    static ChunkManager provideChunkManager(SolCam cam, ChunkFiller chunkFiller) {
+        return new ChunkManager(cam,chunkFiller);
     }
 
     @Provides
@@ -182,7 +164,7 @@ public class GameModule {
     @Provides
     @GameScope
     static ShipBuilder provideShipBuilder() {
-        return new ShipBuilder();
+        return null;
     }
 
     @Provides
@@ -265,8 +247,8 @@ public class GameModule {
 
     @GameScope
     @Provides
-    static UpdateSystem provideUpdateSystem(){
-        return new UpdateSystem();
+    static SolTime provideTime(){
+        return new SolTime();
 
     }
 

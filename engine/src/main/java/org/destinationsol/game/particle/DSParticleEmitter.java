@@ -71,7 +71,6 @@ public class DSParticleEmitter {
     private boolean floatedUp;
     private BoundingBox boundingBox;
     private LightSource light;
-    private SolGame game;
 
     private final OggSoundManager soundManager;
 
@@ -91,7 +90,6 @@ public class DSParticleEmitter {
         relativePosition = null;
         originalRelativePosition = null;
         relativeAngle = 0f;
-        game = null;
         this.soundManager = soundManager;
     }
 
@@ -111,19 +109,17 @@ public class DSParticleEmitter {
         Vector2 shipPos = ship.getPosition();
         Vector2 shipSpeed = ship.getSpeed();
 
-        initialiseEmitter(config, -1, DrawableLevel.PART_BG_0, position, true, game, shipPos, shipSpeed, angleOffset, hasLight);
+        initialiseEmitter(config, -1, DrawableLevel.PART_BG_0, position, true, shipPos, shipSpeed, angleOffset, hasLight);
     }
 
-    public DSParticleEmitter(EffectConfig config, float size, DrawableLevel drawableLevel, Vector2 relativePosition,
-                             boolean inheritsSpeed, SolGame game, Vector2 basePosition, Vector2 baseSpeed,
+    public DSParticleEmitter(EffectConfig config, float size, DrawableLevel drawableLevel, Vector2 relativePosition, boolean inheritsSpeed, Vector2 basePosition, Vector2 baseSpeed,
                              float relativeAngle, OggSoundManager soundManager) {
         this.soundManager = soundManager;
-        initialiseEmitter(config, size, drawableLevel, relativePosition, inheritsSpeed, game, basePosition, baseSpeed,
+        initialiseEmitter(config, size, drawableLevel, relativePosition, inheritsSpeed, basePosition, baseSpeed,
                 relativeAngle, false);
     }
 
-    private void initialiseEmitter(EffectConfig config, float size, DrawableLevel drawableLevel, Vector2 relativePosition, boolean inheritsSpeed,
-                                   SolGame game, Vector2 basePosition, Vector2 baseSpeed, float relativeAngle, boolean hasLight) {
+    private void initialiseEmitter(EffectConfig config, float size, DrawableLevel drawableLevel, Vector2 relativePosition, boolean inheritsSpeed, Vector2 basePosition, Vector2 baseSpeed, float relativeAngle, boolean hasLight) {
 
         drawables = new ArrayList<>();
         ParticleEmitterDrawable drawable = new ParticleEmitterDrawable();
@@ -136,7 +132,6 @@ public class DSParticleEmitter {
         this.originalRelativePosition = new Vector2(this.relativePosition);
         this.position = new Vector2();
         this.relativeAngle = relativeAngle;
-        this.game = game;
 
         light = new LightSource(config.size * 2.5f, true, 0.7f, relativePosition, config.tint);
         if (hasLight) {

@@ -20,7 +20,6 @@ import org.destinationsol.di.scope.SolObjectScope;
 
 @SolObjectScope
 @Subcomponent()
-
 public interface MazeComponent {
 
     @Subcomponent.Builder

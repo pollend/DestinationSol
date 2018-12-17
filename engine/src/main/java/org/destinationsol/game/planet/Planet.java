@@ -99,7 +99,7 @@ public class Planet {
 
     private void fillLangingPlaces() {
         for (int i = 0; i < 10; i++) {
-            Vector2 landingPlace = planetManager.findFlatPlace(game, this, null, 0);
+            Vector2 landingPlace = planetManager.findFlatPlace( this, null, 0);
             landingPlaces.add(landingPlace);
         }
     }

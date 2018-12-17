@@ -33,15 +33,14 @@ public class ForceBeacon {
     private final Vector2 myRelPos;
     private final Vector2 myPrevPos;
     private final DSParticleEmitter myEffect;
-
-    public ForceBeacon(SolGame game, Vector2 relPos, Vector2 basePos, Vector2 baseSpeed) {
+    public ForceBeacon(Vector2 relPos, Vector2 basePos, Vector2 baseSpeed) {
         myRelPos = relPos;
         myEffect = game.getSpecialEffects().buildForceBeacon(.6f, game, relPos, basePos, baseSpeed);
         myEffect.setWorking(true);
         myPrevPos = new Vector2();
     }
 
-    public static SolShip pullShips(SolGame game, SolObject owner, Vector2 ownPos, Vector2 ownSpeed, Faction faction,
+    public static SolShip pullShips(SolObject owner, Vector2 ownPos, Vector2 ownSpeed, Faction faction,
                                     float maxPullDist) {
         SolShip res = null;
         float minLen = Float.MAX_VALUE;

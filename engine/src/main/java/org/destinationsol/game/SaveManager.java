@@ -23,6 +23,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
 import org.destinationsol.IniReader;
+import org.destinationsol.common.SolException;
 import org.destinationsol.common.SolRandom;
 import org.destinationsol.files.HullConfigManager;
 import org.destinationsol.game.item.Gun;
@@ -32,9 +33,11 @@ import org.destinationsol.game.item.MercItem;
 import org.destinationsol.game.item.SolItem;
 import org.destinationsol.game.ship.SolShip;
 import org.destinationsol.game.ship.hulls.HullConfig;
+import org.destinationsol.ui.TutorialManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Inject;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -43,13 +46,25 @@ import java.io.UnsupportedEncodingException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class SaveManager {
+    private static Logger logger = LoggerFactory.getLogger(SaveManager.class);
+
     protected static final String SAVE_FILE_NAME = "prevShip.ini";
     protected static final String MERC_SAVE_FILE = "mercenaries.json";
     protected static final String WORLD_SAVE_FILE_NAME = "world.json";
 
-    private static Logger logger = LoggerFactory.getLogger(SaveManager.class);
+    private RespawnState respawnState;
+
+    @Inject
+    Optional<TutorialManager> tutorialManager;
+
+    @Inject
+    Hero hero;
+
+    @Inject
+    HullConfigManager hullConfigManager;
 
     protected SaveManager() { }
 
@@ -198,6 +213,37 @@ public class SaveManager {
         Vector2 spawnPos = new Vector2(x, y);
 
         return new ShipConfig(hull, itemsStr, money, 1, null, itemManager, spawnPos);
+    }
+
+    public void saveShip() {
+        if (tutorialManager.isPresent()) {
+            return;
+        }
+
+        if (hero.isTranscendent()) {
+            throw new SolException("The hero cannot be saved when in a transcendent state.");
+        }
+
+        HullConfig hull;
+        float money;
+        List<SolItem> items;
+
+        if (hero.isAlive()) {
+            hull = hero.isTranscendent() ? hero.getTranscendentHero().getShip().getHullConfig() : hero.getHull().config;
+            money = hero.getMoney();
+            items = new ArrayList<>();
+            for (List<SolItem> group : hero.getItemContainer()) {
+                for (SolItem i : group) {
+                    items.add(0, i);
+                }
+            }
+        } else {
+            hull = respawnState.getRespawnHull();
+            money = respawnState.getRespawnMoney();
+            items = respawnState.getRespawnItems();
+        }
+
+        SaveManager.writeShips(hull, money, items, hero, hullConfigManager);
     }
 
     /**

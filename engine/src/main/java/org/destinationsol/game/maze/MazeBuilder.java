@@ -31,9 +31,12 @@ import org.destinationsol.game.input.StillGuard;
 import org.destinationsol.game.ship.FarShip;
 import org.destinationsol.game.ship.ShipBuilder;
 
+import javax.inject.Inject;
 import java.util.ArrayList;
 
 public class MazeBuilder {
+
+
     public static final float BORDER = 4f;
     public static final float TILE_SZ = 3.5f;
     private int size;

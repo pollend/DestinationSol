@@ -15,19 +15,26 @@
  */
 package org.destinationsol.di.components;
 
+import com.badlogic.gdx.physics.box2d.joints.PrismaticJoint;
+import dagger.BindsInstance;
 import dagger.Subcomponent;
-import org.destinationsol.di.DoorModule;
+import org.destinationsol.di.SolObjectDoorModule;
 import org.destinationsol.di.scope.SolObjectScope;
+import org.destinationsol.game.drawables.RectSprite;
 import org.destinationsol.game.ship.Door;
 
 
 @SolObjectScope
-@Subcomponent(modules = DoorModule.class)
+@Subcomponent(modules = SolObjectDoorModule.class)
 public interface SolObjectDoorComponent {
     Door door();
 
     @Subcomponent.Builder
     interface Builder{
         SolObjectDoorComponent build();
+        @BindsInstance
+        SolObjectDoorComponent.Builder joint(PrismaticJoint joint);
+        @BindsInstance
+        SolObjectDoorComponent.Builder sprite(RectSprite s);
     }
 }

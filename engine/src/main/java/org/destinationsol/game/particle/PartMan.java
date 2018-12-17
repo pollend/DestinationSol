@@ -20,6 +20,7 @@ import com.badlogic.gdx.math.Vector2;
 import org.destinationsol.common.SolColor;
 import org.destinationsol.common.SolMath;
 import org.destinationsol.common.SolRandom;
+import org.destinationsol.game.ObjectManager;
 import org.destinationsol.game.SolGame;
 import org.destinationsol.game.drawables.Drawable;
 import org.destinationsol.game.drawables.DrawableLevel;
@@ -29,12 +30,16 @@ import org.destinationsol.game.item.Shield;
 import org.destinationsol.game.ship.SolShip;
 import org.destinationsol.game.ship.hulls.Hull;
 
+import javax.inject.Inject;
 import java.util.ArrayList;
 
 public class PartMan {
     public static final float EXPL_LIGHT_MAX_SZ = .4f;
     public static final float EXPL_LIGHT_MAX_FADE_TIME = .8f;
     public static final float SZ_TO_BLINK_COUNT = 18f;
+
+    @Inject
+    ObjectManager objectManager;
 
     public PartMan() {
     }
@@ -73,7 +78,7 @@ public class PartMan {
         RectSprite s = null;
         int count = (int) alphaSum + 1;
         for (int i = 0; i < count; i++) {
-            s = blip(game, position, angle, sz, .5f, hull.getSpeed(), shieldTexture);
+            s = blip( position, angle, sz, .5f, hull.getSpeed(), shieldTexture);
         }
         float lastTint = SolMath.clamp(alphaSum - (int) alphaSum);
         if (s != null) {
@@ -82,13 +87,13 @@ public class PartMan {
         }
     }
 
-    public RectSprite blip(SolGame game, Vector2 position, float angle, float size, float fadeTime, Vector2 speed, TextureAtlas.AtlasRegion texture) {
+    public RectSprite blip(Vector2 position, float angle, float size, float fadeTime, Vector2 speed, TextureAtlas.AtlasRegion texture) {
         RectSprite sprite = new RectSprite(texture, size, 0, 0, new Vector2(), DrawableLevel.PART_FG_0, angle, 0, SolColor.WHITE, true);
         ArrayList<Drawable> drawables = new ArrayList<>();
         drawables.add(sprite);
         DrawableObject o = new DrawableObject(drawables, new Vector2(position), new Vector2(speed), null, false, false);
         o.fade(fadeTime);
-        game.getObjectManager().addObjDelayed(o);
+        objectManager.addObjDelayed(o);
         return sprite;
     }
 

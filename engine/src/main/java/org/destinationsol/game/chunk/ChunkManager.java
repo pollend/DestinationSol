@@ -20,10 +20,7 @@ import com.badlogic.gdx.math.Vector2;
 import org.destinationsol.Const;
 import org.destinationsol.common.SolMath;
 import org.destinationsol.di.components.SolGameComponent;
-import org.destinationsol.game.RemoveController;
-import org.destinationsol.game.SolCam;
-import org.destinationsol.game.SolGame;
-import org.destinationsol.game.UpdateAwareSystem;
+import org.destinationsol.game.*;
 import org.destinationsol.game.planet.PlanetManager;
 
 import javax.inject.Inject;
@@ -57,7 +54,7 @@ public class ChunkManager implements UpdateAwareSystem {
     }
 
     @Override
-    public void update(float timeStep) {
+    public void update(SolTime time) {
         Vector2 camPos = solCam.getPosition();
         boolean refill = updateCurrChunk(camPos);
         if (refill) {

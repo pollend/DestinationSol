@@ -153,9 +153,9 @@ public class Hull {
         speed.set(body.getLinearVelocity());
     }
 
-    public void onRemove(SolGame game) {
+    public void onRemove() {
         for (Door door : doors) {
-            door.onRemove(game);
+            door.onRemove();
         }
         body.getWorld().destroyBody(body);
         particleEmitters.forEach(pe -> pe.onRemove(game, position));
@@ -166,7 +166,7 @@ public class Hull {
         this.engine = new ShipEngine(engine);
     }
 
-    public void setParticleEmitters(SolGame game, SolShip ship) {
+    public void setParticleEmitters( SolShip ship) {
         List<Drawable> drawables = ship.getDrawables();
         // Remove the old particle emitters and their associated drawables
         if (!particleEmitters.isEmpty()) {

@@ -31,9 +31,11 @@ import org.destinationsol.game.item.Loot;
 import org.destinationsol.game.item.MoneyItem;
 import org.destinationsol.game.item.SolItem;
 import org.destinationsol.game.particle.DSParticleEmitter;
+import org.destinationsol.game.particle.SpecialEffects;
 import org.destinationsol.game.planet.Planet;
 import org.destinationsol.game.planet.TileObject;
 
+import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -59,7 +61,10 @@ public class Asteroid implements SolObject {
     private float life;
     private float size;
 
-    Asteroid(SolGame game, TextureAtlas.AtlasRegion tex, Body body, float size, RemoveController removeController, ArrayList<Drawable> drawables) {
+    @Inject
+    SpecialEffects specialEffects;
+
+    Asteroid(TextureAtlas.AtlasRegion tex, Body body, float size, RemoveController removeController, ArrayList<Drawable> drawables) {
         texture = tex;
         this.removeController = removeController;
         this.drawables = drawables;
@@ -70,7 +75,7 @@ public class Asteroid implements SolObject {
         speed = new Vector2();
         mass = body.getMass();
         setParamsFromBody();
-        List<DSParticleEmitter> effects = game.getSpecialEffects().buildBodyEffs(size / 2, game, position, speed);
+        List<DSParticleEmitter> effects = specialEffects.buildBodyEffs(size / 2, game, position, speed);
         smokeSource = effects.get(0);
         fireSource = effects.get(1);
         this.drawables.addAll(smokeSource.getDrawables());
@@ -214,7 +219,7 @@ public class Asteroid implements SolObject {
     }
 
     @Override
-    public void receiveDmg(float dmg, SolGame game, Vector2 position, DmgType dmgType) {
+    public void receiveDmg(float dmg, Vector2 position, DmgType dmgType) {
         life -= dmg;
         game.getSpecialSounds().playHit(game, this, position, dmgType);
     }

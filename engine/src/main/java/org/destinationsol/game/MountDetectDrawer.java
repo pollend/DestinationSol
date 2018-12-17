@@ -36,13 +36,13 @@ public class MountDetectDrawer implements UpdateAwareSystem{
     }
 
     @Override
-    public void update( float timeStep) {
+    public void update(SolTime time) {
         myShouldDraw = false;
-        myAnimPercentage += timeStep / 2f;
+        myAnimPercentage += time.getTimeStep()/ 2f;
         if (myAnimPercentage > 1) {
             myAnimPercentage = 0;
         }
-        myAngle += 30f * timeStep;
+        myAngle += 30f * time.getTimeStep();
         if (myAngle > 180) {
             myAngle -= 360;
         }

@@ -108,7 +108,7 @@ public class GalaxyFiller {
         boolean hasRepairer;
         hasRepairer = faction == Faction.LAANI;
         int money = config.money;
-        FarShip ship = game.getShipBuilder().buildNewFar(game, position, null, angle, 0, pilot, config.items, hullConf, null, hasRepairer, money, tradeConfig, true);
+        FarShip ship = game.getShipBuilder().buildNewFar(position, null, angle, 0, pilot, config.items, hullConf, null, hasRepairer, money, tradeConfig, true);
         game.getObjectManager().addFarObjNow(ship);
         ShipConfig guardConf = config.guard;
         if (guardConf != null) {
@@ -234,7 +234,7 @@ public class GalaxyFiller {
         Pilot pilot = new AiPilot(dp, true, faction, false, null, Const.AI_DET_DIST);
         boolean hasRepairer = faction == Faction.LAANI;
         int money = guardConfig.money;
-        FarShip enemy = game.getShipBuilder().buildNewFar(game, dp.getDestination(), null, guardRelAngle, 0, pilot, guardConfig.items,
+        FarShip enemy = game.getShipBuilder().buildNewFar(dp.getDestination(), null, guardRelAngle, 0, pilot, guardConfig.items,
                 guardConfig.hull, null, hasRepairer, money, null, true);
         game.getObjectManager().addFarObjNow(enemy);
     }

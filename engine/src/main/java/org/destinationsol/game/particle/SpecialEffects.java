@@ -55,7 +55,7 @@ public class SpecialEffects {
         json.dispose();
     }
 
-    public List<DSParticleEmitter> buildBodyEffs(float objRad, SolGame game, Vector2 position, Vector2 speed) {
+    public List<DSParticleEmitter> buildBodyEffs(float objRad, Vector2 position, Vector2 speed) {
         ArrayList<DSParticleEmitter> res = new ArrayList<>();
         float sz = objRad * .9f;
         DSParticleEmitter smoke = new DSParticleEmitter(this.smoke, sz, DrawableLevel.PART_FG_0, new Vector2(), true, game, position, speed, 0, soundManager);

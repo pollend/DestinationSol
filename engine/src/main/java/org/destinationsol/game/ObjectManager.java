@@ -51,11 +51,13 @@ public class ObjectManager implements UpdateAwareSystem{
 
     @Inject
     SolCam solCam;
+
     @Inject
     SolGame solGame;
-    @Inject
-    UpdateSystem updateSystem;
 
+
+    @Inject
+    DrawableManager drawableManager;
 
     @Inject
     public ObjectManager(SolContactListener contactListener, FactionManager factionManager) {
@@ -82,10 +84,10 @@ public class ObjectManager implements UpdateAwareSystem{
     }
 
     @Override
-    public void update(float timeStep) {
+    public void update(SolTime time) {
         addRemove();
 
-        myWorld.step(timeStep, 6, 2);
+        myWorld.step(time.getTimeStep(), 6, 2);
 
         Vector2 camPos = solCam.getPosition();
         myFarEndDist = 1.5f * solCam.getViewDistance();
@@ -93,18 +95,18 @@ public class ObjectManager implements UpdateAwareSystem{
 
         boolean recalcRad = false;
         if (myRadiusRecalcAwait > 0) {
-            myRadiusRecalcAwait -= timeStep;
+            myRadiusRecalcAwait -= time.getTimeStep();
         } else {
             myRadiusRecalcAwait = MAX_RADIUS_RECALC_AWAIT;
             recalcRad = true;
         }
 
         for (SolObject o : myObjs) {
-            o.update();
+            o.update(time);
             SolMath.checkVectorsTaken(o);
             List<Drawable> drawables = o.getDrawables();
             for (Drawable drawable : drawables) {
-                drawable.update(updateSystem,o);
+                drawable.update(time,o);
             }
 
             final Hero hero = solGame.getHero();
@@ -139,7 +141,7 @@ public class ObjectManager implements UpdateAwareSystem{
                 removeFo(it, fo);
                 continue;
             }
-            if (isNear(fod, camPos, timeStep)) {
+            if (isNear(fod, camPos, time.getTimeStep())) {
                 SolObject o = fo.toObject();
                 // Ensure that StarPorts are added straight away so that we can see if they overlap
                 if (o instanceof StarPort) {
@@ -197,7 +199,7 @@ public class ObjectManager implements UpdateAwareSystem{
         myObjs.remove(o);
         myRadii.remove(o);
         o.onRemove();
-        game.getDrawableManager().removeObject(o);
+        drawableManager.removeObject(o);
     }
 
     public void addObjNow(SolObject o) {
@@ -206,7 +208,7 @@ public class ObjectManager implements UpdateAwareSystem{
         }
         myObjs.add(o);
         recalcRadius(o);
-        game.getDrawableManager().addObject(o);
+        drawableManager.addObject(o);
     }
 
     private boolean isNear(FarObjData fod, Vector2 camPos, float ts) {

@@ -66,8 +66,8 @@ public class SolContactListener implements ContactListener {
 
         float absImpulse = calcAbsImpulse(impulse);
         Vector2 collPos = contact.getWorldManifold().getPoints()[0];
-        soa.handleContact(sob, absImpulse, myGame, collPos);
-        sob.handleContact(soa, absImpulse, myGame, collPos);
+        soa.handleContact(sob, absImpulse, collPos);
+        sob.handleContact(soa, absImpulse, collPos);
         myGame.getSpecialSounds().playColl(myGame, absImpulse, soa, collPos);
         myGame.getSpecialSounds().playColl(myGame, absImpulse, sob, collPos);
     }

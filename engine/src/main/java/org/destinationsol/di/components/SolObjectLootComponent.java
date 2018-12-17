@@ -17,9 +17,8 @@ package org.destinationsol.di.components;
 
 import com.badlogic.gdx.math.Vector2;
 import dagger.BindsInstance;
-import dagger.Component;
 import dagger.Subcomponent;
-import org.destinationsol.di.LootModule;
+import org.destinationsol.di.SolObjectLootModule;
 import org.destinationsol.di.scope.SolObjectScope;
 import org.destinationsol.game.item.Loot;
 import org.destinationsol.game.item.SolItem;
@@ -28,7 +27,7 @@ import org.destinationsol.game.ship.SolShip;
 import javax.inject.Named;
 
 @SolObjectScope
-@Subcomponent(modules = LootModule.class)
+@Subcomponent(modules = SolObjectLootModule.class)
 public interface SolObjectLootComponent {
     Loot loot();
 

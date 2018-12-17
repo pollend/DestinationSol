@@ -202,7 +202,7 @@ public class ChunkFiller {
         HullConfig config = enemyConf.hull;
         int money = enemyConf.money;
         float angle = SolRandom.randomFloat(180);
-        return game.getShipBuilder().buildNewFar(game, position, speed, angle, rotationSpeed, provider, enemyConf.items, config,
+        return game.getShipBuilder().buildNewFar( position, speed, angle, rotationSpeed, provider, enemyConf.items, config,
                 remover, false, money, null, true);
     }
 
@@ -223,7 +223,7 @@ public class ChunkFiller {
                 SolMath.fromAl(speed, SolRandom.randomFloat(180), MAX_A_SPD);
 
                 FarAsteroid a = game.getAsteroidBuilder().buildNewFar(asteroidPos, speed, sz, remover);
-                game.getObjectManager().addFarObjNow(a);
+                objectManager.addFarObjNow(a);
             });
         }
     }
@@ -326,11 +326,10 @@ public class ChunkFiller {
      * <p/>
      * Dust is fixed in the world and therefore moves opposite to the cameras movement.
      *
-     * @param game     The {@link SolGame} instance to work with
      * @param chunkCenter The center of the chunk
      * @param remover
      */
-    private void fillDust(SolGame game, Vector2 chunkCenter, RemoveController remover) {
+    private void fillDust(Vector2 chunkCenter, RemoveController remover) {
         ArrayList<Drawable> drawables = new ArrayList<>();
         int count = getEntityCount(DUST_DENSITY);
         if (count == 0) {
@@ -348,7 +347,7 @@ public class ChunkFiller {
 
         // Create a common FarDrawable instance for the specks of dust and only allow the dust to be drawn when it's not hidden by a planet
         FarDrawable so = new FarDrawable(drawables, chunkCenter, new Vector2(), remover, true);
-        game.getObjectManager().addFarObjNow(so);
+        objectManager.addFarObjNow(so);
     }
 
     /**

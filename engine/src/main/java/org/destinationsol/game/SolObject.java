@@ -43,7 +43,7 @@ public interface SolObject {
      * crosses for ships and stuff alike.
      *
      */
-    void update();
+    void update(SolTime solTime);
 
     /**
      * Denotes whether the object, in its current state, should be removed.
@@ -98,10 +98,9 @@ public interface SolObject {
      * object's internal {@link Body}.
      *
      * @param force Force to apply to the object.
-     * @param game  Game this object belongs to.
      * @param acc   Whether this objects is accelerating by the force, such as in gravity.
      */
-    void receiveForce(Vector2 force, SolGame game, boolean acc);
+    void receiveForce(Vector2 force, boolean acc);
 
     /**
      * Returns the object's position.

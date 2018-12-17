@@ -19,9 +19,8 @@ package org.destinationsol.game.drawables;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
 import org.destinationsol.game.GameDrawer;
-import org.destinationsol.game.SolGame;
 import org.destinationsol.game.SolObject;
-import org.destinationsol.game.UpdateSystem;
+import org.destinationsol.game.SolTime;
 
 /**
  * Wrapper for {@link TextureAtlas.AtlasRegion}.
@@ -52,7 +51,7 @@ public interface Drawable {
      *
      * @param o Object against which it is drawn
      */
-    void update(UpdateSystem updateSystem, SolObject o);
+    void update(SolTime time, SolObject o);
 
     /**
      * Called before every draw of this drawable.
@@ -89,9 +88,8 @@ public interface Drawable {
      * Draws this drawable to the supplied GameDrawer.
      *
      * @param drawer GameDrawer to which to draw
-     * @param game Game this drawable belongs in
      */
-    void draw(GameDrawer drawer, SolGame game);
+    void draw(GameDrawer drawer);
 
     /**
      * @return True if this drawable should be drawn, false otherwise

@@ -23,10 +23,9 @@ import org.destinationsol.Const;
 import org.destinationsol.assets.Assets;
 import org.destinationsol.common.SolColor;
 import org.destinationsol.common.SolMath;
-import org.destinationsol.game.DmgType;
-import org.destinationsol.game.GameDrawer;
-import org.destinationsol.game.SolGame;
-import org.destinationsol.game.SolObject;
+import org.destinationsol.game.*;
+
+import javax.inject.Inject;
 
 public class SunSingleton {
     public static final float SUN_HOT_RAD = .75f * Const.SUN_RADIUS;
@@ -36,6 +35,9 @@ public class SunSingleton {
     private final TextureAtlas.AtlasRegion whiteTexture;
     private final Color gradatingTint;
     private final Color fillTint;
+
+    @Inject
+    SolTime time;
 
     SunSingleton() {
         gradatingTexture = Assets.getAtlasRegion("engine:planetStarCommonGrad");
@@ -63,11 +65,12 @@ public class SunSingleton {
         SolMath.free(toCam);
     }
 
-    public void doDmg(SolGame game, SolObject obj, float toSys) {
-        float dmg = SUN_DMG * game.getTimeStep();
+    public void doDmg(SolObject obj, float toSys) {
+
+        float dmg = SUN_DMG * time.getTimeStep();
         if (SUN_HOT_RAD < toSys) {
             return;
         }
-        obj.receiveDmg(dmg, game, null, DmgType.FIRE);
+        obj.receiveDmg(dmg, null, DmgType.FIRE);
     }
 }

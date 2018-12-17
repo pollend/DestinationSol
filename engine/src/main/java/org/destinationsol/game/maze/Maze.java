@@ -19,6 +19,7 @@ package org.destinationsol.game.maze;
 import com.badlogic.gdx.math.Vector2;
 import org.destinationsol.Const;
 import org.destinationsol.game.HardnessCalc;
+import org.destinationsol.game.ObjectManager;
 import org.destinationsol.game.SolCam;
 import org.destinationsol.game.SolGame;
 
@@ -28,18 +29,20 @@ public class Maze {
     private final float radius;
     private final float damagePerSecond;
     private boolean areObjectsCreated;
+    private  final ObjectManager objectManager;
 
-    public Maze(MazeConfig config, Vector2 position, float radius) {
+    public Maze(MazeConfig config, ObjectManager objectManager, Vector2 position, float radius) {
         this.config = config;
         this.position = position;
         this.radius = radius;
+        this.objectManager = objectManager;
         damagePerSecond = HardnessCalc.getMazeDps(config);
     }
 
-    public void update() {
+    public void update(SolCam cam) {
         Vector2 camPos = cam.getPosition();
         if (!areObjectsCreated && camPos.dst(position) < radius + Const.CAM_VIEW_DIST_JOURNEY * 2) {
-            new MazeBuilder().build(game, this);
+            new MazeBuilder(objectManager).build( this);
             areObjectsCreated = true;
         }
     }

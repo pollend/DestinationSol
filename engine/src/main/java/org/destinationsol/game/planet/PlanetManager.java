@@ -45,9 +45,9 @@ public class PlanetManager implements UpdateAwareSystem {
     private final SunSingleton sunSingleton;
     private final SysConfigs sysConfigs;
     private final PlanetCoreSingleton planetCoreSingleton;
-    private final SolCam solCam;
-    private final ObjectManager objectManager;
+    private final SolCam cam;
     private Planet nearestPlanet;
+    private final ObjectManager objectManager;
 
 
     public PlanetManager(ObjectManager objectManager, HullConfigManager hullConfigs, GameColors cols, ItemManager itemManager, SolCam solCam) {
@@ -61,7 +61,7 @@ public class PlanetManager implements UpdateAwareSystem {
         mazes = new ArrayList<>();
         planets = new ArrayList<>();
         belts = new ArrayList<>();
-        flatPlaceFinder = new FlatPlaceFinder();
+        flatPlaceFinder = new FlatPlaceFinder(objectManager);
         sunSingleton = new SunSingleton();
         planetCoreSingleton = new PlanetCoreSingleton();
     }
@@ -72,12 +72,12 @@ public class PlanetManager implements UpdateAwareSystem {
 
     @Override
     public void update(float timeStep) {
-        Vector2 camPos = solCam.getPosition();
+        Vector2 camPos = cam.getPosition();
         for (Planet planet : planets) {
             planet.update(timeStep);
         }
         for (Maze maze : mazes) {
-            maze.update();
+            maze.update(cam);
         }
 
         nearestPlanet = getNearestPlanet(camPos);
@@ -99,7 +99,7 @@ public class PlanetManager implements UpdateAwareSystem {
         return res;
     }
 
-    private void applyGrav(SolGame game, SolSystem nearestSys) {
+    private void applyGrav( SolSystem nearestSys) {
         float npGh = nearestPlanet.getGroundHeight();
         float npFh = nearestPlanet.getFullHeight();
         float npMinH = nearestPlanet.getMinGroundHeight();
@@ -107,7 +107,7 @@ public class PlanetManager implements UpdateAwareSystem {
         Vector2 sysPos = nearestSys.getPosition();
         float npGravConst = nearestPlanet.getGravitationConstant();
 
-        List<SolObject> objs = game.getObjectManager().getObjects();
+        List<SolObject> objs = objectManager.getObjects();
         for (SolObject obj : objs) {
             if (!obj.receivesGravity()) {
                 continue;
@@ -146,10 +146,10 @@ public class PlanetManager implements UpdateAwareSystem {
             }
             float g = gravConst / len / len;
             grav.scl(g);
-            obj.receiveForce(grav, game, true);
+            obj.receiveForce(grav, true);
             SolMath.free(grav);
             if (!onPlanet) {
-                sunSingleton.doDmg(game, obj, toSys);
+                sunSingleton.doDmg( obj, toSys);
             }
         }
 

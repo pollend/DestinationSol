@@ -23,11 +23,16 @@ import com.badlogic.gdx.math.Vector2;
 import org.destinationsol.CommonDrawer;
 import org.destinationsol.assets.Assets;
 
+import javax.inject.Inject;
+
 public class GameDrawer {
     public final TextureAtlas.AtlasRegion debugWhiteTexture;
     private final CommonDrawer myDrawer;
 
     private boolean myCurrAdditive;
+
+    @Inject
+    SolCam solCam;
 
     public GameDrawer(CommonDrawer commonDrawer) {
         myDrawer = commonDrawer;
@@ -38,8 +43,8 @@ public class GameDrawer {
         myDrawer.begin();
     }
 
-    public void updateMatrix(SolGame game) {
-        myDrawer.setMatrix(game.getCam().getMtx());
+    public void updateMatrix() {
+        myDrawer.setMatrix(solCam.getMtx());
     }
 
     public void end() {

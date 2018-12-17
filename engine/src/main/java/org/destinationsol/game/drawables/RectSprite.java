@@ -21,9 +21,8 @@ import com.badlogic.gdx.math.Vector2;
 import org.destinationsol.common.Consumed;
 import org.destinationsol.common.SolMath;
 import org.destinationsol.game.GameDrawer;
-import org.destinationsol.game.SolGame;
 import org.destinationsol.game.SolObject;
-import org.destinationsol.game.UpdateSystem;
+import org.destinationsol.game.SolTime;
 
 public class RectSprite implements Drawable {
     public final Vector2 relativePosition;
@@ -100,8 +99,8 @@ public class RectSprite implements Drawable {
     }
 
     @Override
-    public void update(UpdateSystem updateSystem, SolObject o) {
-        relativeAngle += rotationSpeed * updateSystem.getTimeStep();
+    public void update(SolTime time, SolObject o) {
+        relativeAngle += rotationSpeed * time.getTimeStep();
     }
 
     @Override
@@ -128,7 +127,7 @@ public class RectSprite implements Drawable {
     }
 
     @Override
-    public void draw(GameDrawer drawer, SolGame game) {
+    public void draw(GameDrawer drawer) {
         float x = position.x;
         float y = position.y;
         if (level.depth != 1) {

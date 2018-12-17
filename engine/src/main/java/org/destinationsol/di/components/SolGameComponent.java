@@ -100,6 +100,8 @@ public interface SolGameComponent {
     SolGame game();
 
     SolObjectLootComponent.Builder loot();
+    SolObjectDoorComponent.Builder door();
+    SolObjectShipComponent.Builder ship();
 
     @OnUpdate
     Set<UpdateAwareSystem> updateSystems();

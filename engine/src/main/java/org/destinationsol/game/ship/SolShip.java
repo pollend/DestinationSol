@@ -81,7 +81,7 @@ public class SolShip implements SolObject {
     private float myControlEnableAwait;
     private MercItem mercItem;
 
-    public SolShip(SolGame game, Pilot pilot, Hull hull, RemoveController removeController, List<Drawable> drawables,
+    public SolShip(Pilot pilot, Hull hull, RemoveController removeController, List<Drawable> drawables,
                    ItemContainer container, ShipRepairer repairer, float money, TradeContainer tradeContainer, Shield shield,
                    Armor armor) {
         colliding = false;

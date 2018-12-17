@@ -23,7 +23,7 @@ import org.destinationsol.game.planet.PlanetConfig;
 import org.destinationsol.game.planet.SolSystem;
 
 @Module
-public class PlanetModule {
+public class SolObjectPlanetModule {
     @Provides
     @SolObjectScope
     static Planet providePlanet(SolSystem sys, float angleToSys, float dist, float angle, float toSysRotationSpeed, float rotationSpeed,

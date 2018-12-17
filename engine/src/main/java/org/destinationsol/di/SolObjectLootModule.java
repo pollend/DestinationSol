@@ -39,7 +39,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Module
-public class LootModule {
+public class SolObjectLootModule {
     @Provides
     @SolObjectScope
     static Loot provideLoot(SolGame game, @Named("position") Vector2 position, SolItem item, @Named("speed") Vector2 speed, @Named("life") int life, @Named("rotationSpeed") float rotationSpeed, SolShip owner) {

@@ -17,5 +17,5 @@ package org.destinationsol.game;
 
 public interface UpdateAwareSystem {
 
-    void update(float timeStep);
+    void update(SolTime time);
 }

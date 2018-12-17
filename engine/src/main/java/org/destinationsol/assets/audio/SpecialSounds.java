@@ -84,7 +84,7 @@ public class SpecialSounds {
         return null;
     }
 
-    public void playHit(SolGame game, SolObject o, Vector2 position, DmgType dmgType) {
+    public void playHit( SolObject o, Vector2 position, DmgType dmgType) {
         if (o == null) {
             return;
         }

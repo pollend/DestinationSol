@@ -28,22 +28,17 @@ import org.destinationsol.common.SolColor;
 import org.destinationsol.common.SolMath;
 import org.destinationsol.game.maze.Maze;
 import org.destinationsol.game.maze.MazeBuilder;
-import org.destinationsol.game.planet.FarTileObject;
-import org.destinationsol.game.planet.Planet;
-import org.destinationsol.game.planet.SolSystem;
-import org.destinationsol.game.planet.SurfaceDirection;
-import org.destinationsol.game.planet.SystemBelt;
-import org.destinationsol.game.planet.Tile;
-import org.destinationsol.game.planet.TileObject;
+import org.destinationsol.game.planet.*;
 import org.destinationsol.game.ship.FarShip;
 import org.destinationsol.game.ship.SolShip;
 import org.destinationsol.ui.DisplayDimensions;
 import org.destinationsol.ui.UiDrawer;
 
+import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MapDrawer implements UpdateAwareSystem{
+public class MapDrawer implements UpdateAwareSystem {
     public static final float MIN_ZOOM = 8f;
     private static final float MUL_FACTOR = 2f;
     public static final float MAX_ZOOM = 512f;
@@ -80,9 +75,26 @@ public class MapDrawer implements UpdateAwareSystem{
     private float skullTime;
     private float areaSkullTime;
 
-    // inject
+    @Inject
+    GridDrawer gridDrawer;
 
-    private GridDrawer gridDrawer;
+    @Inject
+    SolCam cam;
+
+    @Inject
+    FactionManager factionManager;
+
+    @Inject
+    PlanetManager planetManager;
+
+    @Inject
+    ObjectManager objectManager;
+
+    @Inject
+    Hero hero;
+
+    @Inject
+    BeaconHandler beaconHandler;
 
 
     public MapDrawer(GridDrawer gridDrawer) {
@@ -122,35 +134,32 @@ public class MapDrawer implements UpdateAwareSystem{
         isToggled = toggled;
     }
 
-    public void draw(GameDrawer drawer, SolGame game) {
-        SolCam cam = game.getCam();
+    public void draw(GameDrawer drawer) {
         float iconSz = getIconRadius(cam) * 2;
         float starNodeW = cam.getViewHeight(zoom) * STAR_NODE_SZ;
         float viewDist = cam.getViewDistance(zoom);
-        FactionManager factionManager = game.getFactionMan();
-        Hero hero = game.getHero();
-        Planet np = game.getPlanetManager().getNearestPlanet();
+        Planet np = planetManager.getNearestPlanet();
         Vector2 camPos = cam.getPosition();
         float camAngle = cam.getAngle();
         float heroDmgCap = hero.isTranscendent() ? Float.MAX_VALUE : HardnessCalc.getShipDmgCap(hero.getShip());
 
-        drawer.updateMatrix(game);
+        drawer.updateMatrix();
         gridDrawer.draw(drawer, cam, GRID_SZ, lineTexture);
-        drawPlanets(drawer, game, viewDist, np, camPos, heroDmgCap, camAngle);
-        drawMazes(drawer, game, viewDist, np, camPos, heroDmgCap, camAngle);
-        drawStarNodes(drawer, game, viewDist, camPos, starNodeW);
+        drawPlanets(drawer, viewDist, np, camPos, heroDmgCap, camAngle);
+        drawMazes(drawer, viewDist, np, camPos, heroDmgCap, camAngle);
+        drawStarNodes(drawer, viewDist, camPos, starNodeW);
 
         // using ui textures
-        drawIcons(drawer, game, iconSz, viewDist, factionManager, hero, camPos, heroDmgCap);
+        drawIcons(drawer, iconSz, viewDist, factionManager, hero, camPos, heroDmgCap);
     }
 
     public float getIconRadius(SolCam cam) {
         return cam.getViewHeight(zoom) * iconRadius;
     }
 
-    private void drawMazes(GameDrawer drawer, SolGame game, float viewDist, Planet np, Vector2 camPos, float heroDmgCap,
+    private void drawMazes(GameDrawer drawer, float viewDist, Planet np, Vector2 camPos, float heroDmgCap,
                            float camAngle) {
-        ArrayList<Maze> mazes = game.getPlanetManager().getMazes();
+        ArrayList<Maze> mazes = planetManager.getMazes();
         for (Maze maze : mazes) {
             Vector2 mazePos = maze.getPos();
             float outerRad = maze.getRadius();
@@ -166,10 +175,9 @@ public class MapDrawer implements UpdateAwareSystem{
 
     }
 
-    private void drawPlanets(GameDrawer drawer, SolGame game, float viewDist, Planet np, Vector2 camPos, float heroDmgCap,
+    private void drawPlanets(GameDrawer drawer, float viewDist, Planet np, Vector2 camPos, float heroDmgCap,
                              float camAngle) {
-        ArrayList<SolSystem> systems = game.getPlanetManager().getSystems();
-        SolCam cam = game.getCam();
+        ArrayList<SolSystem> systems = planetManager.getSystems();
         float circleWidth = cam.getRealLineWidth() * 6;
         float vh = cam.getViewHeight(zoom);
         for (SolSystem sys : systems) {
@@ -209,7 +217,7 @@ public class MapDrawer implements UpdateAwareSystem{
             }
         }
 
-        ArrayList<Planet> planets = game.getPlanetManager().getPlanets();
+        ArrayList<Planet> planets = planetManager.getPlanets();
         for (Planet planet : planets) {
             Vector2 planetPos = planet.getPosition();
             float fh = planet.getFullHeight();
@@ -222,7 +230,7 @@ public class MapDrawer implements UpdateAwareSystem{
             if (dstToPlanetAtm < 0) {
                 groundHeight = planet.getMinGroundHeight() + .5f;
                 drawer.draw(planetCoreTexture, 2 * groundHeight, 2 * groundHeight, groundHeight, groundHeight, planetPos.x, planetPos.y, planet.getAngle(), SolColor.WHITE);
-                drawNpGround(drawer, game, viewDist, np, camPos);
+                drawNpGround(drawer, viewDist, np, camPos);
             } else {
                 groundHeight = planet.getGroundHeight();
                 drawer.draw(planetTexture, 2 * groundHeight, 2 * groundHeight, groundHeight, groundHeight, planetPos.x, planetPos.y, camAngle, SolColor.WHITE);
@@ -249,9 +257,9 @@ public class MapDrawer implements UpdateAwareSystem{
         drawer.draw(skullBigTexture, rad * 2, rad * 2, rad, rad, position.x, position.y, angle, areaWarningColor);
     }
 
-    private void drawIcons(GameDrawer drawer, SolGame game, float iconSz, float viewDist, FactionManager factionManager,
+    private void drawIcons(GameDrawer drawer, float iconSz, float viewDist, FactionManager factionManager,
                            Hero hero, Vector2 camPos, float heroDmgCap) {
-        List<SolObject> objs = game.getObjectManager().getObjects();
+        List<SolObject> objs = objectManager.getObjects();
         for (SolObject o : objs) {
             Vector2 oPos = o.getPosition();
             if (viewDist < camPos.dst(oPos)) {
@@ -273,14 +281,14 @@ public class MapDrawer implements UpdateAwareSystem{
             if ((o instanceof StarPort.Transcendent)) {
                 StarPort.Transcendent t = (StarPort.Transcendent) o;
                 if (t.getShip().getPilot().isPlayer()) {
-                    FarShip ship = game.getHero().getTranscendentHero().getShip();
+                    FarShip ship = hero.getTranscendentHero().getShip();
                     drawObjIcon(iconSz, oPos, t.getAngle(), factionManager, hero, ship.getPilot().getFaction(), heroDmgCap, o, ship.getHullConfig().getIcon(), drawer);
                 }
 
             }
         }
 
-        List<FarShip> farShips = game.getObjectManager().getFarShips();
+        List<FarShip> farShips = objectManager.getFarShips();
         for (FarShip ship : farShips) {
             Vector2 oPos = ship.getPosition();
             if (viewDist < camPos.dst(oPos)) {
@@ -293,14 +301,13 @@ public class MapDrawer implements UpdateAwareSystem{
             drawObjIcon(iconSz, oPos, ship.getAngle(), factionManager, hero, ship.getPilot().getFaction(), heroDmgCap, ship, ship.getHullConfig().getIcon(), drawer);
         }
 
-        List<StarPort.FarStarPort> farPorts = game.getObjectManager().getFarPorts();
+        List<StarPort.FarStarPort> farPorts = objectManager.getFarPorts();
         for (StarPort.FarStarPort sp : farPorts) {
             drawStarPortIcon(drawer, iconSz, sp.getFrom(), sp.getTo());
         }
-        BeaconHandler bh = game.getBeaconHandler();
-        BeaconHandler.Action bhAction = bh.getCurrAction();
+        BeaconHandler.Action bhAction = beaconHandler.getCurrAction();
         if (bhAction != null) {
-            Vector2 beaconPos = bh.getPos();
+            Vector2 beaconPos = beaconHandler.getPos();
             TextureRegion icon = beaconMoveTexture;
             if (bhAction == BeaconHandler.Action.ATTACK) {
                 icon = beaconAttackTexture;
@@ -320,8 +327,8 @@ public class MapDrawer implements UpdateAwareSystem{
         SolMath.free(position);
     }
 
-    private void drawStarNodes(GameDrawer drawer, SolGame game, float viewDist, Vector2 camPos, float starNodeW) {
-        List<SolObject> objs = game.getObjectManager().getObjects();
+    private void drawStarNodes(GameDrawer drawer, float viewDist, Vector2 camPos, float starNodeW) {
+        List<SolObject> objs = objectManager.getObjects();
         for (SolObject o : objs) {
             if (!(o instanceof StarPort)) {
                 continue;
@@ -334,7 +341,7 @@ public class MapDrawer implements UpdateAwareSystem{
             drawStarNode(drawer, sp.getFromPlanet(), sp.getToPlanet(), starNodeW);
         }
 
-        List<StarPort.FarStarPort> farPorts = game.getObjectManager().getFarPorts();
+        List<StarPort.FarStarPort> farPorts = objectManager.getFarPorts();
         for (StarPort.FarStarPort sp : farPorts) {
             Vector2 oPos = sp.getPosition();
             if (viewDist < camPos.dst(oPos)) {
@@ -354,8 +361,7 @@ public class MapDrawer implements UpdateAwareSystem{
         SolMath.free(pos2);
     }
 
-    private void drawNpGround(GameDrawer drawer, SolGame game, float viewDist, Planet np, Vector2 camPos) {
-        ObjectManager objectManager = game.getObjectManager();
+    private void drawNpGround(GameDrawer drawer, float viewDist, Planet np, Vector2 camPos) {
         List<SolObject> objs = objectManager.getObjects();
         for (SolObject o : objs) {
             if (!(o instanceof TileObject)) {
@@ -428,12 +434,12 @@ public class MapDrawer implements UpdateAwareSystem{
     }
 
     @Override
-    public void update(float timeStep) {
-        skullTime += timeStep;
+    public void update(SolTime time) {
+        skullTime += time.getTimeStep();
         if (skullTime > MAX_SKULL_TIME) {
             skullTime = -MAX_SKULL_TIME;
         }
-        areaSkullTime += timeStep;
+        areaSkullTime += time.getTimeStep();
         if (areaSkullTime > MAX_AREA_SKULL_TIME) {
             areaSkullTime = 0;
         }
@@ -459,5 +465,4 @@ public class MapDrawer implements UpdateAwareSystem{
     public TextureAtlas.AtlasRegion getStarPortTex() {
         return starPortTexture;
     }
-
 }

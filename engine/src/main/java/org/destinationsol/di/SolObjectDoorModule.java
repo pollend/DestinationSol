@@ -13,18 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.destinationsol.di.components;
+package org.destinationsol.di;
 
-import dagger.Subcomponent;
-import org.destinationsol.di.SolObjectLootModule;
+import com.badlogic.gdx.physics.box2d.joints.PrismaticJoint;
+import dagger.Module;
+import dagger.Provides;
 import org.destinationsol.di.scope.SolObjectScope;
+import org.destinationsol.game.drawables.RectSprite;
+import org.destinationsol.game.ship.Door;
 
-@SolObjectScope
-@Subcomponent(modules = SolObjectLootModule.class)
-public interface DrawableObjectComponent {
+@Module
+public class SolObjectDoorModule {
 
-    @Subcomponent.Builder
-    interface Builder {
-        DrawableObjectComponent build();
+    @Provides
+    @SolObjectScope
+    public static Door provideDoor(PrismaticJoint joint, RectSprite s){
+        return new Door(joint,s);
     }
 }

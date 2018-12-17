@@ -16,6 +16,7 @@
 
 package org.destinationsol.game.drawables;
 
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -24,14 +25,9 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.OrderedMap;
 import org.destinationsol.assets.audio.OggSoundManager;
 import org.destinationsol.common.DebugCol;
-import org.destinationsol.game.DebugOptions;
-import org.destinationsol.game.GameDrawer;
-import org.destinationsol.game.MapDrawer;
-import org.destinationsol.game.ObjectManager;
-import org.destinationsol.game.SolCam;
-import org.destinationsol.game.SolGame;
-import org.destinationsol.game.SolObject;
+import org.destinationsol.game.*;
 
+import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -46,6 +42,15 @@ public class DrawableManager {
 
     private final OggSoundManager oggSoundManager;
 
+
+    @Inject
+    MountDetectDrawer mountDetectDrawer;
+
+    @Inject
+    MapDrawer mapDrawer;
+
+    @Inject
+    SolCam cam;
 
     public DrawableManager(GameDrawer drawer, OggSoundManager oggSoundManager) {
         this.oggSoundManager = oggSoundManager;
@@ -110,14 +115,12 @@ public class DrawableManager {
         }
     }
 
-    public void draw(SolGame game) {
-        MapDrawer mapDrawer = game.getMapDrawer();
+    public void draw() {
         if (mapDrawer.isToggled()) {
             mapDrawer.draw(drawer, game);
             return;
         }
 
-        SolCam cam = game.getCam();
         drawer.updateMatrix(game);
         game.getFarBackgroundgManagerOld().draw(drawer, cam, game);
         Vector2 camPos = cam.getPosition();

@@ -209,10 +209,10 @@ public class SolGame {
 
     public void update() {
         if (paused) {
-            onPausedUpdateSystems.forEach(system -> system.update(this, timeStep));
+            onPausedUpdateSystems.forEach(system -> system.update( timeStep));
         } else {
             updateTime();
-            updateSystems.forEach(system -> system.update(this, timeStep));
+            updateSystems.forEach(system -> system.update( timeStep));
         }
     }
 
