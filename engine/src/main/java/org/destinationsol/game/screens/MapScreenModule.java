@@ -13,28 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.destinationsol.game.context.internal;
+package org.destinationsol.game.screens;
 
-import com.google.common.collect.Maps;
-import org.destinationsol.game.context.Context;
+import dagger.Module;
+import org.destinationsol.GameOptions;
 
-import java.util.Map;
+@Module
+public class MapScreenModule {
 
-public class ContextImpl implements Context {
+    public MapScreenModule(RightPaneLayout rightPaneLayout, GameOptions gameOptions){
 
-    private final Map<Class<?>, Object> map = Maps.newConcurrentMap();
-
-    @Override
-    public <T> T get(Class<? extends T> type) {
-        if (type == Context.class) {
-            return type.cast(this);
-        }
-        return type.cast(map.get(type));
-    }
-
-    @Override
-    public <T, U extends T> void put(Class<T> type, U object)  {
-        map.put(type, object);
     }
 
 }

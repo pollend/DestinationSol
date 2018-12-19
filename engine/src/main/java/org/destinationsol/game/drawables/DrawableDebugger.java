@@ -22,7 +22,6 @@ import org.destinationsol.common.DebugCol;
 import org.destinationsol.common.SolColor;
 import org.destinationsol.game.DebugOptions;
 import org.destinationsol.game.SolCam;
-import org.destinationsol.game.SolGame;
 import org.destinationsol.game.SolTime;
 import org.destinationsol.game.UpdateAwareSystem;
 import org.destinationsol.ui.FontSize;

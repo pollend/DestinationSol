@@ -19,11 +19,7 @@ import com.badlogic.gdx.math.Vector2;
 import org.destinationsol.Const;
 import org.destinationsol.common.Consumed;
 import org.destinationsol.common.SolMath;
-import org.destinationsol.game.DmgType;
-import org.destinationsol.game.FarObject;
-import org.destinationsol.game.RemoveController;
-import org.destinationsol.game.SolGame;
-import org.destinationsol.game.SolObject;
+import org.destinationsol.game.*;
 import org.destinationsol.game.planet.Planet;
 
 import java.util.List;
@@ -54,9 +50,9 @@ public class DrawableObject implements SolObject {
     }
 
     @Override
-    public void update() {
+    public void update(SolTime solTime) {
         moveDifference.set(speed);
-        float timeStep = game.getTimeStep();
+        float timeStep = solTime.getTimeStep();
         moveDifference.scl(timeStep);
         position.add(moveDifference);
         if (hideOnPlanet) {
@@ -125,7 +121,7 @@ public class DrawableObject implements SolObject {
     }
 
     @Override
-    public void receiveForce(Vector2 force, SolGame game, boolean acc) {
+    public void receiveForce(Vector2 force,  boolean acc) {
     }
 
     @Override

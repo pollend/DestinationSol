@@ -21,7 +21,6 @@ import com.badlogic.gdx.physics.box2d.RayCastCallback;
 import org.destinationsol.common.SolMath;
 import org.destinationsol.common.SolRandom;
 import org.destinationsol.game.ObjectManager;
-import org.destinationsol.game.SolGame;
 
 public class FlatPlaceFinder {
     private final Vector2 vector = new Vector2();

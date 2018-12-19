@@ -42,7 +42,7 @@ public class ChangeShipScreen extends InventoryOperationsScreen {
     }
 
     @Override
-    public ItemContainer getItems(SolGame game) {
+    public ItemContainer getItems() {
         return game.getScreens().talkScreen.getTarget().getTradeContainer().getShips();
     }
 

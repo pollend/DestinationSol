@@ -17,7 +17,6 @@ package org.destinationsol.game.planet;
 
 import com.badlogic.gdx.math.Vector2;
 import org.destinationsol.common.SolMath;
-import org.destinationsol.game.SolGame;
 
 public class PlanetBind {
     private final Planet planet;

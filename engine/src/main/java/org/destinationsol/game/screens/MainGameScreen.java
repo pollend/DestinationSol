@@ -32,7 +32,6 @@ import org.destinationsol.game.FactionManager;
 import org.destinationsol.game.HardnessCalc;
 import org.destinationsol.game.Hero;
 import org.destinationsol.game.SolCam;
-import org.destinationsol.game.SolGame;
 import org.destinationsol.game.SolObject;
 import org.destinationsol.game.context.Context;
 import org.destinationsol.game.item.Gun;
@@ -96,7 +95,7 @@ public class MainGameScreen extends SolUiBaseScreen {
     private final TextPlace myMoneyExcessTp;
     private final SolApplication solApplication;
 
-    MainGameScreen(RightPaneLayout rightPaneLayout, Context context) {
+    MainGameScreen(RightPaneLayout rightPaneLayout) {
         DisplayDimensions displayDimensions = SolApplication.displayDimensions;
 
         solApplication = context.get(SolApplication.class);
