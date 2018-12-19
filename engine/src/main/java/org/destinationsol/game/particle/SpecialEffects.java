@@ -18,10 +18,14 @@ package org.destinationsol.game.particle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.JsonValue;
 import org.destinationsol.assets.Assets;
+import org.destinationsol.assets.audio.OggSoundManager;
 import org.destinationsol.assets.json.Json;
 import org.destinationsol.game.GameColors;
+import org.destinationsol.game.SolCam;
 import org.destinationsol.game.SolGame;
+import org.destinationsol.game.SolTime;
 import org.destinationsol.game.drawables.DrawableLevel;
+import org.destinationsol.game.planet.PlanetManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +42,19 @@ public class SpecialEffects {
     private final EffectConfig asteroidDust;
     private final EffectConfig forceBeacon;
 
-    public SpecialEffects(EffectTypes effectTypes, GameColors colours) {
+    private final PartMan partMan;
+    private final OggSoundManager soundManager;
+    private final PlanetManager planetManager;
+    private final SolCam cam;
+    private final SolTime solTime;
+
+    public SpecialEffects(SolTime solTime, SolCam cam, OggSoundManager soundManager, PlanetManager planetManager, PartMan partMan, EffectTypes effectTypes, GameColors colours) {
+        this.solTime = solTime;
+        this.partMan = partMan;
+        this.soundManager = soundManager;
+        this.planetManager = planetManager;
+        this.cam = cam;
+
         Json json = Assets.getJson("core:specialEffectsConfig");
         JsonValue rootNode = json.getJsonValue();
 
@@ -58,30 +74,29 @@ public class SpecialEffects {
     public List<DSParticleEmitter> buildBodyEffs(float objRad, Vector2 position, Vector2 speed) {
         ArrayList<DSParticleEmitter> res = new ArrayList<>();
         float sz = objRad * .9f;
-        DSParticleEmitter smoke = new DSParticleEmitter(this.smoke, sz, DrawableLevel.PART_FG_0, new Vector2(), true, game, position, speed, 0, soundManager);
+        DSParticleEmitter smoke = new DSParticleEmitter(this.smoke, sz, DrawableLevel.PART_FG_0, new Vector2(), true, position, speed, 0);
         res.add(smoke);
-        DSParticleEmitter fire = new DSParticleEmitter(this.fire, sz, DrawableLevel.PART_FG_1, new Vector2(), true, game, position, speed, 0, soundManager);
+        DSParticleEmitter fire = new DSParticleEmitter(this.fire, sz, DrawableLevel.PART_FG_1, new Vector2(), true, position, speed, 0);
         res.add(fire);
-        DSParticleEmitter electricity = new DSParticleEmitter(this.electricity, objRad * 1.2f, DrawableLevel.PART_FG_0, new Vector2(), true, game, position, speed, 0, soundManager);
+        DSParticleEmitter electricity = new DSParticleEmitter(this.electricity, objRad * 1.2f, DrawableLevel.PART_FG_0, new Vector2(), true, position, speed, 0);
         res.add(electricity);
         return res;
     }
 
-    public void explodeShip(SolGame game, Vector2 position, float size) {
-        PartMan pm = game.getPartMan();
-        DSParticleEmitter smoke = new DSParticleEmitter(shipExplosionSmoke, 2 * size, DrawableLevel.PART_FG_0, new Vector2(), false, game, position, Vector2.Zero, 0, soundManager);
-        pm.finish(game, smoke, position);
-        DSParticleEmitter fire = new DSParticleEmitter(shipExplosionFire, .7f * size, DrawableLevel.PART_FG_1, new Vector2(), false, game, position, Vector2.Zero, 0, soundManager);
-        pm.finish(game, fire, position);
-        pm.blinks(position, game, size);
+    public void explodeShip( Vector2 position, float size) {
+        DSParticleEmitter smoke = new DSParticleEmitter(shipExplosionSmoke, 2 * size, DrawableLevel.PART_FG_0, new Vector2(), false, position, Vector2.Zero, 0);
+        partMan.finish( smoke, position);
+        DSParticleEmitter fire = new DSParticleEmitter(shipExplosionFire, .7f * size, DrawableLevel.PART_FG_1, new Vector2(), false, position, Vector2.Zero, 0);
+        partMan.finish(fire, position);
+        partMan.blinks(position, size);
     }
 
-    public void asteroidDust(SolGame game, Vector2 position, Vector2 speed, float size) {
-        DSParticleEmitter smoke = new DSParticleEmitter(asteroidDust, size, DrawableLevel.PART_FG_0, new Vector2(), true, game, position, speed, 0, soundManager);
-        game.getPartMan().finish(game, smoke, position);
+    public void asteroidDust( Vector2 position, Vector2 speed, float size) {
+        DSParticleEmitter smoke = new DSParticleEmitter(asteroidDust, size, DrawableLevel.PART_FG_0, new Vector2(), true, position, speed, 0);
+        partMan.finish(smoke, position);
     }
 
-    public DSParticleEmitter buildForceBeacon(float size, SolGame game, Vector2 relativePosition, Vector2 basePosition, Vector2 speed) {
-        return new DSParticleEmitter(forceBeacon, size, DrawableLevel.PART_FG_0, relativePosition, false, game, basePosition, speed, 0, soundManager);
+    public DSParticleEmitter buildForceBeacon(float size, Vector2 relativePosition, Vector2 basePosition, Vector2 speed) {
+        return new DSParticleEmitter(forceBeacon, size, DrawableLevel.PART_FG_0, relativePosition, false, basePosition, speed, 0);
     }
 }

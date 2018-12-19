@@ -17,8 +17,9 @@
 package org.destinationsol.game.ship;
 
 import org.destinationsol.common.SolMath;
-import org.destinationsol.game.SolGame;
+import org.destinationsol.game.SolTime;
 import org.destinationsol.game.item.ItemContainer;
+import org.destinationsol.game.item.ItemManager;
 import org.destinationsol.game.item.RepairItem;
 import org.destinationsol.game.ship.hulls.HullConfig;
 
@@ -27,21 +28,23 @@ public class ShipRepairer {
     private static final float REPAIR_SPD = 5;
     private float myRepairPoints;
 
-    public ShipRepairer() {
+    private final ItemManager itemManager;
+
+    public ShipRepairer(ItemManager itemManager) {
+        this.itemManager = itemManager;
     }
 
-    public float tryRepair(SolGame game, ItemContainer ic, float life, HullConfig config) {
+    public float tryRepair(SolTime solTime, ItemContainer ic, float life, HullConfig config) {
         // Don't attempt to repair if already at full health
         if (life == config.getMaxLife()) {
             return 0;
         }
 
-        float ts = game.getTimeStep();
-        if (myRepairPoints <= 0 && ic.tryConsumeItem(game.getItemMan().getRepairExample())) {
+        if (myRepairPoints <= 0 && ic.tryConsumeItem(itemManager.getRepairExample())) {
             myRepairPoints = RepairItem.LIFE_AMT;
         }
         if (myRepairPoints > 0 && life < config.getMaxLife()) {
-            float inc = REPAIR_SPD * ts;
+            float inc = REPAIR_SPD * solTime.getTimeStep();
             if (myRepairPoints < inc) {
                 inc = myRepairPoints;
             }

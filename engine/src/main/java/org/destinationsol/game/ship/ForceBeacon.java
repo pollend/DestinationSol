@@ -21,9 +21,11 @@ import org.destinationsol.common.SolMath;
 import org.destinationsol.game.Faction;
 import org.destinationsol.game.SolGame;
 import org.destinationsol.game.SolObject;
+import org.destinationsol.game.SolTime;
 import org.destinationsol.game.drawables.Drawable;
 import org.destinationsol.game.input.Pilot;
 import org.destinationsol.game.particle.DSParticleEmitter;
+import org.destinationsol.game.particle.SpecialEffects;
 
 import java.util.List;
 
@@ -33,15 +35,14 @@ public class ForceBeacon {
     private final Vector2 myRelPos;
     private final Vector2 myPrevPos;
     private final DSParticleEmitter myEffect;
-    public ForceBeacon(Vector2 relPos, Vector2 basePos, Vector2 baseSpeed) {
+    public ForceBeacon(SpecialEffects specialEffects, Vector2 relPos, Vector2 basePos, Vector2 baseSpeed) {
         myRelPos = relPos;
-        myEffect = game.getSpecialEffects().buildForceBeacon(.6f, game, relPos, basePos, baseSpeed);
+        myEffect = specialEffects.buildForceBeacon(.6f, relPos, basePos, baseSpeed);
         myEffect.setWorking(true);
         myPrevPos = new Vector2();
     }
 
-    public static SolShip pullShips(SolObject owner, Vector2 ownPos, Vector2 ownSpeed, Faction faction,
-                                    float maxPullDist) {
+    public static SolShip pullShips(SolObject owner, Vector2 ownPos, Vector2 ownSpeed, Faction faction, float maxPullDist) {
         SolShip res = null;
         float minLen = Float.MAX_VALUE;
         List<SolObject> objs = game.getObjectManager().getObjects();
@@ -70,7 +71,7 @@ public class ForceBeacon {
                     toMe.add(ownSpeed);
                 }
                 ship.getHull().getBody().setLinearVelocity(toMe);
-                game.getSoundManager().play(game, game.getSpecialSounds().forceBeaconWork, null, ship);
+                game.getSoundManager().play(game.getSpecialSounds().forceBeaconWork, null, ship);
                 if (toMeLen < minLen) {
                     res = ship;
                     minLen = toMeLen;
@@ -85,9 +86,9 @@ public class ForceBeacon {
         drawables.addAll(myEffect.getDrawables());
     }
 
-    public void update(SolGame game, Vector2 basePos, float baseAngle, SolShip ship) {
+    public void update(SolTime solTime, Vector2 basePos, float baseAngle, SolShip ship) {
         Vector2 position = SolMath.toWorld(myRelPos, baseAngle, basePos);
-        Vector2 speed = SolMath.distVec(myPrevPos, position).scl(1 / game.getTimeStep());
+        Vector2 speed = SolMath.distVec(myPrevPos, position).scl(1 / solTime.getTimeStep());
         Faction faction = ship.getPilot().getFaction();
         pullShips(game, ship, position, speed, faction, MAX_PULL_DIST);
         SolMath.free(speed);

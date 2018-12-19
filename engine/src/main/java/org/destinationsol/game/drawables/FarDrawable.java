@@ -19,8 +19,8 @@ package org.destinationsol.game.drawables;
 import com.badlogic.gdx.math.Vector2;
 import org.destinationsol.game.FarObject;
 import org.destinationsol.game.RemoveController;
-import org.destinationsol.game.SolGame;
 import org.destinationsol.game.SolObject;
+import org.destinationsol.game.SolTime;
 
 import java.util.List;
 
@@ -53,7 +53,7 @@ public class FarDrawable implements FarObject {
     }
 
     @Override
-    public void update() {
+    public void update(SolTime solTime) {
     }
 
     @Override

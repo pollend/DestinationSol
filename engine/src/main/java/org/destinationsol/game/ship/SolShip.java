@@ -27,9 +27,10 @@ import org.destinationsol.common.SolMath;
 import org.destinationsol.common.SolRandom;
 import org.destinationsol.game.AbilityCommonConfig;
 import org.destinationsol.game.DmgType;
+import org.destinationsol.game.FactionManager;
 import org.destinationsol.game.RemoveController;
-import org.destinationsol.game.SolGame;
 import org.destinationsol.game.SolObject;
+import org.destinationsol.game.SolTime;
 import org.destinationsol.game.drawables.Drawable;
 import org.destinationsol.game.gun.GunMount;
 import org.destinationsol.game.input.Pilot;
@@ -37,6 +38,7 @@ import org.destinationsol.game.item.Armor;
 import org.destinationsol.game.item.Engine;
 import org.destinationsol.game.item.Gun;
 import org.destinationsol.game.item.ItemContainer;
+import org.destinationsol.game.item.ItemManager;
 import org.destinationsol.game.item.Loot;
 import org.destinationsol.game.item.MercItem;
 import org.destinationsol.game.item.MoneyItem;
@@ -45,9 +47,12 @@ import org.destinationsol.game.item.Shield;
 import org.destinationsol.game.item.SolItem;
 import org.destinationsol.game.item.TradeContainer;
 import org.destinationsol.game.particle.DSParticleEmitter;
+import org.destinationsol.game.particle.PartMan;
+import org.destinationsol.game.particle.SpecialEffects;
 import org.destinationsol.game.ship.hulls.Hull;
 import org.destinationsol.game.ship.hulls.HullConfig;
 
+import javax.inject.Inject;
 import java.util.List;
 
 public class SolShip implements SolObject {
@@ -81,9 +86,29 @@ public class SolShip implements SolObject {
     private float myControlEnableAwait;
     private MercItem mercItem;
 
-    public SolShip(Pilot pilot, Hull hull, RemoveController removeController, List<Drawable> drawables,
+    private final SpecialEffects specialEffects;
+    private final ItemManager itemManager;
+    private final FactionManager factionManager;
+
+    @Inject
+    OggSoundManager soundManager;
+
+    @Inject
+    SpecialSounds specialSounds;
+
+    @Inject
+    PartMan partMan;
+
+    @Inject
+    SpecialSounds specialSounds;
+
+    public SolShip(SpecialEffects specialEffects, Pilot pilot, Hull hull, RemoveController removeController, List<Drawable> drawables,
                    ItemContainer container, ShipRepairer repairer, float money, TradeContainer tradeContainer, Shield shield,
-                   Armor armor) {
+                   Armor armor, ItemManager itemManager, FactionManager factionManager) {
+        this.specialEffects = specialEffects;
+        this.itemManager = itemManager;
+        this.factionManager = factionManager;
+
         colliding = false;
         myRemoveController = removeController;
         myDrawables = drawables;
@@ -91,7 +116,7 @@ public class SolShip implements SolObject {
         myHull = hull;
         myItemContainer = container;
         myTradeContainer = tradeContainer;
-        List<DSParticleEmitter> effs = game.getSpecialEffects().buildBodyEffs(myHull.config.getApproxRadius(), game, myHull.getPosition(), myHull.getSpeed());
+        List<DSParticleEmitter> effs = specialEffects.buildBodyEffs(myHull.config.getApproxRadius(), myHull.getPosition(), myHull.getSpeed());
         mySmokeSrc = effs.get(0);
         myFireSrc = effs.get(1);
         myElectricitySrc = effs.get(2);
@@ -127,11 +152,10 @@ public class SolShip implements SolObject {
     }
 
     @Override
-    public void handleContact(SolObject other, float absImpulse,
-                              SolGame game, Vector2 collPos) {
+    public void handleContact(SolObject other, float absImpulse, Vector2 collPos) {
         colliding = true;
-        if (tryCollectLoot(other, game)) {
-            ((Loot) other).pickedUp(game, this);
+        if (tryCollectLoot(other)) {
+            ((Loot) other).pickedUp( this);
             return;
         }
         if (myHull.config.getType() != HullConfig.Type.STATION) {
@@ -140,7 +164,7 @@ public class SolShip implements SolObject {
             if (f == myHull.getBase()) {
                 dmg *= BASE_DUR_MOD;
             }
-            receiveDmg((int) dmg, game, collPos, DmgType.CRASH);
+            receiveDmg((int) dmg,  collPos, DmgType.CRASH);
         }
     }
 
@@ -159,7 +183,7 @@ public class SolShip implements SolObject {
         return true;
     }
 
-    private boolean tryCollectLoot(SolObject obj, SolGame game) {
+    private boolean tryCollectLoot(SolObject obj) {
         if (!(obj instanceof Loot)) {
             return false;
         }
@@ -179,7 +203,7 @@ public class SolShip implements SolObject {
             myMoney += i.getPrice();
             return true;
         }
-        ItemContainer c = shouldTrade(i, game) ? myTradeContainer.getItems() : myItemContainer;
+        ItemContainer c = shouldTrade(i) ? myTradeContainer.getItems() : myItemContainer;
         boolean canAdd = c.canAdd(i);
         if (canAdd) {
             c.add(i);
@@ -190,12 +214,12 @@ public class SolShip implements SolObject {
         return canAdd;
     }
 
-    private boolean shouldTrade(SolItem i, SolGame game) {
+    private boolean shouldTrade(SolItem i) {
         if (myTradeContainer == null) {
             return false;
         }
         if (i instanceof RepairItem) {
-            return myItemContainer.count(game.getItemMan().getRepairExample()) >= TRADE_AFTER;
+            return myItemContainer.count(itemManager.getRepairExample()) >= TRADE_AFTER;
         }
         Gun g1 = myHull.getGun(false);
         if (g1 != null && g1.config.clipConf.example.isSame(i)) {
@@ -223,62 +247,59 @@ public class SolShip implements SolObject {
     }
 
     @Override
-    public void update(SolGame game) {
-        SolShip nearestEnemy = game.getFactionMan().getNearestEnemy(game, this);
-        myPilot.update(game, this, nearestEnemy);
-        myHull.update(game, myItemContainer, myPilot, this, nearestEnemy);
+    public void update(SolTime solTime) {
+        SolShip nearestEnemy = factionManager.getNearestEnemy(this);
+        myPilot.update(solTime, this, nearestEnemy);
+        myHull.update(solTime, myItemContainer, myPilot, this, nearestEnemy);
         game.getPartMan().updateAllHullEmittersOfType(this, "collision", colliding);
 
-        updateAbility(game);
-        updateIdleTime(game);
-        updateShield(game);
+        updateAbility(solTime);
+        updateIdleTime(solTime);
+        updateShield(solTime);
         if (myArmor != null && !myItemContainer.contains(myArmor)) {
             myArmor = null;
         }
         if (myTradeContainer != null) {
-            myTradeContainer.update(game);
+            myTradeContainer.update(solTime);
         }
 
         if (isControlsEnabled() && myRepairer != null && myIdleTime > ShipRepairer.REPAIR_AWAIT) {
-            myHull.life += myRepairer.tryRepair(game, myItemContainer, myHull.life, myHull.config);
+            myHull.life += myRepairer.tryRepair(solTime, myItemContainer, myHull.life, myHull.config);
         }
-
-        float ts = game.getTimeStep();
         if (myFireAwait > 0) {
-            myFireAwait -= ts;
+            myFireAwait -= solTime.getTimeStep();
         }
         mySmokeSrc.setWorking(myFireAwait > 0 || myHull.life < SMOKE_PERC * myHull.config.getMaxLife());
         boolean onFire = myFireAwait > 0 || myHull.life < FIRE_PERC * myHull.config.getMaxLife();
         myFireSrc.setWorking(onFire);
         if (onFire) {
-            game.getSoundManager().play(game, game.getSpecialSounds().burning, null, this);
+            soundManager.play(specialSounds.burning, null, this);
         }
 
         if (!isControlsEnabled()) {
-            myControlEnableAwait -= ts;
+            myControlEnableAwait -= solTime.getTimeStep();
             if (isControlsEnabled()) {
-                game.getSoundManager().play(game, game.getSpecialSounds().controlEnabled, null, this);
+                soundManager.play(specialSounds.controlEnabled, null, this);
             }
         }
         myElectricitySrc.setWorking(!isControlsEnabled());
 
         if (myAbility instanceof Teleport) {
-            ((Teleport) myAbility).maybeTeleport(game, this);
+            ((Teleport) myAbility).maybeTeleport(this);
         }
 
         colliding = false;
     }
 
-    private void updateAbility(SolGame game) {
+    private void updateAbility(SolTime solTime) {
         if (myAbility == null) {
             return;
         }
-        OggSoundManager soundManager = game.getSoundManager();
         SpecialSounds sounds = game.getSpecialSounds();
         if (myAbilityAwait > 0) {
             myAbilityAwait -= game.getTimeStep();
             if (myAbilityAwait <= 0) {
-                soundManager.play(game, sounds.abilityRecharged, null, this);
+                soundManager.play( sounds.abilityRecharged, null, this);
             }
         }
         boolean tryToUse = isControlsEnabled() && myPilot.isAbility() && canUseAbility();
@@ -290,27 +311,26 @@ public class SolShip implements SolObject {
             }
             myAbilityAwait = myAbility.getConfig().getRechargeTime();
             AbilityCommonConfig cc = myAbility.getCommonConfig();
-            soundManager.play(game, cc.activatedSound, null, this);
+            soundManager.play(cc.activatedSound, null, this);
         }
         if (tryToUse && !used) {
-            soundManager.play(game, sounds.abilityRefused, null, this);
+            soundManager.play(sounds.abilityRefused, null, this);
         }
     }
 
-    private void updateShield(SolGame game) {
+    private void updateShield(SolTime solTime) {
         if (myShield != null) {
             if (myItemContainer.contains(myShield)) {
-                myShield.update(game, this);
+                myShield.update( this,solTime);
             } else {
                 myShield = null;
             }
         }
     }
 
-    private void updateIdleTime(SolGame game) {
-        float ts = game.getTimeStep();
+    private void updateIdleTime(SolTime solTime) {
         if (Pilot.Utils.isIdle(myPilot)) {
-            myIdleTime += ts;
+            myIdleTime += solTime.getTimeStep();
         } else {
             myIdleTime = 0;
         }
@@ -337,7 +357,7 @@ public class SolShip implements SolObject {
     }
 
     @Override
-    public void onRemove(SolGame game) {
+    public void onRemove() {
         if (myHull.life <= 0) {
             game.getShardBuilder().buildExplosionShards(game, myHull.getPosition(), myHull.getSpeed(), myHull.config.getSize());
             throwAllLoot(game);
@@ -377,7 +397,7 @@ public class SolShip implements SolObject {
         }
     }
 
-    private void throwLoot(SolGame game, SolItem item, boolean onDeath) {
+    private void throwLoot(SolItem item, boolean onDeath) {
         Vector2 lootSpeed = new Vector2();
         float speedAngle;
         float speedLen;
@@ -403,7 +423,7 @@ public class SolShip implements SolObject {
     }
 
     @Override
-    public void receiveDmg(float dmg, SolGame game, Vector2 position, DmgType dmgType) {
+    public void receiveDmg(float dmg, Vector2 position, DmgType dmgType) {
         if (dmg <= 0) {
             return;
         }
@@ -437,14 +457,14 @@ public class SolShip implements SolObject {
      * Note: Use {@link SolGame#setRespawnState()}} for the death of the player specifically
      * @param game The SolGame currently in progress.
      */
-    private void onDeath(SolGame game) {
+    private void onDeath() {
         MercItem merc = getMerc();
         if (merc != null) {
             game.getHero().getMercs().remove(merc);
         }
     }
 
-    private void playHitSound(SolGame game, Vector2 position, DmgType dmgType) {
+    private void playHitSound(Vector2 position, DmgType dmgType) {
         if (myArmor != null) {
             game.getSoundManager().play(game, myArmor.getHitSound(dmgType), position, this);
         } else {
@@ -458,7 +478,7 @@ public class SolShip implements SolObject {
     }
 
     @Override
-    public void receiveForce(Vector2 force, SolGame game, boolean acc) {
+    public void receiveForce(Vector2 force, boolean acc) {
         Body body = myHull.getBody();
         if (acc) {
             force.scl(myHull.getMass());
@@ -498,11 +518,11 @@ public class SolShip implements SolObject {
         return ad / e.getMaxRotationSpeed();
     }
 
-    public boolean maybeEquip(SolGame game, SolItem item, boolean equip) {
+    public boolean maybeEquip(SolItem item, boolean equip) {
         return maybeEquip(game, item, false, equip) || maybeEquip(game, item, true, equip);
     }
 
-    public boolean maybeEquip(SolGame game, SolItem item, boolean secondarySlot, boolean equip) {
+    public boolean maybeEquip( SolItem item, boolean secondarySlot, boolean equip) {
         if (!secondarySlot) {
             if (item instanceof Engine) {
                 Gdx.app.log("SolShip", "maybeEquip called for an engine item, can't do that!");
@@ -552,11 +572,11 @@ public class SolShip implements SolObject {
         return false;
     }
 
-    public boolean maybeUnequip(SolGame game, SolItem item, boolean unequip) {
+    public boolean maybeUnequip(SolItem item, boolean unequip) {
         return maybeUnequip(game, item, false, unequip) || maybeUnequip(game, item, true, unequip);
     }
 
-    public boolean maybeUnequip(SolGame game, SolItem item, boolean secondarySlot, boolean unequip) {
+    public boolean maybeUnequip(SolItem item, boolean secondarySlot, boolean unequip) {
         if (!secondarySlot) {
             if (myHull.getEngine() == item) {
                 Gdx.app.log("SolShip", "maybeUnequip called for an engine item, can't do that!");
@@ -619,7 +639,7 @@ public class SolShip implements SolObject {
         return myAbility;
     }
 
-    public void disableControls(float duration, SolGame game) {
+    public void disableControls(float duration) {
         if (myControlEnableAwait <= 0) {
             game.getSoundManager().play(game, game.getSpecialSounds().controlDisabled, null, this);
         }
@@ -630,7 +650,7 @@ public class SolShip implements SolObject {
         return myControlEnableAwait <= 0;
     }
 
-    public void dropItem(SolGame game, SolItem item) {
+    public void dropItem( SolItem item) {
         myItemContainer.remove(item);
         throwLoot(game, item, false);
     }

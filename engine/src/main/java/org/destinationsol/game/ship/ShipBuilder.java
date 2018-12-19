@@ -37,7 +37,6 @@ import org.destinationsol.common.SolRandom;
 import org.destinationsol.game.CollisionMeshLoader;
 import org.destinationsol.game.Faction;
 import org.destinationsol.game.RemoveController;
-import org.destinationsol.game.SolGame;
 import org.destinationsol.game.drawables.Drawable;
 import org.destinationsol.game.drawables.DrawableLevel;
 import org.destinationsol.game.drawables.RectSprite;
@@ -48,7 +47,6 @@ import org.destinationsol.game.particle.LightSource;
 import org.destinationsol.game.ship.hulls.Hull;
 import org.destinationsol.game.ship.hulls.HullConfig;
 
-import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -218,20 +216,20 @@ public class ShipBuilder {
         }
     }
 
-    public SolShip build(SolGame game, Vector2 position, Vector2 speed, float angle, float rotationSpeed, Pilot pilot,
+    public SolShip build(Vector2 position, Vector2 speed, float angle, float rotationSpeed, Pilot pilot,
                          ItemContainer container, HullConfig hullConfig, float life, Gun gun1,
                          Gun gun2, RemoveController removeController, Engine engine,
                          ShipRepairer repairer, float money, TradeContainer tradeContainer, Shield shield,
                          Armor armor) {
         ArrayList<Drawable> drawables = new ArrayList<>();
-        Hull hull = buildHull(game, position, speed, angle, rotationSpeed, hullConfig, life, drawables);
-        SolShip ship = new SolShip(game, pilot, hull, removeController, drawables, container, repairer, money, tradeContainer, shield, armor);
+        Hull hull = buildHull(position, speed, angle, rotationSpeed, hullConfig, life, drawables);
+        SolShip ship = new SolShip(pilot, hull, removeController, drawables, container, repairer, money, tradeContainer, shield, armor, itemManager, factionManager);
         hull.getBody().setUserData(ship);
         for (Door door : hull.getDoors()) {
             door.getBody().setUserData(ship);
         }
 
-        hull.setParticleEmitters(game, ship);
+        hull.setParticleEmitters( ship);
 
         if (engine != null) {
             hull.setEngine(engine);
@@ -239,21 +237,21 @@ public class ShipBuilder {
         if (gun1 != null) {
             GunMount gunMount0 = hull.getGunMount(false);
             if (gunMount0.isFixed() == gun1.config.fixed) {
-                gunMount0.setGun(game, ship, gun1, hullConfig.getGunSlot(0).isUnderneathHull(), 1);
+                gunMount0.setGun( ship, gun1, hullConfig.getGunSlot(0).isUnderneathHull(), 1);
             }
         }
         if (gun2 != null) {
             GunMount gunMount1 = hull.getGunMount(true);
             if (gunMount1 != null) {
                 if (gunMount1.isFixed() == gun2.config.fixed) {
-                    gunMount1.setGun(game, ship, gun2, hullConfig.getGunSlot(1).isUnderneathHull(), 2);
+                    gunMount1.setGun(ship, gun2, hullConfig.getGunSlot(1).isUnderneathHull(), 2);
                 }
             }
         }
         return ship;
     }
 
-    private Hull buildHull(SolGame game, Vector2 position, Vector2 speed, float angle, float rotationSpeed, HullConfig hullConfig,
+    private Hull buildHull(Vector2 position, Vector2 speed, float angle, float rotationSpeed, HullConfig hullConfig,
                            float life, ArrayList<Drawable> drawables) {
         //TODO: This logic belongs in the HullConfigManager/HullConfig
         String shipName = hullConfig.getInternalName();
@@ -267,7 +265,7 @@ public class ShipBuilder {
 
         BodyDef.BodyType bodyType = hullConfig.getType() == HullConfig.Type.STATION ? BodyDef.BodyType.KinematicBody : BodyDef.BodyType.DynamicBody;
         DrawableLevel level = hullConfig.getType() == HullConfig.Type.STD ? DrawableLevel.BODIES : hullConfig.getType() == HullConfig.Type.BIG ? DrawableLevel.BIG_BODIES : DrawableLevel.STATIONS;
-        Body body = myCollisionMeshLoader.getBodyAndSprite(game, hullConfig, hullConfig.getSize(), bodyType, position, angle,
+        Body body = myCollisionMeshLoader.getBodyAndSprite(hullConfig, hullConfig.getSize(), bodyType, position, angle,
                 drawables, SHIP_DENSITY, level, hullConfig.getTexture());
         Fixture shieldFixture = createShieldFixture(hullConfig, body);
 
@@ -315,7 +313,7 @@ public class ShipBuilder {
         return shieldFixture;
     }
 
-    private Door createDoor(SolGame game, Vector2 position, float angle, Body body, Vector2 doorRelPos) {
+    private Door createDoor(Vector2 position, float angle, Body body, Vector2 doorRelPos) {
         World w = game.getObjectManager().getWorld();
         TextureAtlas.AtlasRegion tex = Assets.getAtlasRegion("engine:door");
         PrismaticJoint joint = createDoorJoint(body, w, position, doorRelPos, angle);

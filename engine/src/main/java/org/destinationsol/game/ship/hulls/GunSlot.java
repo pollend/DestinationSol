@@ -26,9 +26,8 @@ import org.destinationsol.common.NotNull;
 @Immutable
 public final class GunSlot {
 
-    private final
     @NotNull
-    Vector2 position;
+    private final Vector2 position;
     private final boolean isUnderneathHull;
     private final boolean allowsRotation;
 

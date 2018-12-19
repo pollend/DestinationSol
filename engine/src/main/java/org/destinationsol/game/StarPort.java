@@ -33,11 +33,11 @@ import org.destinationsol.game.drawables.DrawableLevel;
 import org.destinationsol.game.drawables.RectSprite;
 import org.destinationsol.game.particle.*;
 import org.destinationsol.game.planet.Planet;
+import org.destinationsol.game.planet.PlanetManager;
 import org.destinationsol.game.ship.FarShip;
 import org.destinationsol.game.ship.ForceBeacon;
 import org.destinationsol.game.ship.SolShip;
 
-import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,34 +55,31 @@ public class StarPort implements SolObject {
     private final boolean isSecondary;
     private float angle;
 
+    private final OggSoundManager soundManager;
+    private final SolTime time;
+    private final ObjectManager objectManager;
+    private final SpecialSounds specialSounds;
+    private final SaveManager saveManager;
+    private final Hero hero;
+    private final PartMan partMan;
+    private final SpecialEffects specialEffects;
+    private final SolCam solCam;
 
-    @Inject
-    OggSoundManager soundManager;
-
-    @Inject
-    SolTime time;
-
-    @Inject
-    ObjectManager objectManager;
-
-    @Inject
-    SpecialSounds specialSounds;
-
-    @Inject
-    SaveManager saveManager;
-
-    @Inject
-    Hero hero;
-
-    @Inject
-    PartMan partMan;
-
-    StarPort(Planet from, Planet to, Body body, ArrayList<Drawable> drawables, boolean secondary, ArrayList<LightSource> lights) {
+    StarPort(Planet from, Planet to, Body body, ArrayList<Drawable> drawables, boolean secondary, ArrayList<LightSource> lights, OggSoundManager soundManager, SolTime time, ObjectManager objectManager, SpecialSounds specialSounds, SaveManager saveManager, Hero hero, PartMan partMan, SpecialEffects specialEffects, SolCam solCam) {
         this.fromPlanet = from;
         this.toPlanet = to;
         this.drawables = drawables;
         this.body = body;
         lightSources = lights;
+        this.soundManager = soundManager;
+        this.time = time;
+        this.objectManager = objectManager;
+        this.specialSounds = specialSounds;
+        this.saveManager = saveManager;
+        this.hero = hero;
+        this.partMan = partMan;
+        this.specialEffects = specialEffects;
+        this.solCam = solCam;
         position = new Vector2();
         setParamsFromBody();
         isSecondary = secondary;
@@ -143,20 +140,19 @@ public class StarPort implements SolObject {
         SolShip ship = ForceBeacon.pullShips( this, position, null, null, .4f * SIZE);
         if (ship != null && ship.getMoney() >= FARE && ship.getPosition().dst(position) < .05f * SIZE) {
             ship.setMoney(ship.getMoney() - FARE);
-            Transcendent transcendent = new Transcendent(ship, fromPlanet, toPlanet);
+            Transcendent transcendent = new Transcendent(ship, fromPlanet, toPlanet,specialEffects);
             if (transcendent.getShip().getPilot().isPlayer()) {
                 saveManager.saveShip();
 
                 hero.setTranscendent(transcendent);
             }
-            ObjectManager objectManager = game.getObjectManager();
             objectManager.addObjDelayed(transcendent);
             blip( ship);
-            soundManager.play(game.getSpecialSounds().transcendentCreated, null, transcendent);
+            soundManager.play(specialSounds.transcendentCreated, null, transcendent);
             objectManager.removeObjDelayed(ship);
         }
         for (LightSource light : lightSources) {
-            light.update(true, angle, game);
+            light.update(true, angle,solTime);
         }
 
     }
@@ -274,7 +270,7 @@ public class StarPort implements SolObject {
             DSParticleEmitter force = game.getSpecialEffects().buildForceBeacon(FLOW_DIST * 1.5f, game, new Vector2(), position, Vector2.Zero);
             force.setWorking(true);
             drawables.addAll(force.getDrawables());
-            StarPort sp = new StarPort(from, to, body, drawables, secondary, lights);
+            StarPort sp = new StarPort(from, to, body, drawables, secondary, lights, soundManager, time, objectManager, specialSounds, saveManager, hero, partMan, specialEffects, solCam);
             body.setUserData(sp);
             return sp;
         }
@@ -378,10 +374,13 @@ public class StarPort implements SolObject {
         private final DSParticleEmitter effect;
         private float angle;
 
-        @Inject
-        SpecialEffects specialEffects;
+        private final SpecialEffects specialEffects;
+        private final ObjectManager objectManager;
 
-        Transcendent(SolShip ship, Planet from, Planet to) {
+        Transcendent(SolShip ship, Planet from, Planet to, SpecialEffects specialEffects, SolCam solCam, OggSoundManager soundManager, PlanetManager planetManager,ObjectManager objectManager) {
+            this.specialEffects = specialEffects;
+            this.objectManager = objectManager;
+
             this.ship = ship.toFarObject();
             fromPlanet = from;
             toPlanet = to;
@@ -395,10 +394,10 @@ public class StarPort implements SolObject {
             drawables = new ArrayList<>();
             drawables.add(s);
             EffectConfig eff = specialEffects.transcendentWork;
-            effect = new DSParticleEmitter(eff, TRAN_SZ, DrawableLevel.PART_BG_0, new Vector2(), true, position, Vector2.Zero, 0, soundManager);
+            effect = new DSParticleEmitter(eff, TRAN_SZ, DrawableLevel.PART_BG_0, new Vector2(), true, position, Vector2.Zero, 0, soundManager, solCam, planetManager, solTime);
             effect.setWorking(true);
             drawables.addAll(effect.getDrawables());
-            lightSource = new LightSource(.6f * TRAN_SZ, true, .5f, new Vector2(), eff.tint);
+            lightSource = new LightSource(solCam,.6f * TRAN_SZ, true, .5f, new Vector2(), eff.tint);
             lightSource.collectDrawables(drawables);
             setDependentParams();
         }
@@ -417,7 +416,6 @@ public class StarPort implements SolObject {
             SolMath.free(moveDiff);
 
             if (position.dst(destinationPosition) < .5f) {
-                ObjectManager objectManager = game.getObjectManager();
                 objectManager.removeObjDelayed(this);
                 ship.setPos(position);
                 ship.setSpeed(new Vector2());
@@ -427,7 +425,7 @@ public class StarPort implements SolObject {
                     game.saveShip();
                 }
                 objectManager.addObjDelayed(ship);
-                blip(game, ship);
+                blip(ship);
                 game.getSoundManager().play(game, game.getSpecialSounds().transcendentFinished, null, this);
                 game.getObjectManager().resetDelays(); // because of the hacked speed
             } else {

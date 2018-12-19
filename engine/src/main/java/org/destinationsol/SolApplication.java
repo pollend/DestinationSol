@@ -74,8 +74,6 @@ public class SolApplication implements ApplicationListener {
     @Inject
     UiDrawer uiDrawer;
 
-    SolGame solGame;
-
     private String fatalErrorMsg;
     private String fatalErrorTrace;
 
@@ -89,6 +87,7 @@ public class SolApplication implements ApplicationListener {
     // TODO: Make this non-static.
     private static Set<ResizeSubscriber> resizeSubscribers;
 
+    @Inject
     public SolApplication() {
         // Initiate Box2D to make sure natives are loaded early enough
         Box2D.init();

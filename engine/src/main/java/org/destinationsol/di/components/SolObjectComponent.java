@@ -15,16 +15,15 @@
  */
 package org.destinationsol.di.components;
 
-import dagger.Subcomponent;
-import org.destinationsol.di.SolObjectLootModule;
+import dagger.Component;
+import org.destinationsol.di.SolObjectModule;
 import org.destinationsol.di.scope.SolObjectScope;
+import org.destinationsol.game.item.Loot;
 
 @SolObjectScope
-@Subcomponent(modules = SolObjectLootModule.class)
-public interface DrawableObjectComponent {
+@Component(dependencies = SolGameComponent.class,modules = SolObjectModule.class)
+public interface SolObjectComponent {
+    Loot.Factory lootFactory();
 
-    @Subcomponent.Builder
-    interface Builder {
-        DrawableObjectComponent build();
-    }
+    void inject(Loot loot);
 }

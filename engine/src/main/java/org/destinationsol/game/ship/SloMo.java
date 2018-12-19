@@ -20,7 +20,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.JsonValue;
 import org.destinationsol.common.SolMath;
 import org.destinationsol.game.AbilityCommonConfig;
-import org.destinationsol.game.SolGame;
+import org.destinationsol.game.SolTime;
 import org.destinationsol.game.drawables.DrawableLevel;
 import org.destinationsol.game.item.ItemManager;
 import org.destinationsol.game.item.SolItem;
@@ -53,16 +53,15 @@ public class SloMo implements ShipAbility {
     }
 
     @Override
-    public boolean update(SolGame game, SolShip owner, boolean tryToUse) {
+    public boolean update(SolTime solTime, SolShip owner, boolean tryToUse) {
         if (tryToUse) {
             factor = config.factor;
             Vector2 position = owner.getPosition();
-            DSParticleEmitter src = new DSParticleEmitter(config.cc.effect, -1, DrawableLevel.PART_BG_0, new Vector2(), true, game, position, owner.getSpeed(), 0, soundManager);
+            DSParticleEmitter src = new DSParticleEmitter(config.cc.effect, -1, DrawableLevel.PART_BG_0, new Vector2(), true, game, position, owner.getSpeed(), 0, soundManager, planetManager, solTime);
             game.getPartMan().finish(game, src, position);
             return true;
         }
-        float ts = game.getTimeStep();
-        factor = SolMath.approach(factor, 1, SLO_MO_CHG_SPD * ts);
+        factor = SolMath.approach(factor, 1, SLO_MO_CHG_SPD * solTime.getTimeStep());
         return false;
     }
 

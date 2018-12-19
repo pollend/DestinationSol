@@ -20,7 +20,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import org.destinationsol.common.SolMath;
 import org.destinationsol.game.SolGame;
-import org.destinationsol.game.asteroid.AsteroidBuilder;
 import org.destinationsol.game.ship.SolShip;
 
 public class BallProjectileBody implements ProjectileBody {
@@ -32,7 +31,7 @@ public class BallProjectileBody implements ProjectileBody {
 
     private float angle;
 
-    BallProjectileBody(SolGame game, Vector2 position, float angle, Projectile projectile,
+    BallProjectileBody(Vector2 position, float angle, Projectile projectile,
                        Vector2 gunSpeed, float speedLen, ProjectileConfig config) {
         float density = config.density == -1 ? 1 : config.density;
         body = AsteroidBuilder.buildBall(game, position, angle, config.physSize / 2, density, config.massless);

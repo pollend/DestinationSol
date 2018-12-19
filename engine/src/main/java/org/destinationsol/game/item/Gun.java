@@ -25,7 +25,6 @@ import org.destinationsol.assets.json.Json;
 import org.destinationsol.common.SolMath;
 import org.destinationsol.game.DmgType;
 import org.destinationsol.game.HardnessCalc;
-import org.destinationsol.game.SolGame;
 import org.destinationsol.game.projectile.ProjectileConfig;
 
 import java.util.Arrays;
@@ -75,7 +74,7 @@ public class Gun implements SolItem {
     }
 
     @Override
-    public TextureAtlas.AtlasRegion getIcon(SolGame game) {
+    public TextureAtlas.AtlasRegion getIcon() {
         return config.icon;
     }
 

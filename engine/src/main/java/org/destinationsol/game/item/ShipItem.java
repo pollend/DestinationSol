@@ -78,7 +78,7 @@ public class ShipItem implements SolItem {
     }
 
     @Override
-    public TextureAtlas.AtlasRegion getIcon(SolGame game) {
+    public TextureAtlas.AtlasRegion getIcon() {
         return config.getIcon();
     }
 

@@ -29,7 +29,9 @@ import org.destinationsol.game.GameDrawer;
 import org.destinationsol.game.SolCam;
 import org.destinationsol.game.SolGame;
 import org.destinationsol.game.planet.Planet;
+import org.destinationsol.game.planet.PlanetManager;
 
+import javax.inject.Inject;
 import java.util.ArrayList;
 
 public class FarBackgroundManagerOld {
@@ -37,6 +39,9 @@ public class FarBackgroundManagerOld {
     private final ArrayList<FarBackgroundStar> stars = new ArrayList<>();
     private final float nebulaAngle;
     private final Color nebulaTint;
+
+    @Inject
+    PlanetManager planetManager;
 
     public FarBackgroundManagerOld() {
         nebulaTexture = Assets.getAtlasRegion("engine:farBgNebulae");
@@ -53,8 +58,8 @@ public class FarBackgroundManagerOld {
         nebulaTint = SolColor.col(.5f, 1);
     }
 
-    public void draw(GameDrawer drawer, SolCam cam, SolGame game) {
-        Planet np = game.getPlanetManager().getNearestPlanet();
+    public void draw(GameDrawer drawer, SolCam cam) {
+        Planet np = planetManager.getNearestPlanet();
         Vector2 camPos = cam.getPosition();
         float nebPercentage = (camPos.dst(np.getPosition()) - np.getGroundHeight()) / (4 * Const.ATM_HEIGHT);
         nebPercentage = MathUtils.clamp(nebPercentage, (float) 0, (float) 1);

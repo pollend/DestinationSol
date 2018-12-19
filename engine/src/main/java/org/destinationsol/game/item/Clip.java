@@ -19,7 +19,6 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.utils.JsonValue;
 import org.destinationsol.assets.Assets;
 import org.destinationsol.assets.json.Json;
-import org.destinationsol.game.SolGame;
 import org.destinationsol.game.projectile.ProjectileConfig;
 
 public class Clip implements SolItem {
@@ -59,7 +58,7 @@ public class Clip implements SolItem {
     }
 
     @Override
-    public TextureAtlas.AtlasRegion getIcon(SolGame game) {
+    public TextureAtlas.AtlasRegion getIcon() {
         return config.icon;
     }
 

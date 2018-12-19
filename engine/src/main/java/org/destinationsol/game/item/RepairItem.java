@@ -17,14 +17,15 @@
 package org.destinationsol.game.item;
 
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import org.destinationsol.game.SolGame;
 
 public class RepairItem implements SolItem {
     public static final int LIFE_AMT = 20;
     private final SolItemType itemType;
+    private final ItemManager itemManager;
 
-    RepairItem(SolItemType itemType) {
+    RepairItem(SolItemType itemType,ItemManager itemManager) {
         this.itemType = itemType;
+        this.itemManager = itemManager;
     }
 
     @Override
@@ -44,7 +45,7 @@ public class RepairItem implements SolItem {
 
     @Override
     public SolItem copy() {
-        return new RepairItem(itemType);
+        return new RepairItem(itemType,itemManager);
     }
 
     @Override
@@ -53,8 +54,8 @@ public class RepairItem implements SolItem {
     }
 
     @Override
-    public TextureAtlas.AtlasRegion getIcon(SolGame game) {
-        return game.getItemMan().repairIcon;
+    public TextureAtlas.AtlasRegion getIcon() {
+        return itemManager.repairIcon;
     }
 
     @Override

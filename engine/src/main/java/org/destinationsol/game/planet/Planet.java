@@ -23,6 +23,7 @@ import org.destinationsol.common.SolRandom;
 import org.destinationsol.game.HardnessCalc;
 import org.destinationsol.game.SolCam;
 import org.destinationsol.game.SolGame;
+import org.destinationsol.game.SolTime;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
@@ -76,9 +77,9 @@ public class Planet {
         setSecondaryParams();
     }
 
-    public void update(float timeStep) {
-        angleInSystem += rotationSpeedInSystem * timeStep;
-        angle += rotationSpeed * timeStep;
+    public void update(SolTime time) {
+        angleInSystem += rotationSpeedInSystem * time.getTimeStep();
+        angle += rotationSpeed * time.getTimeStep();
 
         setSecondaryParams();
         Vector2 camPos = solCam.getPosition();

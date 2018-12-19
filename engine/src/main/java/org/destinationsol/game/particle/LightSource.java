@@ -22,7 +22,8 @@ import org.destinationsol.assets.Assets;
 import org.destinationsol.common.SolColorUtil;
 import org.destinationsol.common.SolMath;
 import org.destinationsol.common.SolRandom;
-import org.destinationsol.game.SolGame;
+import org.destinationsol.game.SolCam;
+import org.destinationsol.game.SolTime;
 import org.destinationsol.game.drawables.Drawable;
 import org.destinationsol.game.drawables.DrawableLevel;
 import org.destinationsol.game.drawables.RectSprite;
@@ -41,19 +42,22 @@ public class LightSource {
     private float workPercentage;
     private float fadeTime;
 
+    private  final SolCam cam;
+
     /**
      * doesn't consume relativePosition
      */
-    public LightSource(float size, boolean hasHalo, float intensity, Vector2 relativePosition, Color colour) {
+    public LightSource(SolCam solCam, float size, boolean hasHalo, float intensity, Vector2 relativePosition, Color colour) {
+        this.cam = solCam;
         TextureAtlas.AtlasRegion tex = Assets.getAtlasRegion("core:lightCircleParticle");
         this.size = size;
         Vector2 relPos1 = new Vector2(relativePosition);
-        circle = new RectSprite(tex, 0, 0, 0, relPos1, DrawableLevel.PART_BG_0, 0, 0, colour, true);
+        circle = new RectSprite(tex, 0, 0, 0, relPos1, DrawableLevel.PART_BG_0, 0, 0, colour, true,solCam);
         tex = Assets.getAtlasRegion("core:lightHaloParticle");
         if (hasHalo) {
             Color haloCol = new Color(colour);
             SolColorUtil.changeBrightness(haloCol, .8f);
-            halo = new RectSprite(tex, 0, 0, 0, relPos1, DrawableLevel.PART_FG_0, 0, 0, haloCol, true);
+            halo = new RectSprite(tex, 0, 0, 0, relPos1, DrawableLevel.PART_FG_0, 0, 0, haloCol, true,solCam);
         } else {
             halo = null;
         }
@@ -61,11 +65,11 @@ public class LightSource {
         fadeTime = DEFAULT_FADE_TIME;
     }
 
-    public void update(boolean working, float baseAngle, SolGame game) {
+    public void update(boolean working, float baseAngle, SolTime time) {
         if (working) {
             workPercentage = 1f;
         } else {
-            workPercentage = SolMath.approach(workPercentage, 0, game.getTimeStep() / fadeTime);
+            workPercentage = SolMath.approach(workPercentage, 0, time.getTimeStep() / fadeTime);
         }
         float baseA = SolRandom.randomFloat(.5f, 1) * workPercentage * intensity;
         circle.tint.a = baseA * A_RATIO;
@@ -73,7 +77,7 @@ public class LightSource {
         circle.setTextureSize(SZ_RATIO * sz);
         if (halo != null) {
             halo.tint.a = baseA;
-            halo.relativeAngle = game.getCam().getAngle() - baseAngle;
+            halo.relativeAngle = cam.getAngle() - baseAngle;
             halo.setTextureSize(sz);
         }
     }

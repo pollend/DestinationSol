@@ -278,7 +278,7 @@ public class InventoryScreen extends SolUiBaseScreen {
             SolUiControl itemCtrl = itemControls[i];
             List<SolItem> group = itemContainer.getGroup(groupIdx);
             SolItem item = group.get(0);
-            TextureAtlas.AtlasRegion tex = item.getIcon(game);
+            TextureAtlas.AtlasRegion tex = item.getIcon();
             Rectangle rect = itemCtrl.getScreenArea();
             float rowCenterY = rect.y + rect.height / 2;
             uiDrawer.draw(uiDrawer.whiteTexture, imgSz, imgSz, imgSz / 2, imgSz / 2, rect.x + imgColW / 2, rowCenterY, 0, item.getItemType().uiColor);
@@ -345,8 +345,7 @@ public class InventoryScreen extends SolUiBaseScreen {
         if (!showingHeroItems(solApplication)) {
             return;
         }
-        SolGame game = solApplication.getGame();
-        ItemContainer items = myOperations.getItems(game);
+        ItemContainer items = myOperations.getItems();
         if (items != null) {
             items.markAllAsSeen();
         }
@@ -385,7 +384,7 @@ public class InventoryScreen extends SolUiBaseScreen {
         return myPage;
     }
 
-    public List<SolUiControl> getEquippedItemUIControlsForTutorial(SolGame game) {
+    public List<SolUiControl> getEquippedItemUIControlsForTutorial() {
         List<SolUiControl> controls = new ArrayList<>();
         ItemContainer itemContainer = myOperations.getItems(game);
         if (itemContainer == null) {

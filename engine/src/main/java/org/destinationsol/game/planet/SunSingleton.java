@@ -25,8 +25,6 @@ import org.destinationsol.common.SolColor;
 import org.destinationsol.common.SolMath;
 import org.destinationsol.game.*;
 
-import javax.inject.Inject;
-
 public class SunSingleton {
     public static final float SUN_HOT_RAD = .75f * Const.SUN_RADIUS;
     public static final float GRAV_CONST = 2000;
@@ -36,19 +34,23 @@ public class SunSingleton {
     private final Color gradatingTint;
     private final Color fillTint;
 
-    @Inject
-    SolTime time;
+    private final SolTime time;
+    private final SolCam solCam;
+    private final PlanetManager planetManager;
 
-    SunSingleton() {
+    SunSingleton(SolTime time, SolCam solCam, PlanetManager planetManager) {
+        this.time = time;
+        this.solCam = solCam;
+        this.planetManager = planetManager;
         gradatingTexture = Assets.getAtlasRegion("engine:planetStarCommonGrad");
         whiteTexture = Assets.getAtlasRegion("engine:planetStarCommonWhiteTex");
         gradatingTint = SolColor.col(1, 1);
         fillTint = SolColor.col(1, 1);
     }
 
-    public void draw(SolGame game, GameDrawer drawer) {
-        Vector2 camPos = game.getCam().getPosition();
-        SolSystem sys = game.getPlanetManager().getNearestSystem(camPos);
+    public void draw(GameDrawer drawer) {
+        Vector2 camPos = solCam.getPosition();
+        SolSystem sys = planetManager.getNearestSystem(camPos);
         Vector2 toCam = SolMath.getVec(camPos);
         toCam.sub(sys.getPosition());
         float toCamLen = toCam.len();
@@ -57,7 +59,7 @@ public class SunSingleton {
             gradatingTint.a = MathUtils.clamp(closeness * 4, (float) 0, (float) 1);
             fillTint.a = MathUtils.clamp((closeness - .25f) * 4, (float) 0, (float) 1);
 
-            float sz = 2 * game.getCam().getViewDistance();
+            float sz = 2 * solCam.getViewDistance();
             float gradAngle = SolMath.angle(toCam) + 90;
             drawer.draw(whiteTexture, sz * 2, sz * 2, sz, sz, camPos.x, camPos.y, 0, fillTint);
             drawer.draw(gradatingTexture, sz * 2, sz * 2, sz, sz, camPos.x, camPos.y, gradAngle, gradatingTint);

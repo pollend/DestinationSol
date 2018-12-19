@@ -49,13 +49,11 @@ import java.util.Set;
 
 @dagger.Module
 public class AppModule {
-    private final SolApplication application;
     private final Context context;
     private final SolFileReader reader;
 
 
-    public AppModule(SolApplication application, Context context, SolFileReader solFileReader){
-        this.application = application;
+    public AppModule(Context context, SolFileReader solFileReader){
         this.context = context;
         this.reader = solFileReader;
     }
@@ -78,11 +76,6 @@ public class AppModule {
         return new OggSoundManager(gameOptions);
     }
 
-    @Provides
-    @Singleton
-    public SolApplication provideSolApplication(){
-        return application;
-    }
 
     @Provides
     @Singleton

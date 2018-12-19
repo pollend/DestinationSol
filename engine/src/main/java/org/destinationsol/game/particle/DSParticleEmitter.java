@@ -21,9 +21,10 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.BoundingBox;
-import com.badlogic.gdx.utils.JsonValue;
+import com.badlogic.gdx.utils.Array;
+import org.destinationsol.game.SolTime;
+import org.json.JSONObject;
 import com.google.common.base.Preconditions;
-import org.destinationsol.assets.audio.OggSoundManager;
 import org.destinationsol.assets.audio.OggSoundSet;
 import org.destinationsol.common.NotNull;
 import org.destinationsol.common.SolMath;
@@ -72,9 +73,7 @@ public class DSParticleEmitter {
     private BoundingBox boundingBox;
     private LightSource light;
 
-    private final OggSoundManager soundManager;
-
-    public DSParticleEmitter(@NotNull Vector2 position, @NotNull String trigger, float angleOffset, boolean hasLight, JsonValue effectConfigNode,OggSoundManager soundManager, List<String> sounds) {
+    public DSParticleEmitter(@NotNull Vector2 position, @NotNull String trigger, float angleOffset, boolean hasLight, JSONObject effectConfigNode, List<String> sounds) {
         Preconditions.checkNotNull(position, "position cannot be null");
         this.position = new Vector2(position);
         this.trigger = Preconditions.checkNotNull(trigger, "trigger cannot be null");
@@ -90,19 +89,16 @@ public class DSParticleEmitter {
         relativePosition = null;
         originalRelativePosition = null;
         relativeAngle = 0f;
-        this.soundManager = soundManager;
     }
 
-    public DSParticleEmitter(OggSoundManager soundManager, DSParticleEmitter particleEmitter, SolShip ship) {
-        this.soundManager = soundManager;
-
+    public DSParticleEmitter( DSParticleEmitter particleEmitter, SolShip ship) {
         this.angleOffset = particleEmitter.getAngleOffset();
         this.hasLight = particleEmitter.getHasLight();
         this.trigger = particleEmitter.getTrigger();
         this.position = particleEmitter.getPosition();
         this.config = particleEmitter.getEffectConfig();
         if (!particleEmitter.getWorkSounds().isEmpty()) {
-            this.workSoundSet = new OggSoundSet(soundManager, particleEmitter.getWorkSounds());
+            this.workSoundSet = new OggSoundSet(game.getSoundManager(), particleEmitter.getWorkSounds());
         } else {
             this.workSoundSet = null;
         }
@@ -112,10 +108,8 @@ public class DSParticleEmitter {
         initialiseEmitter(config, -1, DrawableLevel.PART_BG_0, position, true, shipPos, shipSpeed, angleOffset, hasLight);
     }
 
-    public DSParticleEmitter(EffectConfig config, float size, DrawableLevel drawableLevel, Vector2 relativePosition, boolean inheritsSpeed, Vector2 basePosition, Vector2 baseSpeed,
-                             float relativeAngle, OggSoundManager soundManager) {
-        this.soundManager = soundManager;
-        initialiseEmitter(config, size, drawableLevel, relativePosition, inheritsSpeed, basePosition, baseSpeed,
+    public DSParticleEmitter(EffectConfig config, float size, DrawableLevel drawableLevel, Vector2 relativePosition, boolean inheritsSpeed, Vector2 basePosition, Vector2 baseSpeed, float relativeAngle) {
+        initialiseEmitter(config, size, drawableLevel, relativePosition, inheritsSpeed, game, basePosition, baseSpeed,
                 relativeAngle, false);
     }
 
@@ -152,15 +146,15 @@ public class DSParticleEmitter {
             ParticleEmitter.ScaledNumericValue velocity = particleEmitter.getVelocity();
             velocity.setHigh(velocity.getHighMin() * size, velocity.getHighMax() * size);
             areaSize = 0;
-        } else if (JUMP_SIZE_THRESHOLD < particleEmitter.getScale().getHighMax()) { // large scale
-            ParticleEmitter.ScaledNumericValue scale = particleEmitter.getScale();
+        } else if (JUMP_SIZE_THRESHOLD < particleEmitter.getXScale().getHighMax()) { // large scale
+            ParticleEmitter.ScaledNumericValue scale = particleEmitter.getXScale();
             scale.setHigh(scale.getHighMin() * size, scale.getHighMax() * size);
             areaSize = 0;
         } else {
             areaSize = size;
         }
 
-        particleEmitter.setSprite(new Sprite(config.tex));
+        particleEmitter.setSprites(new Array<Sprite>(new Sprite[] { new Sprite(config.tex)}));
         float[] tint = particleEmitter.getTint().getColors();
         tint[0] = config.tint.r;
         tint[1] = config.tint.g;
@@ -198,7 +192,7 @@ public class DSParticleEmitter {
         to.setLow(from.getLowMin() + diff, from.getLowMax() + diff);
     }
 
-    private void updateSpeed(SolGame game, Vector2 baseSpeed, Vector2 basePosition) {
+    private void updateSpeed(SolTime time, Vector2 baseSpeed, Vector2 basePosition) {
         if ((isContinuous() && !isWorking()) || floatedUp) {
             return;
         } else {
@@ -217,7 +211,7 @@ public class DSParticleEmitter {
         SolMath.free(speed);
     }
 
-    public void onRemove(SolGame game, Vector2 basePos) {
+    public void onRemove(Vector2 basePos) {
         PartMan partMan = game.getPartMan();
         partMan.finish(game, this, basePos);
     }
@@ -240,7 +234,7 @@ public class DSParticleEmitter {
 
     public void setWorking(boolean working, SolShip ship) {
         if (working && workSoundSet != null) {
-            soundManager.play(game, workSoundSet, position, ship);
+            game.getSoundManager().play(game, workSoundSet, position, ship);
         }
         light.update(working, relativeAngle, game);
 
@@ -336,13 +330,13 @@ public class DSParticleEmitter {
 
     public class ParticleEmitterDrawable implements Drawable {
 
-        public void update(SolGame game, SolObject object) {
+        public void update(SolTime solTime, SolObject object) {
 
-            maybeSwitchRelativePosition(game);
+            maybeSwitchRelativePosition(solTime);
             Vector2 basePos = object.getPosition();
             float baseAngle = object.getAngle();
             SolMath.toWorld(position, relativePosition, baseAngle, basePos);
-            float timeStep = game.getTimeStep();
+            float timeStep = solTime.getTimeStep();
 
             // fix speed bug
             position.x -= particleEmitter.getWind().getLowMin() * timeStep;
@@ -356,19 +350,18 @@ public class DSParticleEmitter {
             particleEmitter.update(timeStep);
 
             if (boundingBoxRecalcAwait > 0) {
-                boundingBoxRecalcAwait -= game.getTimeStep();
+                boundingBoxRecalcAwait -= solTime.getTimeStep();
             } else {
                 boundingBoxRecalcAwait = MAX_BOUNDINGBOX_RECALC_AWAIT;
                 particleEmitter.getBoundingBox();
             }
         }
 
-        private void maybeSwitchRelativePosition(SolGame game) {
+        private void maybeSwitchRelativePosition(SolTime solTime) {
             if (areaSize == 0) {
                 return;
             }
-            float timeStep = game.getTimeStep();
-            timeSinceLastPositionChange += timeStep;
+            timeSinceLastPositionChange += solTime.getTimeStep();
             if (!working || timeSinceLastPositionChange < MAX_TIME_BETWEEN_POSITION_CHANGE) {
                 return;
             }
@@ -401,7 +394,7 @@ public class DSParticleEmitter {
         }
 
         @Override
-        public void draw(GameDrawer drawer, SolGame game) {
+        public void draw(GameDrawer drawer) {
             drawer.draw(particleEmitter, config.tex, config.emitter.additive);
         }
 

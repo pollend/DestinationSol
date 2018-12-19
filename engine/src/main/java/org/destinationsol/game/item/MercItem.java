@@ -18,7 +18,6 @@ package org.destinationsol.game.item;
 
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import org.destinationsol.game.ShipConfig;
-import org.destinationsol.game.SolGame;
 import org.destinationsol.game.ship.SolShip;
 
 public class MercItem implements SolItem {
@@ -58,8 +57,9 @@ public class MercItem implements SolItem {
         return false;
     }
 
+
     @Override
-    public TextureAtlas.AtlasRegion getIcon(SolGame game) {
+    public TextureAtlas.AtlasRegion getIcon() {
         return config.hull.getIcon();
     }
 

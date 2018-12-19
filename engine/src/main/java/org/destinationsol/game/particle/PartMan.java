@@ -20,8 +20,9 @@ import com.badlogic.gdx.math.Vector2;
 import org.destinationsol.common.SolColor;
 import org.destinationsol.common.SolMath;
 import org.destinationsol.common.SolRandom;
+import org.destinationsol.game.GameColors;
 import org.destinationsol.game.ObjectManager;
-import org.destinationsol.game.SolGame;
+import org.destinationsol.game.SolCam;
 import org.destinationsol.game.drawables.Drawable;
 import org.destinationsol.game.drawables.DrawableLevel;
 import org.destinationsol.game.drawables.DrawableObject;
@@ -41,20 +42,26 @@ public class PartMan {
     @Inject
     ObjectManager objectManager;
 
+    @Inject
+    GameColors gameColors;
+
+    @Inject
+    SolCam solCam;
+
     public PartMan() {
     }
 
-    public void finish(SolGame game, DSParticleEmitter emitter, Vector2 basePosition) {
+    public void finish(DSParticleEmitter emitter, Vector2 basePosition) {
         if (emitter.isContinuous()) {
             emitter.setWorking(false);
         }
         ArrayList<Drawable> drawables = new ArrayList<>();
         drawables.addAll(emitter.getDrawables());
         DrawableObject drawableObject = new DrawableObject(drawables, new Vector2(basePosition), new Vector2(), null, true, false);
-        game.getObjectManager().addObjDelayed(drawableObject);
+        objectManager.addObjDelayed(drawableObject);
     }
 
-    public void blinks(Vector2 position, SolGame game, float size) {
+    public void blinks(Vector2 position, float size) {
         int count = (int) (SZ_TO_BLINK_COUNT * size * size);
         for (int i = 0; i < count; i++) {
             Vector2 lightPos = new Vector2();
@@ -62,8 +69,8 @@ public class PartMan {
             lightPos.add(position);
             float lightSize = SolRandom.randomFloat(.5f, 1) * EXPL_LIGHT_MAX_SZ;
             float fadeTime = SolRandom.randomFloat(.5f, 1) * EXPL_LIGHT_MAX_FADE_TIME;
-            LightObject light = new LightObject(lightSize, true, 1, lightPos, fadeTime, game.getCols().fire);
-            game.getObjectManager().addObjDelayed(light);
+            LightObject light = new LightObject(lightSize, true, 1, lightPos, fadeTime, gameColors.fire);
+            objectManager.addObjDelayed(light);
         }
     }
 
@@ -88,7 +95,7 @@ public class PartMan {
     }
 
     public RectSprite blip(Vector2 position, float angle, float size, float fadeTime, Vector2 speed, TextureAtlas.AtlasRegion texture) {
-        RectSprite sprite = new RectSprite(texture, size, 0, 0, new Vector2(), DrawableLevel.PART_FG_0, angle, 0, SolColor.WHITE, true);
+        RectSprite sprite = new RectSprite(texture, size, 0, 0, new Vector2(), DrawableLevel.PART_FG_0, angle, 0, SolColor.WHITE, true,solCam);
         ArrayList<Drawable> drawables = new ArrayList<>();
         drawables.add(sprite);
         DrawableObject o = new DrawableObject(drawables, new Vector2(position), new Vector2(speed), null, false, false);

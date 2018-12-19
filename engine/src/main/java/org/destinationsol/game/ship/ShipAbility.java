@@ -17,12 +17,12 @@
 package org.destinationsol.game.ship;
 
 import org.destinationsol.game.AbilityCommonConfig;
-import org.destinationsol.game.SolGame;
+import org.destinationsol.game.SolTime;
 
 public interface ShipAbility {
-    boolean update(SolGame game, SolShip owner, boolean tryToUse);
+    boolean update(SolTime solTime, SolShip owner, boolean tryToUse);
 
-    public AbilityConfig getConfig();
+    AbilityConfig getConfig();
 
     AbilityCommonConfig getCommonConfig();
 

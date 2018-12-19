@@ -17,6 +17,7 @@
 package org.destinationsol.game.item;
 
 import org.destinationsol.game.SolGame;
+import org.destinationsol.game.SolTime;
 
 import java.util.List;
 
@@ -33,9 +34,9 @@ public class TradeContainer {
         myItems = new ItemContainer();
     }
 
-    public void update(SolGame game) {
+    public void update(SolTime solTime) {
         if (0 < myAwait) {
-            myAwait -= game.getTimeStep();
+            myAwait -= solTime.getTimeStep();
             return;
         }
 

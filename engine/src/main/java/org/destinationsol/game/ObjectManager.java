@@ -53,10 +53,6 @@ public class ObjectManager implements UpdateAwareSystem{
     SolCam solCam;
 
     @Inject
-    SolGame solGame;
-
-
-    @Inject
     DrawableManager drawableManager;
 
     @Inject
@@ -135,7 +131,7 @@ public class ObjectManager implements UpdateAwareSystem{
         for (Iterator<FarObjData> it = myFarObjs.iterator(); it.hasNext(); ) {
             FarObjData fod = it.next();
             FarObject fo = fod.fo;
-            fo.update();
+            fo.update(time);
             SolMath.checkVectorsTaken(fo);
             if (fo.shouldBeRemoved()) {
                 removeFo(it, fo);
@@ -236,23 +232,23 @@ public class ObjectManager implements UpdateAwareSystem{
         return myFarBeginDist < dst;
     }
 
-    public void drawDebug(GameDrawer drawer, SolGame game) {
+    public void drawDebug(GameDrawer drawer) {
         if (DebugOptions.DRAW_OBJ_BORDERS) {
-            drawDebug0(drawer, game);
+            drawDebug0(drawer);
         }
         if (DebugOptions.OBJ_INFO) {
-            drawDebugStrings(drawer, game);
+            drawDebugStrings(drawer);
         }
 
         if (DebugOptions.DRAW_PHYSIC_BORDERS) {
             drawer.end();
-            myDr.render(myWorld, game.getCam().getMtx());
+            myDr.render(myWorld, solCam.getMtx());
             drawer.begin();
         }
     }
 
-    private void drawDebugStrings(GameDrawer drawer, SolGame game) {
-        float fontSize = game.getCam().getDebugFontSize();
+    private void drawDebugStrings(GameDrawer drawer) {
+        float fontSize = solCam.getDebugFontSize();
         for (SolObject o : myObjs) {
             Vector2 position = o.getPosition();
             String ds = o.toDebugString();
@@ -270,10 +266,9 @@ public class ObjectManager implements UpdateAwareSystem{
         }
     }
 
-    private void drawDebug0(GameDrawer drawer, SolGame game) {
-        SolCam cam = game.getCam();
-        float lineWidth = cam.getRealLineWidth();
-        float vh = cam.getViewHeight();
+    private void drawDebug0(GameDrawer drawer) {
+        float lineWidth = solCam.getRealLineWidth();
+        float vh = solCam.getViewHeight();
         for (SolObject o : myObjs) {
             Vector2 position = o.getPosition();
             float r = getRadius(o);
@@ -284,8 +279,8 @@ public class ObjectManager implements UpdateAwareSystem{
             FarObject fo = fod.fo;
             drawer.drawCircle(drawer.debugWhiteTexture, fo.getPosition(), fo.getRadius(), DebugCol.OBJ_FAR, lineWidth, vh);
         }
-        drawer.drawCircle(drawer.debugWhiteTexture, cam.getPosition(), myFarBeginDist, SolColor.WHITE, lineWidth, vh);
-        drawer.drawCircle(drawer.debugWhiteTexture, cam.getPosition(), myFarEndDist, SolColor.WHITE, lineWidth, vh);
+        drawer.drawCircle(drawer.debugWhiteTexture, solCam.getPosition(), myFarBeginDist, SolColor.WHITE, lineWidth, vh);
+        drawer.drawCircle(drawer.debugWhiteTexture, solCam.getPosition(), myFarEndDist, SolColor.WHITE, lineWidth, vh);
     }
 
     public List<SolObject> getObjects() {

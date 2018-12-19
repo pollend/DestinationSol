@@ -21,6 +21,7 @@ import com.badlogic.gdx.math.Vector2;
 import org.destinationsol.common.Consumed;
 import org.destinationsol.common.SolMath;
 import org.destinationsol.game.GameDrawer;
+import org.destinationsol.game.SolCam;
 import org.destinationsol.game.SolObject;
 import org.destinationsol.game.SolTime;
 
@@ -44,11 +45,13 @@ public class RectSprite implements Drawable {
     private float angle;
     private boolean isEnabled;
 
+    private final SolCam solCam;
+
     /**
      * consumes relPos, doesn't consume Color
      */
     public RectSprite(TextureAtlas.AtlasRegion tex, float texSz, float origPercX, float origPercY, @Consumed Vector2 relativePosition,
-                      DrawableLevel level, float relativeAngle, float rotationSpeed, Color tint, boolean additive) {
+                      DrawableLevel level, float relativeAngle, float rotationSpeed, Color tint, boolean additive,SolCam solCam) {
         if (tex == null) {
             throw new AssertionError("tex is null");
         }
@@ -68,6 +71,8 @@ public class RectSprite implements Drawable {
 
         setTextureSize(texSz);
         isAdditive = additive;
+
+        this.solCam = solCam;
     }
 
     public void setTextureSize(float textureSize) {
@@ -131,7 +136,7 @@ public class RectSprite implements Drawable {
         float x = position.x;
         float y = position.y;
         if (level.depth != 1) {
-            Vector2 camPosition = game.getCam().getPosition();
+            Vector2 camPosition = solCam.getPosition();
             x = (x - camPosition.x) / level.depth + camPosition.x;
             y = (y - camPosition.y) / level.depth + camPosition.y;
         }

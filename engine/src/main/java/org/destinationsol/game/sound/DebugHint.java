@@ -19,6 +19,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.TimeUtils;
 import org.destinationsol.common.DebugCol;
 import org.destinationsol.game.GameDrawer;
+import org.destinationsol.game.SolCam;
 import org.destinationsol.game.SolGame;
 import org.destinationsol.game.SolObject;
 
@@ -34,7 +35,10 @@ public class DebugHint {
     private SolObject myOwner;
     private String myMsg;
 
-    public DebugHint(SolObject owner, Vector2 position) {
+    private final SolCam solCam;
+    public DebugHint(SolCam solCam, SolObject owner, Vector2 position) {
+        this.solCam = solCam;
+
         myOwner = owner;
         this.position = new Vector2(position);
         myMsgs = new HashMap<>();
@@ -58,7 +62,7 @@ public class DebugHint {
 
     public void update() {
         if (myOwner != null) {
-            if (myOwner.shouldBeRemoved(game)) {
+            if (myOwner.shouldBeRemoved()) {
                 myOwner = null;
             } else {
                 position.set(myOwner.getPosition());
@@ -84,8 +88,8 @@ public class DebugHint {
         return myMsgs.isEmpty();
     }
 
-    public void draw(GameDrawer drawer, SolGame game) {
-        float fontSz = game.getCam().getDebugFontSize();
+    public void draw(GameDrawer drawer) {
+        float fontSz = solCam.getDebugFontSize();
         drawer.drawString(myMsg, position.x, position.y, fontSz, false, DebugCol.HINT);
     }
 }

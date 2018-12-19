@@ -21,6 +21,7 @@ import com.badlogic.gdx.utils.JsonValue;
 import org.destinationsol.game.AbilityCommonConfig;
 import org.destinationsol.game.SolGame;
 import org.destinationsol.game.SolObject;
+import org.destinationsol.game.SolTime;
 import org.destinationsol.game.drawables.DrawableLevel;
 import org.destinationsol.game.item.ItemManager;
 import org.destinationsol.game.item.SolItem;
@@ -50,7 +51,7 @@ public class EmWave implements ShipAbility {
     }
 
     @Override
-    public boolean update(SolGame game, SolShip owner, boolean tryToUse) {
+    public boolean update(SolTime solTime, SolShip owner, boolean tryToUse) {
         if (!tryToUse) {
             return false;
         }
@@ -72,7 +73,7 @@ public class EmWave implements ShipAbility {
             float duration = perc * config.duration;
             oShip.disableControls(duration, game);
         }
-        DSParticleEmitter src = new DSParticleEmitter(config.cc.effect, MAX_RADIUS, DrawableLevel.PART_BG_0, new Vector2(), true, game, ownerPos, Vector2.Zero, 0, soundManager);
+        DSParticleEmitter src = new DSParticleEmitter(config.cc.effect, MAX_RADIUS, DrawableLevel.PART_BG_0, new Vector2(), true, game, ownerPos, Vector2.Zero, 0, soundManager, planetManager, solTime);
         game.getPartMan().finish(game, src, ownerPos);
         return true;
     }

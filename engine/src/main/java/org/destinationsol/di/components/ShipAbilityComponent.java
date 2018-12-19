@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.destinationsol.di;
+package org.destinationsol.di.components;
 
-import dagger.Module;
+import dagger.Component;
 
-@Module
-public class DrawableObjectModule {
+@Component(modules = {})
+public interface ShipAbilityComponent {
 }

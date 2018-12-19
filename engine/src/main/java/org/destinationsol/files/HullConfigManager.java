@@ -19,13 +19,18 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.SerializationException;
 import org.destinationsol.assets.Assets;
+import org.destinationsol.assets.audio.OggSoundManager;
 import org.destinationsol.assets.json.Json;
 import org.destinationsol.common.SolException;
 import org.destinationsol.common.SolMath;
 import org.destinationsol.game.AbilityCommonConfigs;
+import org.destinationsol.game.SolCam;
+import org.destinationsol.game.SolTime;
 import org.destinationsol.game.item.Engine;
 import org.destinationsol.game.item.ItemManager;
 import org.destinationsol.game.particle.DSParticleEmitter;
+import org.destinationsol.game.particle.PartMan;
+import org.destinationsol.game.planet.PlanetManager;
 import org.destinationsol.game.ship.AbilityConfig;
 import org.destinationsol.game.ship.EmWave;
 import org.destinationsol.game.ship.KnockBack;
@@ -47,6 +52,17 @@ public final class HullConfigManager {
     private final AbilityCommonConfigs abilityCommonConfigs;
     private final Map<String, HullConfig> nameToConfigMap;
     private final Map<HullConfig, String> configToNameMap;
+
+    @Inject
+    SolTime solTime;
+    @Inject
+    SolCam solCam;
+    @Inject
+    OggSoundManager soundManager;
+    @Inject
+    PlanetManager planetManager;
+    @Inject
+    PartMan partMan;
 
     public HullConfigManager(ItemManager itemManager, AbilityCommonConfigs abilityCommonConfigs) {
         this.itemManager = itemManager;
@@ -153,7 +169,7 @@ public final class HullConfigManager {
                 workSounds = Arrays.asList(particleEmitterNode.get("workSounds").asStringArray());
             }
 
-            configData.particleEmitters.add(new DSParticleEmitter(position, trigger, angleOffset, hasLight, particleNode, workSounds));
+            configData.particleEmitters.add(new DSParticleEmitter(position, trigger, angleOffset, hasLight, particleNode, workSounds,soundManager,solCam,planetManager,solTime));
         }
     }
 
@@ -208,7 +224,7 @@ public final class HullConfigManager {
             return SloMo.Config.load(abNode, manager, commonConfigs.sloMo);
         }
         if ("teleport".equals(type)) {
-            return Teleport.Config.load(abNode, manager, commonConfigs.teleport);
+            return Teleport.Config.load(abNode, manager, commonConfigs.teleport,partMan);
         }
         if ("knockBack".equals(type)) {
             return KnockBack.Config.load(abNode, manager, commonConfigs.knockBack);

@@ -25,18 +25,21 @@ import org.destinationsol.game.SolGame;
 
 public class PlanetCoreSingleton {
     private final TextureAtlas.AtlasRegion texture;
+    private final SolCam solCam;
+    private final PlanetManager planetManager;
 
-    PlanetCoreSingleton() {
+    PlanetCoreSingleton(SolCam solCam,PlanetManager planetManager) {
+        this.solCam = solCam;
+        this.planetManager = planetManager;
         texture = Assets.getAtlasRegion("engine:planetStarCommonPlanetCore");
     }
 
-    public void draw(SolGame game, GameDrawer drawer) {
-        SolCam cam = game.getCam();
-        Vector2 camPosition = cam.getPosition();
-        Planet nearestPlanet = game.getPlanetManager().getNearestPlanet();
+    public void draw(GameDrawer drawer) {
+        Vector2 camPosition = solCam.getPosition();
+        Planet nearestPlanet = planetManager.getNearestPlanet();
         Vector2 planetPosition = nearestPlanet.getPosition();
         float distanceToCam = camPosition.dst(planetPosition);
-        float viewDistance = cam.getViewDistance();
+        float viewDistance = solCam.getViewDistance();
         float minGroundHeight = nearestPlanet.getMinGroundHeight();
         if (distanceToCam < minGroundHeight + viewDistance) {
             drawer.draw(texture, minGroundHeight * 2, minGroundHeight * 2, minGroundHeight, minGroundHeight, planetPosition.x, planetPosition.y, nearestPlanet.getAngle(), SolColor.WHITE);

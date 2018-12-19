@@ -17,7 +17,6 @@
 package org.destinationsol.game.item;
 
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import org.destinationsol.game.SolGame;
 
 public class MoneyItem implements SolItem {
     public static final int AMT = 10;
@@ -27,9 +26,12 @@ public class MoneyItem implements SolItem {
     private final float amount;
     private final SolItemType itemType;
 
-    MoneyItem(float amt, SolItemType itemType) {
+    private final ItemManager itemManager;
+
+    MoneyItem(float amt, SolItemType itemType,ItemManager itemManager) {
         amount = amt;
         this.itemType = itemType;
+        this.itemManager=itemManager;
     }
 
     @Override
@@ -49,7 +51,7 @@ public class MoneyItem implements SolItem {
 
     @Override
     public MoneyItem copy() {
-        return new MoneyItem(amount, itemType);
+        return new MoneyItem(amount, itemType,itemManager);
     }
 
     @Override
@@ -58,15 +60,14 @@ public class MoneyItem implements SolItem {
     }
 
     @Override
-    public TextureAtlas.AtlasRegion getIcon(SolGame game) {
-        ItemManager im = game.getItemMan();
+    public TextureAtlas.AtlasRegion getIcon() {
         if (amount == BIG_AMT) {
-            return im.bigMoneyIcon;
+            return itemManager.bigMoneyIcon;
         }
         if (amount == MED_AMT) {
-            return im.medMoneyIcon;
+            return itemManager.medMoneyIcon;
         }
-        return im.moneyIcon;
+        return itemManager.moneyIcon;
     }
 
     @Override

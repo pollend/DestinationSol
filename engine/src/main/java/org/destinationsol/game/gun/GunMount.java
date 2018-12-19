@@ -20,7 +20,6 @@ import com.badlogic.gdx.math.Vector2;
 import org.destinationsol.Const;
 import org.destinationsol.common.SolMath;
 import org.destinationsol.game.Faction;
-import org.destinationsol.game.SolGame;
 import org.destinationsol.game.SolObject;
 import org.destinationsol.game.drawables.Drawable;
 import org.destinationsol.game.input.Shooter;
@@ -44,12 +43,12 @@ public class GunMount {
         myFixed = !gunSlot.allowsRotation();
     }
 
-    public void update(ItemContainer ic, SolGame game, float shipAngle, SolShip creator, boolean shouldShoot, SolShip nearestEnemy, Faction faction) {
+    public void update(ItemContainer ic, float shipAngle, SolShip creator, boolean shouldShoot, SolShip nearestEnemy, Faction faction) {
         if (myGun == null) {
             return;
         }
         if (!ic.contains(myGun.getItem())) {
-            setGun(game, creator, null, false, 0);
+            setGun(creator, null, false, 0);
             return;
         }
 
@@ -85,7 +84,7 @@ public class GunMount {
         return myGun == null ? null : myGun.getItem();
     }
 
-    public void setGun(SolGame game, SolObject o, Gun gun, boolean underShip, int slotNr) {
+    public void setGun(SolObject o, Gun gun, boolean underShip, int slotNr) {
         List<Drawable> drawables = o.getDrawables();
         if (myGun != null) {
             List<Drawable> dras1 = myGun.getDrawables();

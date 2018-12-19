@@ -54,7 +54,7 @@ public class AbilityCharge implements SolItem {
     }
 
     @Override
-    public TextureAtlas.AtlasRegion getIcon(SolGame game) {
+    public TextureAtlas.AtlasRegion getIcon() {
         return config.icon;
     }
 

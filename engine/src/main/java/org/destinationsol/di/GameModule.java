@@ -29,7 +29,6 @@ import org.destinationsol.di.components.SolGameComponent;
 import org.destinationsol.di.scope.GameScope;
 import org.destinationsol.files.HullConfigManager;
 import org.destinationsol.game.*;
-import org.destinationsol.game.asteroid.AsteroidBuilder;
 import org.destinationsol.game.chunk.ChunkFiller;
 import org.destinationsol.game.chunk.ChunkManager;
 import org.destinationsol.game.context.Context;
@@ -37,15 +36,16 @@ import org.destinationsol.game.drawables.DrawableDebugger;
 import org.destinationsol.game.drawables.DrawableManager;
 import org.destinationsol.game.farBg.FarBackgroundManagerOld;
 import org.destinationsol.game.item.ItemManager;
-import org.destinationsol.game.item.LootBuilder;
 import org.destinationsol.game.particle.EffectTypes;
 import org.destinationsol.game.particle.PartMan;
 import org.destinationsol.game.particle.SpecialEffects;
 import org.destinationsol.game.planet.PlanetManager;
 import org.destinationsol.game.screens.GameScreens;
 import org.destinationsol.game.ship.ShipBuilder;
+import org.destinationsol.game.ship.SolShip;
 import org.destinationsol.ui.TutorialManager;
 
+import javax.inject.Named;
 import java.util.Optional;
 
 @Module
@@ -93,8 +93,8 @@ public class GameModule {
 
     @GameScope
     @Provides
-    static PlanetManager providePlanetManager(ObjectManager objectManager,HullConfigManager hullConfigs, GameColors cols, ItemManager itemManager,SolCam cam) {
-        return new PlanetManager(objectManager,hullConfigs, cols, itemManager,cam);
+    static PlanetManager providePlanetManager(SolTime time,ObjectManager objectManager,HullConfigManager hullConfigs, GameColors cols, ItemManager itemManager,SolCam cam) {
+        return new PlanetManager(time,objectManager,hullConfigs, cols, itemManager,cam);
     }
 
     @GameScope
@@ -145,20 +145,8 @@ public class GameModule {
 
     @Provides
     @GameScope
-    static AsteroidBuilder provideAsteroidBuilder() {
-        return new AsteroidBuilder();
-    }
-
-    @Provides
-    @GameScope
-    static LootBuilder provideLootBuilder() {
-        return new LootBuilder();
-    }
-
-    @Provides
-    @GameScope
-    static ShardBuilder provideShardBuilder() {
-        return new ShardBuilder();
+    static Hero provideHero(@Named("hero") SolShip shipHero) {
+        return new Hero(shipHero);
     }
 
     @Provides
@@ -241,8 +229,8 @@ public class GameModule {
 
     @GameScope
     @Provides
-    static SpecialEffects provideSpecialEffects(EffectTypes effectTypes, GameColors colors) {
-        return new SpecialEffects(effectTypes, colors);
+    static SpecialEffects provideSpecialEffects(SolCam cam,OggSoundManager soundManager, PlanetManager planetManager, PartMan partMan, EffectTypes effectTypes, GameColors colors) {
+        return new SpecialEffects(cam,soundManager,planetManager,partMan,effectTypes, colors);
     }
 
     @GameScope

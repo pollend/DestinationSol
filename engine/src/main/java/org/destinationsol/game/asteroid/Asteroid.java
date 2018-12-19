@@ -19,20 +19,35 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.CircleShape;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
+import org.destinationsol.Const;
+import org.destinationsol.assets.Assets;
+import org.destinationsol.assets.audio.OggSoundManager;
+import org.destinationsol.assets.audio.SpecialSounds;
+import org.destinationsol.common.SolColor;
 import org.destinationsol.common.SolMath;
 import org.destinationsol.common.SolRandom;
+import org.destinationsol.game.CollisionMeshLoader;
 import org.destinationsol.game.DmgType;
 import org.destinationsol.game.FarObject;
+import org.destinationsol.game.ObjectManager;
 import org.destinationsol.game.RemoveController;
-import org.destinationsol.game.SolGame;
 import org.destinationsol.game.SolObject;
+import org.destinationsol.game.SolTime;
 import org.destinationsol.game.drawables.Drawable;
+import org.destinationsol.game.drawables.DrawableLevel;
+import org.destinationsol.game.drawables.RectSprite;
+import org.destinationsol.game.item.ItemManager;
 import org.destinationsol.game.item.Loot;
 import org.destinationsol.game.item.MoneyItem;
 import org.destinationsol.game.item.SolItem;
 import org.destinationsol.game.particle.DSParticleEmitter;
+import org.destinationsol.game.particle.PartMan;
 import org.destinationsol.game.particle.SpecialEffects;
 import org.destinationsol.game.planet.Planet;
+import org.destinationsol.game.planet.PlanetManager;
 import org.destinationsol.game.planet.TileObject;
 
 import javax.inject.Inject;
@@ -61,21 +76,37 @@ public class Asteroid implements SolObject {
     private float life;
     private float size;
 
-    @Inject
-    SpecialEffects specialEffects;
+    private final OggSoundManager soundManager;
+    private final PartMan partMan;
+    private final SpecialEffects specialEffects;
+    private final PlanetManager planetManager;
+    private final  SpecialSounds specialSounds;
+    private final Loot.Factory lootFactory;
+    private final Asteroid.Factory asteroidFactory;
+    private final ObjectManager objectManager;
+    private final ItemManager itemManager;
 
-    Asteroid(TextureAtlas.AtlasRegion tex, Body body, float size, RemoveController removeController, ArrayList<Drawable> drawables) {
+    Asteroid(SpecialSounds specialSounds, Loot.Factory lootFactory, Factory asteroidFactory,ItemManager itemManager, ObjectManager objectManager, PlanetManager planetManager, PartMan partMan, OggSoundManager soundManager, SpecialEffects specialEffects, TextureAtlas.AtlasRegion tex, Body body, float size, RemoveController removeController, ArrayList<Drawable> drawables) {
+        this.itemManager = itemManager;
+        this.objectManager = objectManager;
+        this.planetManager = planetManager;
+        this.specialEffects = specialEffects;
+        this.partMan = partMan;
+        this.soundManager= soundManager;
         texture = tex;
         this.removeController = removeController;
         this.drawables = drawables;
         this.body = body;
         this.size = size;
         life = SZ_TO_LIFE * size;
+        this.specialSounds = specialSounds;
+        this.lootFactory = lootFactory;
+        this.asteroidFactory = asteroidFactory;
         position = new Vector2();
         speed = new Vector2();
         mass = body.getMass();
         setParamsFromBody();
-        List<DSParticleEmitter> effects = specialEffects.buildBodyEffs(size / 2, game, position, speed);
+        List<DSParticleEmitter> effects = specialEffects.buildBodyEffs(size / 2, position, speed);
         smokeSource = effects.get(0);
         fireSource = effects.get(1);
         this.drawables.addAll(smokeSource.getDrawables());
@@ -109,14 +140,14 @@ public class Asteroid implements SolObject {
     }
 
     @Override
-    public void handleContact(SolObject other, float absImpulse, SolGame game, Vector2 collPos) {
+    public void handleContact(SolObject other, float absImpulse, Vector2 collPos) {
         float dmg;
         if (other instanceof TileObject && MIN_BURN_SZ < size) {
             dmg = life;
         } else {
             dmg = absImpulse / mass / DUR;
         }
-        receiveDmg(dmg, game, collPos, DmgType.CRASH);
+        receiveDmg(dmg, collPos, DmgType.CRASH);
     }
 
     @Override
@@ -135,15 +166,15 @@ public class Asteroid implements SolObject {
     }
 
     @Override
-    public void update(SolGame game) {
-        boolean burning = updateInAtm(game);
+    public void update(SolTime solTime) {
+        boolean burning = updateInAtm(solTime);
         smokeSource.setWorking(burning);
         fireSource.setWorking(burning);
         setParamsFromBody();
     }
 
-    private boolean updateInAtm(SolGame game) {
-        Planet np = game.getPlanetManager().getNearestPlanet();
+    private boolean updateInAtm(SolTime solTime) {
+        Planet np = planetManager.getNearestPlanet();
         float dst = np.getPosition().dst(position);
         if (np.getFullHeight() < dst) {
             return false;
@@ -152,8 +183,8 @@ public class Asteroid implements SolObject {
             return false;
         }
 
-        float dmg = body.getLinearVelocity().len() * SPD_TO_ATM_DMG * game.getTimeStep();
-        receiveDmg(dmg, game, null, DmgType.FIRE);
+        float dmg = body.getLinearVelocity().len() * SPD_TO_ATM_DMG * solTime.getTimeStep();
+        receiveDmg(dmg, null, DmgType.FIRE);
         return true;
     }
 
@@ -169,19 +200,19 @@ public class Asteroid implements SolObject {
     }
 
     @Override
-    public void onRemove(SolGame game) {
-        game.getPartMan().finish(game, smokeSource, position);
-        game.getPartMan().finish(game, fireSource, position);
+    public void onRemove() {
+        partMan.finish(smokeSource, position);
+        partMan.finish(fireSource, position);
         body.getWorld().destroyBody(body);
         if (life <= 0) {
-            game.getSpecialEffects().asteroidDust(game, position, speed, size);
+            specialEffects.asteroidDust( position, speed, size);
             float vol = SolMath.clamp(size / .5f);
-            game.getSoundManager().play(game, game.getSpecialSounds().asteroidCrack, null, this, vol);
-            maybeSplit(game);
+            soundManager.play(specialSounds.asteroidCrack, null, this, vol);
+            maybeSplit();
         }
     }
 
-    private void maybeSplit(SolGame game) {
+    private void maybeSplit() {
         if (MIN_SPLIT_SZ > size) {
             return;
         }
@@ -195,18 +226,18 @@ public class Asteroid implements SolObject {
             SolMath.fromAl(newPos, speedAngle, SolRandom.randomFloat(0, size / 2));
             newPos.add(position);
             float sz = size * SolRandom.randomFloat(.25f, .5f);
-            Asteroid a = game.getAsteroidBuilder().buildNew(game, newPos, speed, sz, removeController);
-            game.getObjectManager().addObjDelayed(a);
+            Asteroid a = asteroidFactory.buildNew(newPos, speed, sz, removeController);
+            objectManager.addObjDelayed(a);
             sclSum += a.size * a.size;
         }
         float thrMoney = size * 40f * SolRandom.randomFloat(.3f, 1);
-        List<MoneyItem> moneyItems = game.getItemMan().moneyToItems(thrMoney);
+        List<MoneyItem> moneyItems = itemManager.moneyToItems(thrMoney);
         for (MoneyItem mi : moneyItems) {
-            throwLoot(game, mi);
+            throwLoot(mi);
         }
     }
 
-    private void throwLoot(SolGame game, SolItem item) {
+    private void throwLoot( SolItem item) {
         float speedAngle = SolRandom.randomFloat(180);
         Vector2 lootSpeed = new Vector2();
         SolMath.fromAl(lootSpeed, speedAngle, SolRandom.randomFloat(0, Loot.MAX_SPD));
@@ -214,14 +245,14 @@ public class Asteroid implements SolObject {
         Vector2 lootPosition = new Vector2();
         SolMath.fromAl(lootPosition, speedAngle, SolRandom.randomFloat(0, size / 2)); // calculate random offset inside asteroid
         lootPosition.add(position); // add offset to asteroid's position
-        Loot l = game.getLootBuilder().build(game, lootPosition, item, lootSpeed, Loot.MAX_LIFE, SolRandom.randomFloat(Loot.MAX_ROT_SPD), null);
-        game.getObjectManager().addObjDelayed(l);
+        Loot l = lootFactory.build( lootPosition, item, lootSpeed, Loot.MAX_LIFE, SolRandom.randomFloat(Loot.MAX_ROT_SPD), null);
+        objectManager.addObjDelayed(l);
     }
 
     @Override
     public void receiveDmg(float dmg, Vector2 position, DmgType dmgType) {
         life -= dmg;
-        game.getSpecialSounds().playHit(game, this, position, dmgType);
+        specialSounds.playHit( this, position, dmgType);
     }
 
     @Override
@@ -230,7 +261,7 @@ public class Asteroid implements SolObject {
     }
 
     @Override
-    public void receiveForce(Vector2 force, SolGame game, boolean acc) {
+    public void receiveForce(Vector2 force, boolean acc) {
         if (acc) {
             force.scl(mass);
         }
@@ -239,6 +270,91 @@ public class Asteroid implements SolObject {
 
     public float getLife() {
         return life;
+    }
+
+    public static class Factory{
+        private static final float DENSITY = 10f;
+        private static final float MAX_A_ROT_SPD = .5f;
+        private static final float MAX_BALL_SZ = .2f;
+        private final CollisionMeshLoader collisionMeshLoader;
+        private final List<TextureAtlas.AtlasRegion> textures;
+
+        private final OggSoundManager soundManager;
+        private final PartMan partMan;
+        private final SpecialEffects specialEffects;
+        private final PlanetManager planetManager;
+        private final  SpecialSounds specialSounds;
+        private final Loot.Factory lootFactory;
+        private final Asteroid.Factory asteroidFactory;
+        private final ObjectManager objectManager;
+        private final ItemManager itemManager;
+
+
+        @Inject
+        public Factory(ObjectManager objectManager, OggSoundManager soundManager, PartMan partMan, SpecialEffects specialEffects, PlanetManager planetManager, SpecialSounds specialSounds, Loot.Factory lootFactory, Factory asteroidFactory, ItemManager itemManager) {
+            collisionMeshLoader = new CollisionMeshLoader(objectManager,"engine:asteroids");
+            this.soundManager = soundManager;
+            this.partMan = partMan;
+            this.specialEffects = specialEffects;
+            this.planetManager = planetManager;
+            this.specialSounds = specialSounds;
+            this.lootFactory = lootFactory;
+            this.asteroidFactory = asteroidFactory;
+            this.itemManager = itemManager;
+            textures = Assets.listTexturesMatching("engine:asteroid_.*");
+            this.objectManager = objectManager;
+        }
+
+        public Body buildBall(Vector2 position, float angle, float rad, float density, boolean sensor) {
+            BodyDef bodyDef = new BodyDef();
+            bodyDef.type = BodyDef.BodyType.DynamicBody;
+            bodyDef.angle = angle * MathUtils.degRad;
+            bodyDef.angularDamping = 0;
+            bodyDef.position.set(position);
+            bodyDef.linearDamping = 0;
+            Body body = objectManager.getWorld().createBody(bodyDef);
+            FixtureDef fixtureDef = new FixtureDef();
+            fixtureDef.density = density;
+            fixtureDef.friction = Const.FRICTION;
+            fixtureDef.shape = new CircleShape();
+            fixtureDef.shape.setRadius(rad);
+            fixtureDef.isSensor = sensor;
+            body.createFixture(fixtureDef);
+            fixtureDef.shape.dispose();
+            return body;
+        }
+
+        // doesn't consume position
+        public Asteroid buildNew(Vector2 position, Vector2 speed, float size, RemoveController removeController) {
+            float rotationSpeed = SolRandom.randomFloat(MAX_A_ROT_SPD);
+            return build(position, SolRandom.randomElement(textures), size, SolRandom.randomFloat(180), rotationSpeed, speed, removeController);
+        }
+
+        // doesn't consume position
+        public FarAsteroid buildNewFar(Vector2 position, Vector2 speed, float size, RemoveController removeController) {
+            float rotationSpeed = SolRandom.randomFloat(MAX_A_ROT_SPD);
+            return new FarAsteroid(SolRandom.randomElement(textures), new Vector2(position), SolRandom.randomFloat(180), removeController, size, new Vector2(speed), rotationSpeed);
+        }
+
+        // doesn't consume position
+        public Asteroid build( Vector2 position, TextureAtlas.AtlasRegion texture, float size, float angle, float rotationSpeed, Vector2 speed, RemoveController removeController) {
+
+            ArrayList<Drawable> drawables = new ArrayList<>();
+            Body body;
+            if (MAX_BALL_SZ < size) {
+                body = collisionMeshLoader.getBodyAndSprite( texture, size, BodyDef.BodyType.DynamicBody, position, angle, drawables, DENSITY, DrawableLevel.BODIES);
+            } else {
+                body = buildBall(position, angle, size / 2, DENSITY, false);
+                RectSprite s = new RectSprite(texture, size, 0, 0, new Vector2(), DrawableLevel.BODIES, 0, 0, SolColor.WHITE, false);
+                drawables.add(s);
+            }
+            body.setAngularVelocity(rotationSpeed);
+            body.setLinearVelocity(speed);
+
+            Asteroid asteroid = new Asteroid(specialSounds,lootFactory,asteroidFactory,itemManager,objectManager,planetManager,partMan,soundManager,specialEffects,texture, body, size, removeController, drawables);
+            body.setUserData(asteroid);
+            return asteroid;
+        }
     }
 }
 

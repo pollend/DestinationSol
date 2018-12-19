@@ -18,6 +18,7 @@ package org.destinationsol.game.sound;
 import com.badlogic.gdx.math.Vector2;
 import org.destinationsol.common.Nullable;
 import org.destinationsol.game.GameDrawer;
+import org.destinationsol.game.SolCam;
 import org.destinationsol.game.SolGame;
 import org.destinationsol.game.SolObject;
 
@@ -29,7 +30,10 @@ public class DebugHintDrawer {
     private final Map<SolObject, DebugHint> myTracedNotes;
     private final Map<Vector2, DebugHint> myFreeNotes;
 
-    public DebugHintDrawer() {
+    private final SolCam solCam;
+
+    public DebugHintDrawer(SolCam solCam) {
+        this.solCam = solCam;
         myTracedNotes = new HashMap<>();
         myFreeNotes = new HashMap<>();
     }
@@ -37,9 +41,9 @@ public class DebugHintDrawer {
     public void add(@Nullable SolObject owner, Vector2 position, String value) {
         DebugHint dh;
         if (owner == null) {
-            dh = myFreeNotes.computeIfAbsent(position, p -> new DebugHint(null, p));
+            dh = myFreeNotes.computeIfAbsent(position, p -> new DebugHint(solCam,null, p));
         } else {
-            dh = myTracedNotes.computeIfAbsent(owner, o -> new DebugHint(o, o.getPosition()));
+            dh = myTracedNotes.computeIfAbsent(owner, o -> new DebugHint(solCam,o, o.getPosition()));
         }
         dh.add(value);
     }
@@ -59,12 +63,12 @@ public class DebugHintDrawer {
         }
     }
 
-    public void draw(GameDrawer drawer, SolGame game) {
+    public void draw(GameDrawer drawer) {
         for (DebugHint n : myTracedNotes.values()) {
-            n.draw(drawer, game);
+            n.draw(drawer);
         }
         for (DebugHint n : myFreeNotes.values()) {
-            n.draw(drawer, game);
+            n.draw(drawer);
         }
     }
 

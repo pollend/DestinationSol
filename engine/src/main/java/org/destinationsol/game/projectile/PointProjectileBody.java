@@ -22,6 +22,7 @@ import org.destinationsol.Const;
 import org.destinationsol.common.SolMath;
 import org.destinationsol.game.SolGame;
 import org.destinationsol.game.SolObject;
+import org.destinationsol.game.SolTime;
 import org.destinationsol.game.ship.SolShip;
 
 public class PointProjectileBody implements ProjectileBody {
@@ -31,17 +32,17 @@ public class PointProjectileBody implements ProjectileBody {
     private final float acceleration;
 
     public PointProjectileBody(float angle, Vector2 muzzlePos, Vector2 gunSpeed, float speedLen,
-                               Projectile projectile, SolGame game, float acceleration) {
+                               Projectile projectile, float acceleration) {
         position = new Vector2(muzzlePos);
         speed = new Vector2();
         SolMath.fromAl(speed, angle, speedLen);
         speed.add(gunSpeed);
-        rayBack = new ProjectileRayBack(projectile, game);
+        rayBack = new ProjectileRayBack(projectile);
         this.acceleration = acceleration;
     }
 
     @Override
-    public void update(SolGame game) {
+    public void update(SolTime time) {
         if (acceleration > 0 && SolMath.canAccelerate(acceleration, speed)) {
             float speedLen = speed.len();
             if (speedLen < Const.MAX_MOVE_SPD) {
@@ -50,7 +51,7 @@ public class PointProjectileBody implements ProjectileBody {
         }
         Vector2 prevPos = SolMath.getVec(position);
         Vector2 diff = SolMath.getVec(speed);
-        diff.scl(game.getTimeStep());
+        diff.scl(time.getTimeStep());
         position.add(diff);
         SolMath.free(diff);
         game.getObjectManager().getWorld().rayCast(rayBack, prevPos, position);
@@ -98,11 +99,9 @@ public class PointProjectileBody implements ProjectileBody {
     private class ProjectileRayBack implements RayCastCallback {
 
         private final Projectile projectile;
-        private final SolGame game;
 
-        private ProjectileRayBack(Projectile projectile, SolGame game) {
+        private ProjectileRayBack(Projectile projectile) {
             this.projectile = projectile;
-            this.game = game;
         }
 
         @Override
@@ -111,7 +110,7 @@ public class PointProjectileBody implements ProjectileBody {
             boolean oIsMassless = o instanceof Projectile && ((Projectile) o).isMassless();
             if (!oIsMassless && projectile.shouldCollide(o, fixture, game.getFactionMan())) {
                 position.set(point);
-                projectile.setObstacle(o, game);
+                projectile.setObstacle(o);
                 return 0;
             }
             return -1;

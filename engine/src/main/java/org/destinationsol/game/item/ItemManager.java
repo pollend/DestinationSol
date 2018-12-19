@@ -56,7 +56,7 @@ public class ItemManager {
         myTypes = new SolItemTypes(soundManager, gameColors);
         projConfigs = new ProjectileConfigs(soundManager, effectTypes, gameColors);
 
-        myRepairExample = new RepairItem(myTypes.repair);
+        myRepairExample = new RepairItem(myTypes.repair,this);
         myM.put(myRepairExample.getCode(), myRepairExample);
 
         myL.addAll(myM.values());
@@ -207,7 +207,7 @@ public class ItemManager {
         } else {
             t = myTypes.money;
         }
-        return new MoneyItem(amt, t);
+        return new MoneyItem(amt, t,this);
     }
 
     public RepairItem getRepairExample() {

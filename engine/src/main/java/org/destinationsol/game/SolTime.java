@@ -81,6 +81,13 @@ public class SolTime {
         DebugCollector.warn(this.paused ? "game paused" : "game resumed");
     }
 
+    public float getTimeFactor() {
+        return timeFactor;
+    }
+
+    public float getTime() {
+        return time;
+    }
 
     private void scaleTimeStep() {
         timeFactor = DebugOptions.GAME_SPEED_MULTIPLIER;

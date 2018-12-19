@@ -27,7 +27,10 @@ import org.destinationsol.common.SolMath;
 import org.destinationsol.game.DmgType;
 import org.destinationsol.game.SolGame;
 import org.destinationsol.game.SolObject;
+import org.destinationsol.game.SolTime;
 import org.destinationsol.game.ship.SolShip;
+
+import javax.inject.Inject;
 
 public class Shield implements SolItem {
     public static final float SIZE_PERC = .7f;
@@ -36,19 +39,23 @@ public class Shield implements SolItem {
     private float myIdleTime;
     private int myEquipped;
 
-    private Shield(Config config) {
+    private final OggSoundManager soundManager;
+
+
+    private Shield(Config config,OggSoundManager soundManager) {
         this.config = config;
+        this.soundManager = soundManager;
         myLife = config.maxLife;
         myIdleTime = config.idleTime;
     }
 
-    private Shield(Config config, int equipped) {
-        this(config);
+    private Shield(OggSoundManager soundManager,Config config, int equipped) {
+        this(config,soundManager);
         myEquipped = equipped;
     }
 
-    public void update(SolGame game, SolObject owner) {
-        float ts = game.getTimeStep();
+    public void update(SolObject owner, SolTime time) {
+        float ts = time.getTimeStep();
         if (myIdleTime >= config.idleTime) {
             if (myLife < config.maxLife) {
                 float regen = config.regenSpeed * ts;
@@ -57,7 +64,7 @@ public class Shield implements SolItem {
         } else {
             myIdleTime += ts;
             if (myIdleTime >= config.idleTime) {
-                game.getSoundManager().play(game, config.regenSound, null, owner);
+                soundManager.play(config.regenSound, null, owner);
             }
         }
     }
@@ -79,7 +86,7 @@ public class Shield implements SolItem {
 
     @Override
     public SolItem copy() {
-        return new Shield(config, myEquipped);
+        return new Shield(soundManager,config, myEquipped);
     }
 
     @Override
@@ -88,7 +95,7 @@ public class Shield implements SolItem {
     }
 
     @Override
-    public TextureAtlas.AtlasRegion getIcon(SolGame game) {
+    public TextureAtlas.AtlasRegion getIcon() {
         return config.icon;
     }
 
@@ -114,7 +121,7 @@ public class Shield implements SolItem {
         return myLife > 0 && dmgType != DmgType.FIRE && dmgType != DmgType.CRASH;
     }
 
-    public void absorb(SolGame game, float dmg, Vector2 position, SolShip ship, DmgType dmgType) {
+    public void absorb(float dmg, Vector2 position, SolShip ship, DmgType dmgType) {
         if (!canAbsorb(dmgType) || dmg <= 0) {
             throw new AssertionError("illegal call to absorb");
         }
@@ -130,7 +137,7 @@ public class Shield implements SolItem {
 
         game.getPartMan().shieldSpark(game, position, ship.getHull(), config.tex, dmg / config.maxLife);
         float volMul = SolMath.clamp(4 * dmg / config.maxLife);
-        game.getSoundManager().play(game, config.absorbSound, null, ship, volMul);
+        soundManager.play(config.absorbSound, null, ship, volMul);
 
     }
 
@@ -160,7 +167,7 @@ public class Shield implements SolItem {
         public final String code;
         public TextureAtlas.AtlasRegion tex;
 
-        private Config(int maxLife, float idleTime, float regenSpeed, float bulletDmgFactor, float energyDmgFactor, float explosionDmgFactor, String displayName, int price,
+        private Config(OggSoundManager soundManager,int maxLife, float idleTime, float regenSpeed, float bulletDmgFactor, float energyDmgFactor, float explosionDmgFactor, String displayName, int price,
                 PlayableSound absorbSound, PlayableSound regenSound,
                 TextureAtlas.AtlasRegion icon, TextureAtlas.AtlasRegion tex, SolItemType itemType, String code) {
             this.maxLife = maxLife;
@@ -177,7 +184,7 @@ public class Shield implements SolItem {
             this.tex = tex;
             this.itemType = itemType;
             this.code = code;
-            example = new Shield(this);
+            example = new Shield(this,soundManager);
             this.desc = makeDesc();
         }
 
@@ -204,7 +211,7 @@ public class Shield implements SolItem {
             TextureAtlas.AtlasRegion tex = Assets.getAtlasRegion(shieldName);
             TextureAtlas.AtlasRegion icon = Assets.getAtlasRegion(shieldName + "Icon");
 
-            Config config = new Config(maxLife, idleTime, regenSpeed, bulletDmgFactor, energyDmgFactor, explosionDmgFactor, displayName, price, absorbSound, regenSound, icon, tex,
+            Config config = new Config(soundManager, maxLife, idleTime, regenSpeed, bulletDmgFactor, energyDmgFactor, explosionDmgFactor, displayName, price, absorbSound, regenSound, icon, tex,
                     types.shield, shieldName);
             itemManager.registerItem(config.example);
         }

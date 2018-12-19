@@ -28,8 +28,10 @@ import org.destinationsol.game.Faction;
 import org.destinationsol.game.FactionManager;
 import org.destinationsol.game.FarObject;
 import org.destinationsol.game.GameDrawer;
+import org.destinationsol.game.SolCam;
 import org.destinationsol.game.SolGame;
 import org.destinationsol.game.SolObject;
+import org.destinationsol.game.SolTime;
 import org.destinationsol.game.drawables.Drawable;
 import org.destinationsol.game.drawables.DrawableLevel;
 import org.destinationsol.game.drawables.RectSprite;
@@ -57,7 +59,7 @@ public class Projectile implements SolObject {
     private SolObject obstacle;
     private boolean wasDamageDealt;
 
-    public Projectile(SolGame game, float angle, Vector2 muzzlePos, Vector2 gunSpeed, Faction faction,
+    public Projectile(SolCam solCam, float angle, Vector2 muzzlePos, Vector2 gunSpeed, Faction faction,
                       ProjectileConfig config, boolean varySpeed) {
         drawables = new ArrayList<>();
         this.config = config;
@@ -66,7 +68,7 @@ public class Projectile implements SolObject {
         if (config.stretch) {
             drawable = new ProjectileDrawable(this, config.tex, config.texSz);
         } else {
-            drawable = new RectSprite(config.tex, config.texSz, config.origin.x, config.origin.y, new Vector2(), DrawableLevel.PROJECTILES, 0, 0, SolColor.WHITE, false);
+            drawable = new RectSprite(config.tex, config.texSz, config.origin.x, config.origin.y, new Vector2(), DrawableLevel.PROJECTILES, 0, 0, SolColor.WHITE, false,solCam);
         }
         drawables.add(drawable);
         float speedLen = config.speedLen;
@@ -74,30 +76,30 @@ public class Projectile implements SolObject {
             speedLen *= SolRandom.randomFloat(.9f, 1.1f);
         }
         if (config.physSize > 0) {
-            body = new BallProjectileBody(game, muzzlePos, angle, this, gunSpeed, speedLen, config);
+            body = new BallProjectileBody(muzzlePos, angle, this, gunSpeed, speedLen, config);
         } else {
-            body = new PointProjectileBody(angle, muzzlePos, gunSpeed, speedLen, this, game, config.acc);
+            body = new PointProjectileBody(angle, muzzlePos, gunSpeed, speedLen, this, config.acc);
         }
         this.faction = faction;
-        bodyEffect = buildEffect(game, config.bodyEffect, DrawableLevel.PART_BG_0, null, true);
-        trailEffect = buildEffect(game, config.trailEffect, DrawableLevel.PART_BG_0, null, false);
+        bodyEffect = buildEffect( config.bodyEffect, DrawableLevel.PART_BG_0, null, true);
+        trailEffect = buildEffect( config.trailEffect, DrawableLevel.PART_BG_0, null, false);
         if (config.lightSz > 0) {
             Color col = SolColor.WHITE;
             if (bodyEffect != null) {
                 col = config.bodyEffect.tint;
             }
-            lightSource = new LightSource(config.lightSz, true, 1f, new Vector2(), col);
+            lightSource = new LightSource(solCam,config.lightSz, true, 1f, new Vector2(), col);
             lightSource.collectDrawables(drawables);
         } else {
             lightSource = null;
         }
     }
 
-    private DSParticleEmitter buildEffect(SolGame game, EffectConfig ec, DrawableLevel drawableLevel, Vector2 position, boolean inheritsSpeed) {
+    private DSParticleEmitter buildEffect(EffectConfig ec, DrawableLevel drawableLevel, Vector2 position, boolean inheritsSpeed) {
         if (ec == null) {
             return null;
         }
-        DSParticleEmitter res = new DSParticleEmitter(ec, -1, drawableLevel, new Vector2(), inheritsSpeed, game, position, body.getSpeed(), 0, soundManager);
+        DSParticleEmitter res = new DSParticleEmitter(ec, -1, drawableLevel, new Vector2(), inheritsSpeed, position, body.getSpeed(), 0);
         if (res.isContinuous()) {
             res.setWorking(true);
             drawables.addAll(res.getDrawables());
@@ -108,17 +110,17 @@ public class Projectile implements SolObject {
     }
 
     @Override
-    public void update(SolGame game) {
-        body.update(game);
+    public void update(SolTime time) {
+        body.update(time);
         if (obstacle != null) {
             if (!wasDamageDealt) {
-                obstacle.receiveDmg(config.dmg, game, body.getPosition(), config.dmgType);
+                obstacle.receiveDmg(config.dmg, body.getPosition(), config.dmgType);
             }
             if (config.density > 0) {
                 obstacle = null;
                 wasDamageDealt = true;
             } else {
-                collided(game);
+                collided();
                 if (config.emTime > 0 && obstacle instanceof SolShip) {
                     ((SolShip) obstacle).disableControls(config.emTime, game);
                 }
@@ -128,11 +130,11 @@ public class Projectile implements SolObject {
         if (lightSource != null) {
             lightSource.update(true, body.getAngle(), game);
         }
-        maybeGuide(game);
+        maybeGuide();
         game.getSoundManager().play(game, config.workSound, null, this);
     }
 
-    private void maybeGuide(SolGame game) {
+    private void maybeGuide() {
         if (config.guideRotationSpeed == 0) {
             return;
         }
@@ -153,7 +155,7 @@ public class Projectile implements SolObject {
         body.changeAngle(diffAngle);
     }
 
-    private void collided(SolGame game) {
+    private void collided() {
         shouldBeRemoved = true;
         Vector2 position = body.getPosition();
         buildEffect(game, config.collisionEffect, DrawableLevel.PART_FG_1, position, false);
@@ -170,7 +172,7 @@ public class Projectile implements SolObject {
     }
 
     @Override
-    public void onRemove(SolGame game) {
+    public void onRemove() {
         Vector2 position = body.getPosition();
         if (bodyEffect != null) {
             game.getPartMan().finish(game, bodyEffect, position);
@@ -186,7 +188,7 @@ public class Projectile implements SolObject {
         if (config.density > 0) {
             return;
         }
-        collided(game);
+        collided();
     }
 
     @Override
@@ -195,8 +197,8 @@ public class Projectile implements SolObject {
     }
 
     @Override
-    public void receiveForce(Vector2 force, SolGame game, boolean acc) {
-        body.receiveForce(force, game, acc);
+    public void receiveForce(Vector2 force, boolean acc) {
+        body.receiveForce(force, acc);
     }
 
     @Override
@@ -225,8 +227,7 @@ public class Projectile implements SolObject {
     }
 
     @Override
-    public void handleContact(SolObject other, float absImpulse,
-                              SolGame game, Vector2 collPos) {
+    public void handleContact(SolObject other, float absImpulse, Vector2 collPos) {
     }
 
     @Override
@@ -306,7 +307,7 @@ public class Projectile implements SolObject {
         }
 
         @Override
-        public void update(SolGame game, SolObject o) {
+        public void update(SolTime solTime,SolObject o) {
         }
 
         @Override
@@ -329,7 +330,7 @@ public class Projectile implements SolObject {
         }
 
         @Override
-        public void draw(GameDrawer drawer, SolGame game) {
+        public void draw(GameDrawer drawer) {
             float h = width;
             float minH = game.getCam().getRealLineWidth() * 3;
             if (h < minH) {

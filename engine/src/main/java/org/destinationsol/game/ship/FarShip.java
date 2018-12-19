@@ -20,6 +20,7 @@ import com.badlogic.gdx.math.Vector2;
 import org.destinationsol.game.FarObject;
 import org.destinationsol.game.RemoveController;
 import org.destinationsol.game.SolGame;
+import org.destinationsol.game.SolTime;
 import org.destinationsol.game.input.Pilot;
 import org.destinationsol.game.item.Armor;
 import org.destinationsol.game.item.Engine;
@@ -92,19 +93,19 @@ public class FarShip implements FarObject {
     }
 
     @Override
-    public SolShip toObject(SolGame game) {
+    public SolShip toObject() {
         return game.getShipBuilder().build(game, position, speed, angle, rotationSpeed, pilot, container, hullConfig, life, gun1,
                 gun2, removeController, engine, repairer, money, tradeContainer, shield, armor);
     }
 
     @Override
-    public void update(SolGame game) {
-        pilot.updateFar(game, this);
+    public void update(SolTime solTime) {
+        pilot.updateFar(this);
         if (tradeContainer != null) {
-            tradeContainer.update(game);
+            tradeContainer.update(solTime);
         }
         if (repairer != null) {
-            life += repairer.tryRepair(game, container, life, hullConfig);
+            life += repairer.tryRepair(solTime, container, life, hullConfig);
         }
     }
 

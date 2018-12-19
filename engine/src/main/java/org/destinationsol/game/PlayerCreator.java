@@ -80,14 +80,14 @@ public class PlayerCreator {
                 return;
             }
             SolItem item = game.getItemMan().random();
-            if (isNoGunAndHasIcon(item, game) && itemContainer.canAdd(item)) {
+            if (isNoGunAndHasIcon(item) && itemContainer.canAdd(item)) {
                 itemContainer.add(item.copy());
             }
         }
     }
 
-    private boolean isNoGunAndHasIcon(SolItem it, SolGame game) {
-        return !(it instanceof Gun) && it.getIcon(game) != null;
+    private boolean isNoGunAndHasIcon(SolItem it) {
+        return !(it instanceof Gun) && it.getIcon() != null;
     }
 
     private void addAndEquipRespawnItems(Hero hero, RespawnState respawnState, ItemContainer itemContainer, SolGame game) {
@@ -108,7 +108,7 @@ public class PlayerCreator {
     }
 
     private Hero createHero(Vector2 position, Pilot pilot, float money, HullConfig hull, String items, boolean giveAmmo, SolGame game) {
-        FarShip farShip = game.getShipBuilder().buildNewFar(game,
+        FarShip farShip = game.getShipBuilder().buildNewFar(
                 new Vector2(position),
                 null,
                 SHIP_SPAWN_ANGLE,
@@ -121,7 +121,7 @@ public class PlayerCreator {
                 money,
                 null,
                 giveAmmo);
-        return new Hero(farShip.toObject(game));
+        return new Hero(farShip.toObject());
     }
 
     private boolean shouldGiveAmmo(RespawnState respawnState, boolean isNewShip) {

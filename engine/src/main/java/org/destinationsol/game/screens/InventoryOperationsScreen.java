@@ -15,15 +15,14 @@
  */
 package org.destinationsol.game.screens;
 
-import org.destinationsol.game.SolGame;
 import org.destinationsol.game.item.ItemContainer;
 import org.destinationsol.game.item.SolItem;
 import org.destinationsol.ui.SolUiBaseScreen;
 
 public abstract class InventoryOperationsScreen extends SolUiBaseScreen {
-    abstract ItemContainer getItems(SolGame game);
+    abstract ItemContainer getItems();
 
-    boolean isUsing(SolGame game, SolItem item) {
+    boolean isUsing(SolItem item) {
         return false;
     }
 

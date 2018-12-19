@@ -23,8 +23,10 @@ import org.destinationsol.assets.Assets;
 import org.destinationsol.common.SolColor;
 import org.destinationsol.common.SolMath;
 import org.destinationsol.common.SolRandom;
+import org.destinationsol.di.components.SolObjectFactory;
 import org.destinationsol.game.DebugOptions;
 import org.destinationsol.game.Faction;
+import org.destinationsol.game.GalaxyFiller;
 import org.destinationsol.game.ObjectManager;
 import org.destinationsol.game.RemoveController;
 import org.destinationsol.game.ShipConfig;
@@ -75,6 +77,9 @@ public class ChunkFiller {
     ObjectManager objectManager;
     @Inject
     PlanetManager planetManager;
+    @Inject
+    GalaxyFiller galaxyFiller;
+
 
     @Inject
     public ChunkFiller() {
@@ -149,7 +154,7 @@ public class ChunkFiller {
                 float distanceToPlanet = planet.getPosition().dst(chunkCenter);
                 boolean isPlanetNear = distanceToPlanet < planet.getFullHeight() + Const.CHUNK_SIZE;
                 if (!isPlanetNear) {
-                    fillForSys( chunkCenter, removeController, system);
+                    fillForSys(chunkCenter, removeController, system);
                 }
             }
             return Optional.of(system.getConfig().envConfig);
@@ -164,40 +169,40 @@ public class ChunkFiller {
         return Optional.empty();
     }
 
-    private void fillForSys(SolGame game, Vector2 chunkCenter, RemoveController removeController, SolSystem system) {
+    private void fillForSys(Vector2 chunkCenter, RemoveController removeController, SolSystem system) {
         SysConfig config = system.getConfig();
-        Vector2 mainStationPosition = game.getGalaxyFiller().getMainStationPosition();
+        Vector2 mainStationPosition = galaxyFiller.getMainStationPosition();
         Vector2 startPosition = mainStationPosition == null ? new Vector2() : mainStationPosition;
         float distanceToStartPosition = chunkCenter.dst(startPosition);
         if (Const.CHUNK_SIZE < distanceToStartPosition) {
-            fillAsteroids(game, removeController, false, chunkCenter);
+            fillAsteroids(removeController, false, chunkCenter);
             ArrayList<ShipConfig> enemies = system.getPosition().dst(chunkCenter) < system.getInnerRadius() ? config.innerTempEnemies : config.tempEnemies;
             for (ShipConfig enemyConfig : enemies) {
-                fillEnemies(game, removeController, enemyConfig, chunkCenter);
+                fillEnemies(removeController, enemyConfig, chunkCenter);
             }
         }
     }
 
-    private void fillEnemies(SolGame game, RemoveController removeController, ShipConfig enemyConfig, Vector2 chunkCenter) {
+    private void fillEnemies(RemoveController removeController, ShipConfig enemyConfig, Vector2 chunkCenter) {
         int enemyCount = getEntityCount(enemyConfig.density);
         if (enemyCount == 0) {
             return;
         }
 
         for (int i = 0; i < enemyCount; i++) {
-            Optional<Vector2> enemyPosition = getFreeRndPos(game, chunkCenter);
+            Optional<Vector2> enemyPosition = getFreeRndPos(chunkCenter);
             enemyPosition.ifPresent(enemyPos -> {
-                FarShip ship = buildSpaceEnemy(game, enemyPos, removeController, enemyConfig);
-                game.getObjectManager().addFarObjNow(ship);
+                FarShip ship = buildSpaceEnemy(enemyPos, removeController, enemyConfig);
+                objectManager.addFarObjNow(ship);
             });
         }
     }
 
-    private FarShip buildSpaceEnemy(SolGame game, Vector2 position, RemoveController remover, ShipConfig enemyConf) {
+    private FarShip buildSpaceEnemy(Vector2 position, RemoveController remover, ShipConfig enemyConf) {
         Vector2 speed = new Vector2();
         SolMath.fromAl(speed, SolRandom.randomFloat(180), SolRandom.randomFloat(0, ENEMY_MAX_SPD));
         float rotationSpeed = SolRandom.randomFloat(ENEMY_MAX_ROT_SPD);
-        MoveDestProvider dp = new StillGuard(position, game, enemyConf);
+        MoveDestProvider dp = new StillGuard(planetManager,position, enemyConf);
         Pilot provider = new AiPilot(dp, false, Faction.EHAR, true, null, Const.AI_DET_DIST);
         HullConfig config = enemyConf.hull;
         int money = enemyConf.money;
@@ -281,12 +286,11 @@ public class ChunkFiller {
      * This type of junk moves at the same speed as the camera (similar to the dust) but additionally has its own floating
      * direction and angle for every individual piece of junk.
      *
-     * @param game     The {@link SolGame} instance to work with
      * @param remover
      * @param conf     The environment configuration
      * @param chunkCenter The center of the chunk
      */
-    private void fillJunk(SolGame game, RemoveController remover, SpaceEnvConfig conf, Vector2 chunkCenter) {
+    private void fillJunk(RemoveController remover, SpaceEnvConfig conf, Vector2 chunkCenter) {
         int count = getEntityCount(conf.junkDensity);
         if (count == 0) {
             return;
@@ -356,11 +360,10 @@ public class ChunkFiller {
      * <p/>
      * Up to 100 tries will be made to find an unoccupied position; if by then none has been found, <code>null</code> will be returned.
      *
-     * @param game        The {@link SolGame} instance to work with
      * @param chunkCenter The center of a chunk in which a random position should be found
      * @return A random, unoccupied position in a chunk centered around chunkCenter, relative to the entire map, or <code>null</code> if within 100 tries no unoccupied position has been found
      */
-    private Optional<Vector2> getFreeRndPos(SolGame game, Vector2 chunkCenter) {
+    private Optional<Vector2> getFreeRndPos( Vector2 chunkCenter) {
         for (int i = 0; i < 100; i++) {
             Vector2 position = getRndPos(chunkCenter);
             if (game.isPlaceEmpty(position, true)) {

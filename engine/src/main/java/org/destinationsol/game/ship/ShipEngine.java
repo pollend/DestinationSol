@@ -20,9 +20,10 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import org.destinationsol.common.SolMath;
-import org.destinationsol.game.SolGame;
+import org.destinationsol.game.SolTime;
 import org.destinationsol.game.input.Pilot;
 import org.destinationsol.game.item.Engine;
+import org.destinationsol.game.particle.PartMan;
 
 public class ShipEngine {
     public static final float MAX_RECOVER_ROT_SPD = 5f;
@@ -31,19 +32,21 @@ public class ShipEngine {
 
     private final Engine myItem;
     private float myRecoverAwait;
+    private final PartMan partMan;
 
-    public ShipEngine(Engine engine) {
-        myItem = engine;
+    public ShipEngine(Engine engine, PartMan partMan) {
+        this.partMan = partMan;
+        this.myItem = engine;
     }
 
-    public void update(float angle, SolGame game, Pilot provider, Body body, Vector2 speed, boolean controlsEnabled,
+    public void update(SolTime solTime,float angle, Pilot provider, Body body, Vector2 speed, boolean controlsEnabled,
                        float mass, SolShip ship) {
 
-        boolean working = applyInput(game, angle, provider, body, speed, controlsEnabled, mass);
-        game.getPartMan().updateAllHullEmittersOfType(ship, "engine", working);
+        boolean working = applyInput(solTime, angle, provider, body, speed, controlsEnabled, mass);
+        partMan.updateAllHullEmittersOfType(ship, "engine", working);
     }
 
-    private boolean applyInput(SolGame cmp, float shipAngle, Pilot provider, Body body, Vector2 speed,
+    private boolean applyInput(SolTime solTime, float shipAngle, Pilot provider, Body body, Vector2 speed,
                                boolean controlsEnabled, float mass) {
         boolean speedOk = SolMath.canAccelerate(shipAngle, speed);
         boolean working = controlsEnabled && provider.isUp() && speedOk;
@@ -55,7 +58,6 @@ public class ShipEngine {
             SolMath.free(v);
         }
 
-        float ts = cmp.getTimeStep();
         float rotationSpeed = body.getAngularVelocity() * MathUtils.radDeg;
         float desiredRotationSpeed = 0;
         float rotAcc = e.getRotationAcceleration();
@@ -66,7 +68,7 @@ public class ShipEngine {
             desiredRotationSpeed = SolMath.toInt(r) * e.getMaxRotationSpeed();
             if (absRotationSpeed < MAX_RECOVER_ROT_SPD) {
                 if (myRecoverAwait > 0) {
-                    myRecoverAwait -= ts;
+                    myRecoverAwait -=  solTime.getTimeStep();
                 }
                 if (myRecoverAwait <= 0) {
                     rotAcc *= RECOVER_MUL;
@@ -75,7 +77,7 @@ public class ShipEngine {
         } else {
             myRecoverAwait = RECOVER_AWAIT;
         }
-        body.setAngularVelocity(MathUtils.degRad * SolMath.approach(rotationSpeed, desiredRotationSpeed, rotAcc * ts));
+        body.setAngularVelocity(MathUtils.degRad * SolMath.approach(rotationSpeed, desiredRotationSpeed, rotAcc * solTime.getTimeStep()));
         return working;
     }
 

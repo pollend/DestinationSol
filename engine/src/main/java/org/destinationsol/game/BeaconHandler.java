@@ -62,14 +62,16 @@ public class BeaconHandler implements UpdateAwareSystem{
     PlanetManager planetManager;
     @Inject
     DrawableManager drawableManager;
+    @Inject
+    SolCam solCam;
 
     public BeaconHandler() {
         TextureAtlas.AtlasRegion attackTexture = Assets.getAtlasRegion("engine:uiBeaconAttack");
-        attackSprite = new RectSprite(attackTexture, TEX_SZ, 0, 0, new Vector2(), DrawableLevel.PART_FG_0, 0, ROT_SPD, new Color(1, 1, 1, 0), true);
+        attackSprite = new RectSprite(attackTexture, TEX_SZ, 0, 0, new Vector2(), DrawableLevel.PART_FG_0, 0, ROT_SPD, new Color(1, 1, 1, 0), true,solCam);
         TextureAtlas.AtlasRegion followTexture = Assets.getAtlasRegion("engine:uiBeaconFollow");
-        followSprite = new RectSprite(followTexture, TEX_SZ, 0, 0, new Vector2(), DrawableLevel.PART_FG_0, 0, ROT_SPD, new Color(1, 1, 1, 0), true);
+        followSprite = new RectSprite(followTexture, TEX_SZ, 0, 0, new Vector2(), DrawableLevel.PART_FG_0, 0, ROT_SPD, new Color(1, 1, 1, 0), true,solCam);
         TextureAtlas.AtlasRegion moveTexture = Assets.getAtlasRegion("engine:uiBeaconMove");
-        moveSprite = new RectSprite(moveTexture, TEX_SZ, 0, 0, new Vector2(), DrawableLevel.PART_FG_0, 0, ROT_SPD, new Color(1, 1, 1, 0), true);
+        moveSprite = new RectSprite(moveTexture, TEX_SZ, 0, 0, new Vector2(), DrawableLevel.PART_FG_0, 0, ROT_SPD, new Color(1, 1, 1, 0), true,solCam);
         targetRelativePosition = new Vector2();
         speed = new Vector2();
     }
@@ -85,7 +87,7 @@ public class BeaconHandler implements UpdateAwareSystem{
     }
 
     @Override
-    public void update(float timeStep) {
+    public void update(SolTime time) {
         if (!isInitialized) {
             return;
         }

@@ -16,19 +16,19 @@
 package org.destinationsol.game.projectile;
 
 import com.badlogic.gdx.math.Vector2;
-import org.destinationsol.game.SolGame;
+import org.destinationsol.game.SolTime;
 import org.destinationsol.game.ship.SolShip;
 
 public interface ProjectileBody {
-    void update(SolGame game);
+    void update(SolTime solTime);
 
     Vector2 getPosition();
 
     Vector2 getSpeed();
 
-    void receiveForce(Vector2 force, SolGame game, boolean acc);
+    void receiveForce(Vector2 force, boolean acc);
 
-    void onRemove(SolGame game);
+    void onRemove();
 
     float getAngle();
 

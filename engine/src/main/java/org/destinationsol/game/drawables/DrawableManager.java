@@ -26,6 +26,8 @@ import com.badlogic.gdx.utils.OrderedMap;
 import org.destinationsol.assets.audio.OggSoundManager;
 import org.destinationsol.common.DebugCol;
 import org.destinationsol.game.*;
+import org.destinationsol.game.farBg.FarBackgroundManagerOld;
+import org.destinationsol.game.planet.PlanetManager;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
@@ -51,6 +53,18 @@ public class DrawableManager {
 
     @Inject
     SolCam cam;
+
+    @Inject
+    FarBackgroundManagerOld farBackgroundManagerOld;
+
+    @Inject
+    ObjectManager objectManager;
+
+    @Inject
+    PlanetManager planetManager;
+
+    @Inject
+    GridDrawer gridDrawer;
 
     public DrawableManager(GameDrawer drawer, OggSoundManager oggSoundManager) {
         this.oggSoundManager = oggSoundManager;
@@ -117,16 +131,15 @@ public class DrawableManager {
 
     public void draw() {
         if (mapDrawer.isToggled()) {
-            mapDrawer.draw(drawer, game);
+            mapDrawer.draw(drawer);
             return;
         }
 
-        drawer.updateMatrix(game);
-        game.getFarBackgroundgManagerOld().draw(drawer, cam, game);
+        drawer.updateMatrix();
+        farBackgroundManagerOld.draw(drawer, cam);
         Vector2 camPos = cam.getPosition();
         float viewDistance = cam.getViewDistance();
 
-        ObjectManager objectManager = game.getObjectManager();
         List<SolObject> objects = objectManager.getObjects();
         for (SolObject object : objects) {
             Vector2 objectPosition = object.getPosition();
@@ -157,7 +170,7 @@ public class DrawableManager {
         for (int dlIdx = 0, dlCount = drawableLevels.length; dlIdx < dlCount; dlIdx++) {
             DrawableLevel drawableLevel = drawableLevels[dlIdx];
             if (drawableLevel == DrawableLevel.PART_FG_0) {
-                game.getMountDetectDrawer().draw(drawer);
+                mountDetectDrawer.draw(drawer);
             }
             OrderedMap<Texture, List<Drawable>> map = drawables.get(dlIdx);
             Array<Texture> texs = map.orderedKeys();
@@ -167,18 +180,18 @@ public class DrawableManager {
                 for (Drawable drawable : drawables) {
                     if (visibleDrawables.contains(drawable)) {
                         if (!DebugOptions.NO_DRAS) {
-                            drawable.draw(drawer, game);
+                            drawable.draw(drawer);
                         }
                     }
                 }
             }
             if (drawableLevel.depth <= 1) {
-                game.drawDebug(drawer);
+                drawDebug(drawer);
             }
             if (drawableLevel == DrawableLevel.ATM) {
                 if (!DebugOptions.NO_DRAS) {
-                    game.getPlanetManager().drawPlanetCoreHack(game, drawer);
-                    game.getPlanetManager().drawSunHack(game, drawer);
+                    planetManager.drawPlanetCoreHack( drawer);
+                    planetManager.drawSunHack( drawer);
                 }
             }
         }
@@ -187,18 +200,39 @@ public class DrawableManager {
             for (OrderedMap<Texture, List<Drawable>> map : drawables) {
                 for (List<Drawable> drawables : map.values()) {
                     for (Drawable drawable : drawables) {
-                        drawDebug(drawer, game, drawable);
+                        drawDebug(drawer, drawable);
                     }
                 }
             }
         }
 
-        oggSoundManager.drawDebug(drawer, game);
+        oggSoundManager.drawDebug(drawer);
         drawer.maybeChangeAdditive(false);
     }
 
-    private void drawDebug(GameDrawer drawer, SolGame game, Drawable drawable) {
-        SolCam cam = game.getCam();
+
+    public void drawDebug(GameDrawer drawer) {
+        if (DebugOptions.GRID_SZ > 0) {
+            gridDrawer.draw(drawer, cam, DebugOptions.GRID_SZ, drawer.debugWhiteTexture);
+        }
+        planetManager.drawDebug(drawer);
+        objectManager.drawDebug(drawer);
+        if (DebugOptions.ZOOM_OVERRIDE != 0) {
+            cam.drawDebug(drawer);
+        }
+        drawDebugPoint(drawer, DebugOptions.DEBUG_POINT, DebugCol.POINT);
+        drawDebugPoint(drawer, DebugOptions.DEBUG_POINT2, DebugCol.POINT2);
+        drawDebugPoint(drawer, DebugOptions.DEBUG_POINT3, DebugCol.POINT3);
+    }
+
+    private void drawDebugPoint(GameDrawer drawer, Vector2 dp, Color col) {
+        if (dp.x != 0 || dp.y != 0) {
+            float sz = cam.getRealLineWidth() * 5;
+            drawer.draw(drawer.debugWhiteTexture, sz, sz, sz / 2, sz / 2, dp.x, dp.y, 0, col);
+        }
+    }
+
+    private void drawDebug(GameDrawer drawer, Drawable drawable) {
         float lineWidth = cam.getRealLineWidth();
         Color col = visibleDrawables.contains(drawable) ? DebugCol.DRA : DebugCol.DRA_OUT;
         Vector2 position = drawable.getPosition();

@@ -99,7 +99,7 @@ public class SpecialSounds {
         oggSoundManager.play(sound, position, o);
     }
 
-    public void playColl(SolGame game, float absImpulse, SolObject o, Vector2 position) {
+    public void playColl( float absImpulse, SolObject o, Vector2 position) {
         if (o == null || absImpulse < .1f) {
             return;
         }

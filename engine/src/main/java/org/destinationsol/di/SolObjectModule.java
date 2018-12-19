@@ -15,20 +15,23 @@
  */
 package org.destinationsol.di;
 
+import dagger.Binds;
 import dagger.Module;
 import dagger.Provides;
-import org.destinationsol.di.scope.SolObjectScope;
-import org.destinationsol.game.planet.Planet;
-import org.destinationsol.game.planet.PlanetConfig;
-import org.destinationsol.game.planet.SolSystem;
+import org.destinationsol.di.components.SolObjectComponent;
+import org.destinationsol.game.ObjectManager;
+import org.destinationsol.game.SolCam;
+import org.destinationsol.game.SolObject;
+import org.destinationsol.game.item.Loot;
 
 @Module
-public class SolObjectPlanetModule {
+public abstract class SolObjectModule {
     @Provides
-    @SolObjectScope
-    static Planet providePlanet(SolSystem sys, float angleToSys, float dist, float angle, float toSysRotationSpeed, float rotationSpeed,
-                                float groundHeight, boolean objsCreated, PlanetConfig config, String name){
-        return new Planet(sys,angleToSys,dist,angle,toSysRotationSpeed,rotationSpeed,groundHeight,objsCreated,config,name);
+    static Loot.Factory provideLootFactory(SolCam cam, ObjectManager objectManager, SolObjectComponent solObjectComponent){
+        return new Loot.Factory(cam,objectManager,solObjectComponent);
     }
+
+    @Binds
+    public abstract SolObject bindLoot(Loot loot);
 
 }

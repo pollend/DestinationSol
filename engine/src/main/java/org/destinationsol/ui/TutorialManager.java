@@ -20,6 +20,7 @@ import org.destinationsol.GameOptions;
 import org.destinationsol.SolApplication;
 import org.destinationsol.common.SolColor;
 import org.destinationsol.game.SolGame;
+import org.destinationsol.game.SolTime;
 import org.destinationsol.game.UpdateAwareSystem;
 import org.destinationsol.game.item.SolItem;
 import org.destinationsol.game.screens.GameScreens;
@@ -38,7 +39,7 @@ public class TutorialManager implements UpdateAwareSystem {
 
     private int stepIndex;
 
-    public TutorialManager(GameScreens screens, boolean mobile, GameOptions gameOptions, SolGame game) {
+    public TutorialManager(GameScreens screens, boolean mobile, GameOptions gameOptions) {
         displayDimensions = SolApplication.displayDimensions;
 
         float backgroundW = displayDimensions.getRatio() * .5f;
@@ -231,7 +232,7 @@ public class TutorialManager implements UpdateAwareSystem {
     }
 
     @Override
-    public void update(SolGame game,float timeStep) {
+    public void update(SolTime solTime) {
         Step step = steps.get(stepIndex);
         step.highlight();
         if (step.canProgressToNextStep()) {
@@ -284,12 +285,10 @@ public class TutorialManager implements UpdateAwareSystem {
 
     public static class SelectEquippedItemStep extends Step {
         InventoryScreen inventoryScreen;
-        SolGame game;
 
-        public SelectEquippedItemStep(String text, InventoryScreen inventoryScreen, SolGame game) {
+        public SelectEquippedItemStep(String text, InventoryScreen inventoryScreen) {
             super(text, null, true);
             this.inventoryScreen = inventoryScreen;
-            this.game = game;
         }
 
         @Override
@@ -304,7 +303,7 @@ public class TutorialManager implements UpdateAwareSystem {
         // Highlight all equipped items on opened inventory page
         @Override
         public void highlight() {
-            List<SolUiControl> equippedItemControls = inventoryScreen.getEquippedItemUIControlsForTutorial(game);
+            List<SolUiControl> equippedItemControls = inventoryScreen.getEquippedItemUIControlsForTutorial();
             for (SolUiControl control : equippedItemControls) {
                 control.enableWarn();
             }

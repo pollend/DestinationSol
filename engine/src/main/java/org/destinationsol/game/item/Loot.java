@@ -16,20 +16,34 @@
 
 package org.destinationsol.game.item;
 
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
 import org.destinationsol.assets.audio.OggSoundManager;
+import org.destinationsol.assets.audio.SpecialSounds;
+import org.destinationsol.common.SolColor;
 import org.destinationsol.common.SolMath;
+import org.destinationsol.di.components.SolObjectComponent;
 import org.destinationsol.game.DmgType;
 import org.destinationsol.game.FarObject;
+import org.destinationsol.game.ObjectManager;
+import org.destinationsol.game.SolCam;
 import org.destinationsol.game.SolGame;
 import org.destinationsol.game.SolObject;
+import org.destinationsol.game.SolTime;
 import org.destinationsol.game.drawables.Drawable;
+import org.destinationsol.game.drawables.DrawableLevel;
+import org.destinationsol.game.drawables.RectSprite;
 import org.destinationsol.game.particle.LightSource;
+import org.destinationsol.game.particle.PartMan;
 import org.destinationsol.game.ship.SolShip;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Loot implements SolObject {
@@ -54,9 +68,16 @@ public class Loot implements SolObject {
     private float angle;
 
     @Inject
+    PartMan partMan;
+    @Inject
+    SpecialSounds specialSounds;
+    @Inject
     OggSoundManager soundManager;
+    @Inject
+    ObjectManager objectManager;
 
     public Loot(SolItem item, Body body, int life, List<Drawable> drawables, LightSource ls, SolShip owner) {
+
         this.body = body;
         this.life = life;
         this.item = item;
@@ -70,18 +91,18 @@ public class Loot implements SolObject {
     }
 
     @Override
-    public void update(SolGame game) {
+    public void update(SolTime time) {
         setParamsFromBody();
-        lightSource.update(true, angle, game);
+        lightSource.update(true, angle, time);
         if (ownerAwait > 0) {
-            ownerAwait -= game.getTimeStep();
+            ownerAwait -= time.getTimeStep();
             if (ownerAwait <= 0) {
                 owner = null;
             }
         }
         SolShip puller = null;
         float minDist = Float.MAX_VALUE;
-        List<SolObject> objs = game.getObjectManager().getObjects();
+        List<SolObject> objs = objectManager.getObjects();
         for (SolObject o : objs) {
             if (!(o instanceof SolShip)) {
                 continue;
@@ -116,14 +137,14 @@ public class Loot implements SolObject {
     }
 
     @Override
-    public void onRemove(SolGame game) {
+    public void onRemove() {
         body.getWorld().destroyBody(body);
     }
 
     @Override
-    public void receiveDmg(float dmg, SolGame game, Vector2 position, DmgType dmgType) {
+    public void receiveDmg(float dmg, Vector2 position, DmgType dmgType) {
         life -= dmg;
-        game.getSpecialSounds().playHit(game, this, position, dmgType);
+        specialSounds.playHit(this, position, dmgType);
     }
 
     @Override
@@ -132,7 +153,7 @@ public class Loot implements SolObject {
     }
 
     @Override
-    public void receiveForce(Vector2 force, SolGame game, boolean acc) {
+    public void receiveForce(Vector2 force,  boolean acc) {
         if (acc) {
             force.scl(mass);
         }
@@ -165,10 +186,9 @@ public class Loot implements SolObject {
     }
 
     @Override
-    public void handleContact(SolObject other, float absImpulse,
-                              SolGame game, Vector2 collPos) {
+    public void handleContact(SolObject other, float absImpulse, Vector2 collPos) {
         float dmg = absImpulse / mass / DURABILITY;
-        receiveDmg((int) dmg, game, collPos, DmgType.CRASH);
+        receiveDmg((int) dmg, collPos, DmgType.CRASH);
     }
 
     @Override
@@ -219,14 +239,63 @@ public class Loot implements SolObject {
         return owner;
     }
 
-    public void pickedUp(SolGame game, SolShip ship) {
+    public void pickedUp( SolShip ship) {
         life = 0;
         Vector2 speed = new Vector2(ship.getPosition());
         speed.sub(position);
         float fadeTime = .25f;
         speed.scl(1 / fadeTime);
         speed.add(ship.getSpeed());
-        game.getPartMan().blip(game, position, angle, item.getItemType().sz, fadeTime, speed, item.getIcon(game));
+        partMan.blip( position, angle, item.getItemType().sz, fadeTime, speed, item.getIcon());
         soundManager.play(item.getItemType().pickUpSound, null, this);
+    }
+
+    public static class Factory
+    {
+        private final SolCam cam;
+        private final ObjectManager objectManager;
+        private final SolObjectComponent objectComponent;
+
+        @Inject
+        public Factory(SolCam cam, ObjectManager objectManager, SolObjectComponent solObjectComponent){
+            this.cam = cam;
+            this.objectManager = objectManager;
+            this.objectComponent = solObjectComponent;
+        }
+
+        // set speed & rot speed
+        public Loot build(Vector2 position, SolItem item, Vector2 speed, int life, float rotationSpeed, SolShip owner) {
+            List<Drawable> drawables = new ArrayList<>();
+            TextureAtlas.AtlasRegion tex = item.getIcon();
+            float sz = item.getItemType().sz;
+            RectSprite s = new RectSprite(tex, sz, 0, 0, new Vector2(), DrawableLevel.GUNS, 0, 0, SolColor.WHITE, false);
+            drawables.add(s);
+            Body b = buildBody( position, sz);
+            b.setLinearVelocity(speed);
+            b.setAngularVelocity(rotationSpeed);
+            Color col = item.getItemType().color;
+            LightSource ls = new LightSource(cam,sz + .18f, false, .5f, new Vector2(), col);
+            ls.collectDrawables(drawables);
+            Loot loot = new Loot(item, b, life, drawables, ls, owner);
+            objectComponent.inject(loot);
+            b.setUserData(loot);
+            return loot;
+        }
+
+        private Body buildBody(Vector2 position, float sz) {
+            BodyDef bd = new BodyDef();
+            bd.type = BodyDef.BodyType.DynamicBody;
+            bd.angle = 0;
+            bd.angularDamping = 0;
+            bd.position.set(position);
+            bd.linearDamping = 0;
+            Body body = objectManager.getWorld().createBody(bd);
+            PolygonShape shape = new PolygonShape();
+            shape.setAsBox(sz / 2, sz / 2);
+            body.createFixture(shape, .5f);
+            shape.dispose();
+            return body;
+        }
+
     }
 }

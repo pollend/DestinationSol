@@ -15,5 +15,5 @@
  */
 package org.destinationsol.di.components;
 
-public interface ParticleEmitterComponent {
+public interface LoaderComponent {
 }

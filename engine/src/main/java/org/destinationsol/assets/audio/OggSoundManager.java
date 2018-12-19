@@ -26,10 +26,13 @@ import org.destinationsol.common.SolRandom;
 import org.destinationsol.game.DebugOptions;
 import org.destinationsol.game.GameDrawer;
 import org.destinationsol.game.Hero;
+import org.destinationsol.game.SolCam;
 import org.destinationsol.game.SolGame;
 import org.destinationsol.game.SolObject;
+import org.destinationsol.game.SolTime;
 import org.destinationsol.game.UpdateAwareSystem;
 import org.destinationsol.game.planet.Planet;
+import org.destinationsol.game.planet.PlanetManager;
 import org.destinationsol.game.sound.DebugHintDrawer;
 import org.terasology.assets.Asset;
 
@@ -84,16 +87,22 @@ public class OggSoundManager implements UpdateAwareSystem {
     private float myLoopAwait;
 
     private final GameOptions gameOptions;
-    private final SolGame solGame;
 
+    @Inject
+    SolTime solTime;
 
-    public OggSoundManager(GameOptions gameOptions,SolGame solGame) {
+    @Inject
+    PlanetManager planetManager;
+
+    @Inject
+    SolCam solCam;
+
+    public OggSoundManager(GameOptions gameOptions) {
 //        this.assets = assets;
         soundMap = new HashMap<>();
         loopedSoundMap = new HashMap<>();
         debugHintDrawer = new DebugHintDrawer();
         this.gameOptions= gameOptions;
-        this.solGame = solGame;
     }
 
     /**
@@ -176,9 +185,9 @@ public class OggSoundManager implements UpdateAwareSystem {
         }
 
         // Calculate the pitch for the sound
-        float pitch = SolRandom.randomFloat(.97f, 1.03f) * solGame.getTimeFactor() * playableSound.getBasePitch();
+        float pitch = SolRandom.randomFloat(.97f, 1.03f) * solTime.getTimeFactor() * playableSound.getBasePitch();
 
-        if (skipLooped(source, sound, solGame.getTime())) {
+        if (skipLooped(source, sound, solTime.getTime())) {
             return;
         }
 
@@ -204,8 +213,8 @@ public class OggSoundManager implements UpdateAwareSystem {
     private float getVolume( Vector2 position, float volumeMultiplier, OggSound sound) {
         float globalVolumeMultiplier = gameOptions.sfxVolume.getVolume();
 
-        Vector2 cameraPosition = solGame.getCam().getPosition();
-        Planet nearestPlanet = solGame.getPlanetManager().getNearestPlanet();
+        Vector2 cameraPosition = solCam.getPosition();
+        Planet nearestPlanet = planetManager.getNearestPlanet();
 
         float airPercentage = 0;
         if (nearestPlanet.getConfig().skyConfig != null) {
@@ -263,11 +272,10 @@ public class OggSoundManager implements UpdateAwareSystem {
      * Draws info about recently played sounds in player proximity when {@link DebugOptions#SOUND_INFO} flag is set.
      *
      * @param drawer GameDrawer to use for drawing
-     * @param game   Game to draw to.
      */
-    public void drawDebug(GameDrawer drawer, SolGame game) {
+    public void drawDebug(GameDrawer drawer) {
         if (DebugOptions.SOUND_INFO) {
-            debugHintDrawer.draw(drawer, game);
+            debugHintDrawer.draw(drawer);
         }
     }
 
@@ -276,12 +284,12 @@ public class OggSoundManager implements UpdateAwareSystem {
      *
      */
     @Override
-    public void update(float timeStep) {
+    public void update(SolTime time) {
         if (DebugOptions.SOUND_INFO) {
             debugHintDrawer.update();
         }
 
-        myLoopAwait -= timeStep;
+        myLoopAwait -= time.getTimeStep();
         if (myLoopAwait <= 0) {
             myLoopAwait = 30;
             cleanLooped();
@@ -293,7 +301,6 @@ public class OggSoundManager implements UpdateAwareSystem {
      * <p>
      * (See {@link SolObject#shouldBeRemoved(SolGame)})
      *
-     * @param game Game currently in progress.
      */
     private void cleanLooped() {
         loopedSoundMap.keySet().removeIf(o -> o.shouldBeRemoved());

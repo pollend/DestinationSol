@@ -49,15 +49,24 @@ public class CollisionMeshLoader {
     private final PolygonShape polygonShape  = new PolygonShape();
     private final CircleShape circleShape = new CircleShape();
     private final Vector2 vec = new Vector2();
+    private final ObjectManager objectManager;
+    private final SolCam solCam;
 
-    public CollisionMeshLoader() { }
+
+    public CollisionMeshLoader(ObjectManager objectManager,SolCam solCam) {
+        this.objectManager = objectManager;
+        this.solCam= solCam;
+    }
 
     /**
      * Creates a Model from the given Hull (Collision Mesh), which can be created using Box2D.
      *
      * @param fileName A ResourceUrn pointing to the collision mesh to be loaded
      */
-    public CollisionMeshLoader(String fileName) {
+    public CollisionMeshLoader(ObjectManager objectManager,SolCam solCam,String fileName) {
+        this.objectManager = objectManager;
+        this.solCam= solCam;
+
         Json json = Assets.getJson(fileName);
 
         readModel(json.getJsonValue());
@@ -244,7 +253,7 @@ public class CollisionMeshLoader {
      *
      * @param drawables a atlas will be added here
      */
-    public Body getBodyAndSprite(SolGame game, HullConfig hullConfig, float scale, BodyDef.BodyType type,
+    public Body getBodyAndSprite( HullConfig hullConfig, float scale, BodyDef.BodyType type,
                                  Vector2 position, float angle, List<Drawable> drawables, float density, DrawableLevel level, TextureAtlas.AtlasRegion tex) {
         final String name = hullConfig.getInternalName();
 
@@ -254,7 +263,7 @@ public class CollisionMeshLoader {
         bd.angularDamping = 0;
         bd.position.set(position);
         bd.linearDamping = 0;
-        Body body = game.getObjectManager().getWorld().createBody(bd);
+        Body body = objectManager.getWorld().createBody(bd);
         FixtureDef fd = new FixtureDef();
         fd.density = density;
         fd.friction = Const.FRICTION;
@@ -272,7 +281,7 @@ public class CollisionMeshLoader {
         if (tex == null) {
             tex = hullConfig.getTexture();
         }
-        RectSprite s = new RectSprite(tex, scale, orig.x - .5f, orig.y - .5f, new Vector2(), level, 0, 0, SolColor.WHITE, false);
+        RectSprite s = new RectSprite(tex, scale, orig.x - .5f, orig.y - .5f, new Vector2(), level, 0, 0, SolColor.WHITE, false,solCam);
         drawables.add(s);
         return body;
     }
@@ -282,7 +291,7 @@ public class CollisionMeshLoader {
      *
      * @param drawables a atlas will be added here
      */
-    public Body getBodyAndSprite(SolGame game, TextureAtlas.AtlasRegion tex, float scale, BodyDef.BodyType type,
+    public Body getBodyAndSprite(TextureAtlas.AtlasRegion tex, float scale, BodyDef.BodyType type,
                                  Vector2 position, float angle, List<Drawable> drawables, float density, DrawableLevel level) {
         BodyDef bd = new BodyDef();
         bd.type = type;
@@ -290,7 +299,7 @@ public class CollisionMeshLoader {
         bd.angularDamping = 0;
         bd.position.set(position);
         bd.linearDamping = 0;
-        Body body = game.getObjectManager().getWorld().createBody(bd);
+        Body body = objectManager.getWorld().createBody(bd);
         FixtureDef fd = new FixtureDef();
         fd.density = density;
         fd.friction = Const.FRICTION;
@@ -305,7 +314,7 @@ public class CollisionMeshLoader {
         }
 
         orig = getOrigin(tex.name, 1);
-        RectSprite s = new RectSprite(tex, scale, orig.x - .5f, orig.y - .5f, new Vector2(), level, 0, 0, SolColor.WHITE, false);
+        RectSprite s = new RectSprite(tex, scale, orig.x - .5f, orig.y - .5f, new Vector2(), level, 0, 0, SolColor.WHITE, false,solCam);
         drawables.add(s);
 
         return body;

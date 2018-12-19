@@ -54,7 +54,7 @@ public interface FarObject {
      * sort of simplified movement for ships.
      *
      */
-    void update();
+    void update(SolTime solTime);
 
     /**
      * Returns the approximate radius the object is taking up, computed from the point returned by {@link #getPosition()}.

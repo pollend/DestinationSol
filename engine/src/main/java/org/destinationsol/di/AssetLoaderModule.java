@@ -15,20 +15,5 @@
  */
 package org.destinationsol.di;
 
-
-import dagger.Module;
-import org.destinationsol.game.ObjectManager;
-import org.destinationsol.game.maze.MazeBuilder;
-import org.destinationsol.game.ship.ShipBuilder;
-
-@Module
-public class SolObjectBuilderModule {
-
-    public static MazeBuilder provideMazeBuilder(ObjectManager objectManager){
-        return new MazeBuilder(objectManager);
-    }
-
-    public static ShipBuilder provideShipBuilder(){
-        return new ShipBuilder();
-    }
+public class AssetLoaderModule {
 }

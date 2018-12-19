@@ -22,6 +22,7 @@ import org.destinationsol.game.input.Pilot;
 import org.destinationsol.game.projectile.Projectile;
 import org.destinationsol.game.ship.SolShip;
 
+import javax.inject.Inject;
 import java.util.List;
 
 public class FactionManager {
@@ -32,14 +33,18 @@ public class FactionManager {
         myRayBack = new MyRayBack();
     }
 
+    @Inject
+    SolCam solCam;
+    @Inject
+    ObjectManager objectManager;
+
     /**
      * Finds the nearest Enemy @{link SolShip} for the given ship
      *
-     * @param game the game object
      * @param ship the ship to find enemies for
      * @return the nearest Enemy ship
      */
-    public SolShip getNearestEnemy(SolGame game, SolShip ship) {
+    public SolShip getNearestEnemy(SolShip ship) {
         Pilot pilot = ship.getPilot();
         float detectionDist = pilot.getDetectionDist();
         if (detectionDist <= 0) {
@@ -47,33 +52,31 @@ public class FactionManager {
         }
         detectionDist += ship.getHull().config.getApproxRadius();
         Faction f = pilot.getFaction();
-        return getNearestEnemy(game, detectionDist, f, ship.getPosition());
+        return getNearestEnemy(detectionDist, f, ship.getPosition());
     }
 
     /**
      * Finds the nearest Enemy for target seeking projectiles
      *
-     * @param game       the game object
      * @param projectile the target seeking projectile
      * @return the nearest Enemy ship
      */
-    public SolShip getNearestEnemy(SolGame game, Projectile projectile) {
-        return getNearestEnemy(game, game.getCam().getViewDistance(), projectile.getFaction(), projectile.getPosition());
+    public SolShip getNearestEnemy(Projectile projectile) {
+        return getNearestEnemy(solCam.getViewDistance(), projectile.getFaction(), projectile.getPosition());
     }
 
     /**
      * Finds the nearest Enemy @{link SolShip}
      *
-     * @param game          the game object
      * @param detectionDist the maximum distance allowed for detection
      * @param faction       the faction of the entity
      * @param position      the position of the entity
      * @return the nearest Enemy ship
      */
-    public SolShip getNearestEnemy(SolGame game, float detectionDist, Faction faction, Vector2 position) {
+    public SolShip getNearestEnemy(float detectionDist, Faction faction, Vector2 position) {
         SolShip nearestEnemyShip = null;
         float minimumDistance = detectionDist;
-        List<SolObject> objects = game.getObjectManager().getObjects();
+        List<SolObject> objects = objectManager.getObjects();
         for (SolObject solObject : objects) {
             if (!(solObject instanceof SolShip)) {
                 continue;

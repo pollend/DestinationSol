@@ -24,6 +24,7 @@ import org.destinationsol.common.SolMath;
 import org.destinationsol.game.Faction;
 import org.destinationsol.game.SolCam;
 import org.destinationsol.game.SolGame;
+import org.destinationsol.game.SolTime;
 import org.destinationsol.game.drawables.Drawable;
 import org.destinationsol.game.gun.GunMount;
 import org.destinationsol.game.input.Pilot;
@@ -106,36 +107,36 @@ public class Hull {
         return mount.getGun();
     }
 
-    public void update(SolGame game, ItemContainer container, Pilot provider, SolShip ship, SolShip nearestEnemy) {
+    public void update(SolTime solTime, ItemContainer container, Pilot provider, SolShip ship, SolShip nearestEnemy) {
         setParamsFromBody();
         boolean controlsEnabled = ship.isControlsEnabled() && !SolCam.DIRECT_CAM_CONTROL;
 
         if (engine != null) {
-            engine.update(angle, game, provider, body, speed, controlsEnabled, mass, ship);
+            engine.update(solTime,angle, provider, body, speed, controlsEnabled, mass, ship);
         }
 
         Faction faction = ship.getPilot().getFaction();
-        gunMount1.update(container, game, angle, ship, controlsEnabled && provider.isShoot(), nearestEnemy, faction);
+        gunMount1.update(container, angle, ship, controlsEnabled && provider.isShoot(), nearestEnemy, faction);
         if (gunMount2 != null) {
-            gunMount2.update(container, game, angle, ship, controlsEnabled && provider.isShoot2(), nearestEnemy, faction);
+            gunMount2.update(container, angle, ship, controlsEnabled && provider.isShoot2(), nearestEnemy, faction);
         }
 
         for (LightSource src : lightSources) {
-            src.update(true, angle, game);
+            src.update(true, angle,solTime);
         }
 
         for (ForceBeacon b : beacons) {
-            b.update(game, position, angle, ship);
+            b.update(solTime, position, angle, ship);
         }
 
         for (Door door : doors) {
-            door.update(game, ship);
+            door.update(solTime, ship);
         }
 
         if (planetBind != null) {
             Vector2 speed = SolMath.getVec();
             planetBind.setDiff(speed, position, true);
-            float fps = 1 / game.getTimeStep();
+            float fps = 1 / solTime.getTimeStep();
             speed.scl(fps);
             body.setLinearVelocity(speed);
             SolMath.free(speed);

@@ -35,31 +35,31 @@ import org.destinationsol.game.FactionManager;
 import org.destinationsol.game.GalaxyFiller;
 import org.destinationsol.game.GameColors;
 import org.destinationsol.game.GridDrawer;
+import org.destinationsol.game.Hero;
 import org.destinationsol.game.MapDrawer;
 import org.destinationsol.game.MountDetectDrawer;
 import org.destinationsol.game.ObjectManager;
 import org.destinationsol.game.ShardBuilder;
 import org.destinationsol.game.SolCam;
-import org.destinationsol.game.SolGame;
 import org.destinationsol.game.StarPort;
 import org.destinationsol.game.UpdateAwareSystem;
 import org.destinationsol.game.WorldConfig;
-import org.destinationsol.game.asteroid.AsteroidBuilder;
 import org.destinationsol.game.chunk.ChunkFiller;
 import org.destinationsol.game.chunk.ChunkManager;
 import org.destinationsol.game.drawables.DrawableDebugger;
 import org.destinationsol.game.drawables.DrawableManager;
 import org.destinationsol.game.farBg.FarBackgroundManagerOld;
 import org.destinationsol.game.item.ItemManager;
-import org.destinationsol.game.item.LootBuilder;
 import org.destinationsol.game.particle.PartMan;
 import org.destinationsol.game.particle.SpecialEffects;
 import org.destinationsol.game.planet.PlanetManager;
 import org.destinationsol.game.screens.GameScreens;
 import org.destinationsol.game.ship.ShipBuilder;
+import org.destinationsol.game.ship.SolShip;
 import org.destinationsol.ui.SolInputManager;
 import org.destinationsol.ui.TutorialManager;
 
+import javax.inject.Named;
 import java.util.Optional;
 import java.util.Set;
 
@@ -76,8 +76,6 @@ public interface SolGameComponent {
     DrawableManager drawableManager();
     ChunkManager chunkManager();
     PartMan partMan();
-    AsteroidBuilder asteroidBuilder();
-    LootBuilder lootBuilder();
     ShipBuilder shipBuilder();
     HullConfigManager hullConfigManager();
     GridDrawer gridDrawer();
@@ -87,7 +85,7 @@ public interface SolGameComponent {
     ShardBuilder shardBuilder();
     ItemManager itemManager();
     StarPort.Builder starPortBuilder();
-    OggSoundManager soundManager();
+    OggSoundManager soundManatimeger();
     DrawableDebugger drawableDebugger();
     SpecialSounds specialSounds();
     SpecialEffects specialEffects();
@@ -97,11 +95,7 @@ public interface SolGameComponent {
     Optional<TutorialManager> tutorialManager();
     GameOptions gameOptions();
     SolApplication solApplication();
-    SolGame game();
-
-    SolObjectLootComponent.Builder loot();
-    SolObjectDoorComponent.Builder door();
-    SolObjectShipComponent.Builder ship();
+    Hero hero();
 
     @OnUpdate
     Set<UpdateAwareSystem> updateSystems();
@@ -114,6 +108,7 @@ public interface SolGameComponent {
     interface Builder{
         SolGameComponent build();
         Builder setApplicationComponent(SolApplicationComponent component);
+        @BindsInstance Builder hero(@Named("hero") SolShip shipHero);
         @BindsInstance Builder tutorial(@Tutorial boolean tutorial);
         @BindsInstance Builder newGame(@NewGame boolean newGame);
         @BindsInstance Builder shipName(@ShipName String shipName);

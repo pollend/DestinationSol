@@ -26,9 +26,10 @@ import org.destinationsol.common.SolMath;
 import org.destinationsol.common.SolRandom;
 import org.destinationsol.game.AbilityCommonConfig;
 import org.destinationsol.game.Faction;
-import org.destinationsol.game.SolGame;
+import org.destinationsol.game.SolTime;
 import org.destinationsol.game.item.ItemManager;
 import org.destinationsol.game.item.SolItem;
+import org.destinationsol.game.particle.PartMan;
 import org.destinationsol.game.planet.Planet;
 
 public class Teleport implements ShipAbility {
@@ -38,13 +39,16 @@ public class Teleport implements ShipAbility {
     private boolean shouldTeleport;
     private float angle;
 
-    public Teleport(Config config) {
+    private final PartMan partMan;
+
+    public Teleport(Config config, PartMan partMan) {
         this.config = config;
         newPos = new Vector2();
+        this.partMan= partMan;
     }
 
     @Override
-    public boolean update(SolGame game, SolShip owner, boolean tryToUse) {
+    public boolean update(SolTime solTime, SolShip owner, boolean tryToUse) {
         shouldTeleport = false;
         if (!tryToUse) {
             return false;
@@ -90,15 +94,15 @@ public class Teleport implements ShipAbility {
     }
 
     // can be performed in update
-    public void maybeTeleport(SolGame game, SolShip owner) {
+    public void maybeTeleport(SolShip owner) {
         if (!shouldTeleport) {
             return;
         }
 
         TextureAtlas.AtlasRegion tex = Assets.getAtlasRegion("engine:teleportBlip");
         float blipSz = owner.getHull().config.getApproxRadius() * 3;
-        game.getPartMan().blip(game, owner.getPosition(), SolRandom.randomFloat(180), blipSz, 1, Vector2.Zero, tex);
-        game.getPartMan().blip(game, newPos, SolRandom.randomFloat(180), blipSz, 1, Vector2.Zero, tex);
+        partMan.blip(owner.getPosition(), SolRandom.randomFloat(180), blipSz, 1, Vector2.Zero, tex);
+        partMan.blip(newPos, SolRandom.randomFloat(180), blipSz, 1, Vector2.Zero, tex);
 
         float newAngle = owner.getAngle() + angle;
         Vector2 newSpeed = SolMath.getVec(owner.getSpeed());
@@ -116,23 +120,25 @@ public class Teleport implements ShipAbility {
         private final SolItem chargeExample;
         private final float rechargeTime;
         private final AbilityCommonConfig cc;
+        private final PartMan partMan;
 
-        public Config(float angle, SolItem chargeExample, float rechargeTime, AbilityCommonConfig cc) {
+        public Config(float angle, SolItem chargeExample, float rechargeTime, AbilityCommonConfig cc,PartMan partMan) {
             this.angle = angle;
             this.chargeExample = chargeExample;
             this.rechargeTime = rechargeTime;
             this.cc = cc;
+            this.partMan = partMan;
         }
 
-        public static AbilityConfig load(JsonValue abNode, ItemManager itemManager, AbilityCommonConfig cc) {
+        public static AbilityConfig load(JsonValue abNode, ItemManager itemManager, AbilityCommonConfig cc,PartMan partMan) {
             float angle = abNode.getFloat("angle");
             SolItem chargeExample = itemManager.getExample("teleportCharge");
             float rechargeTime = abNode.getFloat("rechargeTime");
-            return new Config(angle, chargeExample, rechargeTime, cc);
+            return new Config(angle, chargeExample, rechargeTime, cc,partMan);
         }
 
         public ShipAbility build() {
-            return new Teleport(this);
+            return new Teleport(this,partMan);
         }
 
         @Override
