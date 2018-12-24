@@ -16,7 +16,6 @@
 
 package org.destinationsol.game.item;
 
-import org.destinationsol.game.SolGame;
 import org.destinationsol.game.SolTime;
 
 import java.util.List;

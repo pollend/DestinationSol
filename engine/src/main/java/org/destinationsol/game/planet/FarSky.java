@@ -19,7 +19,6 @@ package org.destinationsol.game.planet;
 import com.badlogic.gdx.math.Vector2;
 import org.destinationsol.Const;
 import org.destinationsol.game.FarObject;
-import org.destinationsol.game.SolGame;
 import org.destinationsol.game.SolObject;
 
 public class FarSky implements FarObject {

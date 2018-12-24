@@ -19,7 +19,6 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.utils.JsonValue;
 import org.destinationsol.assets.Assets;
 import org.destinationsol.assets.json.Json;
-import org.destinationsol.game.SolGame;
 
 public class AbilityCharge implements SolItem {
     private final Config config;

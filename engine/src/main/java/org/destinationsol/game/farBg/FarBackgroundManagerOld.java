@@ -27,7 +27,6 @@ import org.destinationsol.common.SolColorUtil;
 import org.destinationsol.common.SolRandom;
 import org.destinationsol.game.GameDrawer;
 import org.destinationsol.game.SolCam;
-import org.destinationsol.game.SolGame;
 import org.destinationsol.game.planet.Planet;
 import org.destinationsol.game.planet.PlanetManager;
 

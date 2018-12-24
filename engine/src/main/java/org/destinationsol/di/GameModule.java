@@ -22,16 +22,12 @@ import org.destinationsol.GameOptions;
 import org.destinationsol.SolApplication;
 import org.destinationsol.assets.audio.OggSoundManager;
 import org.destinationsol.assets.audio.SpecialSounds;
-import org.destinationsol.di.Qualifier.NewGame;
-import org.destinationsol.di.Qualifier.ShipName;
 import org.destinationsol.di.Qualifier.Tutorial;
-import org.destinationsol.di.components.SolGameComponent;
 import org.destinationsol.di.scope.GameScope;
 import org.destinationsol.files.HullConfigManager;
 import org.destinationsol.game.*;
 import org.destinationsol.game.chunk.ChunkFiller;
 import org.destinationsol.game.chunk.ChunkManager;
-import org.destinationsol.game.context.Context;
 import org.destinationsol.game.drawables.DrawableDebugger;
 import org.destinationsol.game.drawables.DrawableManager;
 import org.destinationsol.game.farBg.FarBackgroundManagerOld;
@@ -43,6 +39,7 @@ import org.destinationsol.game.planet.PlanetManager;
 import org.destinationsol.game.screens.GameScreens;
 import org.destinationsol.game.ship.ShipBuilder;
 import org.destinationsol.game.ship.SolShip;
+import org.destinationsol.ui.DisplayDimensions;
 import org.destinationsol.ui.TutorialManager;
 
 import javax.inject.Named;
@@ -90,8 +87,8 @@ public class GameModule {
 
     @GameScope
     @Provides
-    static SolContactListener provideSolContactListener(SolGame game) {
-        return new SolContactListener(game);
+    static SolContactListener provideSolContactListener() {
+        return new SolContactListener();
     }
 
 
@@ -109,9 +106,9 @@ public class GameModule {
 
     @GameScope
     @Provides
-    static Optional<TutorialManager> provideTutorialManager(@Tutorial boolean isTut, GameScreens gameScreens, GameOptions gameOptions, SolGame solGame) {
+    static Optional<TutorialManager> provideTutorialManager(@Tutorial boolean isTut, GameScreens gameScreens, GameOptions gameOptions, DisplayDimensions displayDimensions) {
         if (isTut)
-            return Optional.of(new TutorialManager(gameScreens, isTut, gameOptions, solGame));
+            return Optional.of(new TutorialManager(gameScreens, isTut, gameOptions,displayDimensions));
         return Optional.empty();
     }
 
@@ -148,8 +145,8 @@ public class GameModule {
 
     @Provides
     @GameScope
-    static GameScreens provideGameScreens(SolApplication cmp, Context context) {
-        return new GameScreens(cmp, context);
+    static GameScreens provideGameScreens(SolApplication cmp) {
+        return new GameScreens(cmp);
     }
 
     @GameScope
@@ -220,8 +217,8 @@ public class GameModule {
 
     @GameScope
     @Provides
-    static SpecialEffects provideSpecialEffects(SolCam cam,OggSoundManager soundManager, PlanetManager planetManager, PartMan partMan, EffectTypes effectTypes, GameColors colors) {
-        return new SpecialEffects(cam,soundManager,planetManager,partMan,effectTypes, colors);
+    static SpecialEffects provideSpecialEffects(SolTime solTime,SolCam cam,OggSoundManager soundManager, PlanetManager planetManager, PartMan partMan, EffectTypes effectTypes, GameColors colors) {
+        return new SpecialEffects(solTime,cam,soundManager,planetManager,partMan,effectTypes, colors);
     }
 
     @GameScope

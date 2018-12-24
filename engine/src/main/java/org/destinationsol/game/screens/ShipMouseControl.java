@@ -18,11 +18,9 @@ package org.destinationsol.game.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
-import org.destinationsol.SolApplication;
 import org.destinationsol.assets.Assets;
 import org.destinationsol.game.BeaconHandler;
 import org.destinationsol.game.Hero;
-import org.destinationsol.game.SolGame;
 import org.destinationsol.ui.SolInputManager;
 
 public class ShipMouseControl implements ShipUiControl {

@@ -20,7 +20,6 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.RayCastCallback;
 import org.destinationsol.common.SolMath;
 import org.destinationsol.game.Hero;
-import org.destinationsol.game.SolGame;
 import org.destinationsol.game.SolObject;
 
 public class CollisionWarnDrawer extends WarnDrawer {

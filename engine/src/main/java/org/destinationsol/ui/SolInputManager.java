@@ -32,7 +32,6 @@ import org.destinationsol.assets.audio.PlayableSound;
 import org.destinationsol.common.SolColor;
 import org.destinationsol.common.SolMath;
 import org.destinationsol.di.Qualifier.Mobile;
-import org.destinationsol.game.SolGame;
 
 import javax.inject.Inject;
 import java.util.ArrayList;

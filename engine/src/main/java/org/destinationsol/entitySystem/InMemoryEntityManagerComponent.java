@@ -13,27 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.destinationsol.di.components.screens;
+package org.destinationsol.entitySystem;
 
-import dagger.Module;
-import dagger.Provides;
-import org.destinationsol.di.scope.ActivityScope;
-import org.destinationsol.game.screens.RightPaneLayout;
-import org.destinationsol.menu.MenuLayout;
-import org.destinationsol.ui.SolUiScreen;
+import dagger.Component;
+import org.terasology.entitysystem.entity.inmemory.InMemoryEntityManager;
 
-@Module
-public class BaseScreenModule<T extends SolUiScreen> {
-
-    protected final T screen;
-
-    public BaseScreenModule(T screen){
-        this.screen = screen;
-    }
-
-    @Provides
-    @ActivityScope
-    public T provideScreen(){
-        return screen;
-    }
+@Component(modules = InMemoryEntityManager.class)
+public interface InMemoryEntityManagerComponent extends EntityManagerComponent {
 }

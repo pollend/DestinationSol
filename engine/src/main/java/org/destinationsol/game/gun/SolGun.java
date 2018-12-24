@@ -81,7 +81,7 @@ public class SolGun {
         return myDrawables;
     }
 
-    private void shoot(Vector2 gunSpeed, SolGame game, float gunAngle, Vector2 muzzlePos, Faction faction, SolObject creator) {
+    private void shoot(Vector2 gunSpeed, float gunAngle, Vector2 muzzlePos, Faction faction, SolObject creator) {
         Vector2 baseSpeed = gunSpeed;
         Clip.Config cc = myItem.config.clipConf;
         if (cc.projConfig.zeroAbsSpeed) {
@@ -108,7 +108,7 @@ public class SolGun {
         soundManager.play( myItem.config.shootSound, muzzlePos, creator);
     }
 
-    public void update(ItemContainer itemContainer, SolGame game, float gunAngle, SolObject creator, boolean shouldShoot, Faction faction, SolShip ship) {
+    public void update(ItemContainer itemContainer, float gunAngle, SolObject creator, boolean shouldShoot, Faction faction, SolShip ship) {
         float baseAngle = creator.getAngle();
         Vector2 basePos = creator.getPosition();
         float gunRelAngle = gunAngle - baseAngle;

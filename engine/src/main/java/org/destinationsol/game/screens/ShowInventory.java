@@ -98,12 +98,12 @@ public class ShowInventory extends InventoryOperationsScreen {
     }
 
     @Override
-    public ItemContainer getItems(SolGame game) {
+    public ItemContainer getItems() {
         return target == null ? null : target.getItemContainer();
     }
 
     @Override
-    public boolean isUsing(SolGame game, SolItem item) {
+    public boolean isUsing(SolItem item) {
         return target != null && target.maybeUnequip(game, item, false);
     }
 

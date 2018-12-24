@@ -17,7 +17,6 @@
 package org.destinationsol.game.input;
 
 import org.destinationsol.game.Faction;
-import org.destinationsol.game.SolGame;
 import org.destinationsol.game.SolTime;
 import org.destinationsol.game.ship.FarShip;
 import org.destinationsol.game.ship.SolShip;

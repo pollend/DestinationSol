@@ -19,8 +19,8 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
 import org.destinationsol.game.FarObject;
 import org.destinationsol.game.RemoveController;
-import org.destinationsol.game.SolGame;
 import org.destinationsol.game.SolObject;
+import org.destinationsol.game.SolTime;
 
 public class FarAsteroid implements FarObject {
     private final Vector2 position;
@@ -48,12 +48,12 @@ public class FarAsteroid implements FarObject {
     }
 
     @Override
-    public SolObject toObject(SolGame game) {
+    public SolObject toObject() {
         return game.getAsteroidBuilder().build(game, position, texture, size, angle, rotationSpeed, speed, removeController);
     }
 
     @Override
-    public void update(SolGame game) {
+    public void update(SolTime time) {
     }
 
     @Override

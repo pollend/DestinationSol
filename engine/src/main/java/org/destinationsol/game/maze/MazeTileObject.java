@@ -27,8 +27,8 @@ import org.destinationsol.Const;
 import org.destinationsol.common.SolColor;
 import org.destinationsol.game.DmgType;
 import org.destinationsol.game.FarObject;
-import org.destinationsol.game.SolGame;
 import org.destinationsol.game.SolObject;
+import org.destinationsol.game.SolTime;
 import org.destinationsol.game.drawables.Drawable;
 import org.destinationsol.game.drawables.DrawableLevel;
 import org.destinationsol.game.drawables.RectSprite;
@@ -54,7 +54,7 @@ public class MazeTileObject implements SolObject {
     }
 
     @Override
-    public void update(SolGame game) {
+    public void update(SolTime time) {
     }
 
     @Override
@@ -63,14 +63,14 @@ public class MazeTileObject implements SolObject {
     }
 
     @Override
-    public void onRemove(SolGame game) {
+    public void onRemove() {
         if (body != null) {
             body.getWorld().destroyBody(body);
         }
     }
 
     @Override
-    public void receiveDmg(float dmg, SolGame game, Vector2 position, DmgType dmgType) {
+    public void receiveDmg(float dmg, Vector2 position, DmgType dmgType) {
         game.getSpecialSounds().playHit(game, this, position, dmgType);
     }
 
@@ -80,7 +80,7 @@ public class MazeTileObject implements SolObject {
     }
 
     @Override
-    public void receiveForce(Vector2 force, SolGame game, boolean acc) {
+    public void receiveForce(Vector2 force, boolean acc) {
     }
 
     @Override

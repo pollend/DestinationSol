@@ -32,7 +32,6 @@ import org.destinationsol.game.DmgType;
 import org.destinationsol.game.FarObject;
 import org.destinationsol.game.ObjectManager;
 import org.destinationsol.game.SolCam;
-import org.destinationsol.game.SolGame;
 import org.destinationsol.game.SolObject;
 import org.destinationsol.game.SolTime;
 import org.destinationsol.game.drawables.Drawable;

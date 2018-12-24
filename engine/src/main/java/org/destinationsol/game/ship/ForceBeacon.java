@@ -19,7 +19,6 @@ package org.destinationsol.game.ship;
 import com.badlogic.gdx.math.Vector2;
 import org.destinationsol.common.SolMath;
 import org.destinationsol.game.Faction;
-import org.destinationsol.game.SolGame;
 import org.destinationsol.game.SolObject;
 import org.destinationsol.game.SolTime;
 import org.destinationsol.game.drawables.Drawable;

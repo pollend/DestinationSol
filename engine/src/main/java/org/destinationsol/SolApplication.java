@@ -93,7 +93,7 @@ public class SolApplication implements ApplicationListener {
         resizeSubscribers = new HashSet<>();
 
         this.applicationComponent = DaggerSolApplicationComponent.builder()
-                .appModule(new AppModule(this,null))
+                .appModule(new AppModule(null))
                 .build();
         Assets.initialize(applicationComponent.moduleEnviroment());
         applicationComponent.inject(this);
@@ -247,9 +247,6 @@ public class SolApplication implements ApplicationListener {
         inputManager.dispose();
     }
 
-    public SolGame getGame() {
-        return solGame;
-    }
 
     public SolLayouts getLayouts() {
         return layouts;
@@ -258,7 +255,7 @@ public class SolApplication implements ApplicationListener {
     public void finishGame() {
         solGame.onGameEnd();
         solGame = null;
-        inputManager.setScreen(this, applicationComponent.menuScreens().main);
+        inputManager.setScreen(applicationComponent.menuScreens().main);
     }
 
     public boolean isMobile() {

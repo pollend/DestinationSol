@@ -30,7 +30,6 @@ import org.destinationsol.game.GalaxyFiller;
 import org.destinationsol.game.ObjectManager;
 import org.destinationsol.game.RemoveController;
 import org.destinationsol.game.ShipConfig;
-import org.destinationsol.game.SolGame;
 import org.destinationsol.game.asteroid.FarAsteroid;
 import org.destinationsol.game.drawables.Drawable;
 import org.destinationsol.game.drawables.DrawableLevel;

@@ -19,7 +19,6 @@ import com.badlogic.gdx.math.Vector2;
 import org.destinationsol.Const;
 import org.destinationsol.common.SolMath;
 import org.destinationsol.game.ShipConfig;
-import org.destinationsol.game.SolGame;
 import org.destinationsol.game.planet.PlanetBind;
 import org.destinationsol.game.planet.PlanetManager;
 import org.destinationsol.game.ship.SolShip;

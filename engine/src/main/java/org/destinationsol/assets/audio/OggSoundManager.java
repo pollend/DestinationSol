@@ -27,7 +27,6 @@ import org.destinationsol.game.DebugOptions;
 import org.destinationsol.game.GameDrawer;
 import org.destinationsol.game.Hero;
 import org.destinationsol.game.SolCam;
-import org.destinationsol.game.SolGame;
 import org.destinationsol.game.SolObject;
 import org.destinationsol.game.SolTime;
 import org.destinationsol.game.UpdateAwareSystem;

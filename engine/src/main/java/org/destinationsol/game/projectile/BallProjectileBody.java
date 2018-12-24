@@ -19,7 +19,6 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import org.destinationsol.common.SolMath;
-import org.destinationsol.game.SolGame;
 import org.destinationsol.game.ship.SolShip;
 
 public class BallProjectileBody implements ProjectileBody {
@@ -78,7 +77,7 @@ public class BallProjectileBody implements ProjectileBody {
     }
 
     @Override
-    public void receiveForce(Vector2 force, SolGame game, boolean acc) {
+    public void receiveForce(Vector2 force, boolean acc) {
         if (acc) {
             force.scl(mass);
         }

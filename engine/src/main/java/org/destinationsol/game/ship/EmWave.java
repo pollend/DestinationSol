@@ -19,7 +19,6 @@ package org.destinationsol.game.ship;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.JsonValue;
 import org.destinationsol.game.AbilityCommonConfig;
-import org.destinationsol.game.SolGame;
 import org.destinationsol.game.SolObject;
 import org.destinationsol.game.SolTime;
 import org.destinationsol.game.drawables.DrawableLevel;

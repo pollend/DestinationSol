@@ -253,7 +253,7 @@ public class StarPort implements SolObject {
             myLoader = new CollisionMeshLoader("engine:miscCollisionMeshes");
         }
 
-        public StarPort build(SolGame game, Planet from, Planet to, boolean secondary) {
+        public StarPort build(Planet from, Planet to, boolean secondary) {
             float angle = SolMath.angle(from.getPosition(), to.getPosition());
             Vector2 position = getDesiredPosition(from, to, false);
             // Adjust position so that StarPorts are not overlapping
@@ -275,7 +275,7 @@ public class StarPort implements SolObject {
             return sp;
         }
 
-        private void addFlow(SolGame game, Vector2 position, ArrayList<Drawable> drawables, float angle, ArrayList<LightSource> lights) {
+        private void addFlow(Vector2 position, ArrayList<Drawable> drawables, float angle, ArrayList<LightSource> lights) {
             EffectConfig flow = game.getSpecialEffects().starPortFlow;
             Vector2 relPos = new Vector2();
             SolMath.fromAl(relPos, angle, -FLOW_DIST);

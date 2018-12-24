@@ -17,7 +17,6 @@ package org.destinationsol.game.screens;
 
 import org.destinationsol.common.SolColor;
 import org.destinationsol.game.Hero;
-import org.destinationsol.game.SolGame;
 
 public class DmgWarnDrawer extends WarnDrawer {
     DmgWarnDrawer() {

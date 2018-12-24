@@ -24,7 +24,6 @@ import org.destinationsol.common.SolRandom;
 import org.destinationsol.game.Faction;
 import org.destinationsol.game.ObjectManager;
 import org.destinationsol.game.ShipConfig;
-import org.destinationsol.game.SolGame;
 import org.destinationsol.game.input.AiPilot;
 import org.destinationsol.game.input.Pilot;
 import org.destinationsol.game.input.StillGuard;

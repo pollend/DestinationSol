@@ -37,7 +37,7 @@ public class PlayerCreator {
     private static final int NUMBER_OF_TUTORIAL_ITEM_ADD_ATTEMPTS = 50;
     private static final float MAX_NUMBER_OF_TUTORIAL_ITEM_GROUPS = 1.5f * Const.ITEM_GROUPS_PER_PAGE;
 
-    Hero createPlayer(ShipConfig shipConfig, boolean shouldSpawnOnGalaxySpawnPosition, RespawnState respawnState, SolGame game, boolean isMouseControl, boolean isNewShip) {
+    Hero createPlayer(ShipConfig shipConfig, boolean shouldSpawnOnGalaxySpawnPosition, RespawnState respawnState, boolean isMouseControl, boolean isNewShip) {
         Vector2 position = findPlayerSpawnPosition(shipConfig, shouldSpawnOnGalaxySpawnPosition, game);
         game.getCam().setPos(position);
         if (isMouseControl) {
@@ -49,7 +49,7 @@ public class PlayerCreator {
         return hero;
     }
 
-    private Hero configureAndCreateHero(ShipConfig shipConfig, RespawnState respawnState, SolGame game, boolean isMouseControl, boolean isNewShip, Vector2 position) {
+    private Hero configureAndCreateHero(ShipConfig shipConfig, RespawnState respawnState, boolean isMouseControl, boolean isNewShip, Vector2 position) {
         Pilot pilot = createPilot(game, isMouseControl);
         float money = grantPlayerMoney(shipConfig, respawnState, game);
         HullConfig hull = findHullConfig(shipConfig, respawnState);
@@ -60,7 +60,7 @@ public class PlayerCreator {
         return hero;
     }
 
-    private void addAndEquipItems(Hero hero, RespawnState respawnState, SolGame game) {
+    private void addAndEquipItems(Hero hero, RespawnState respawnState) {
         ItemContainer itemContainer = hero.getItemContainer();
         if (!respawnState.getRespawnItems().isEmpty()) {
             addAndEquipRespawnItems(hero, respawnState, itemContainer, game);
@@ -70,11 +70,11 @@ public class PlayerCreator {
         itemContainer.markAllAsSeen();
     }
 
-    private boolean isTutorialMode(SolGame game) {
+    private boolean isTutorialMode() {
         return game.getTutMan() != null;
     }
 
-    private void addRandomTutorialItems(SolGame game, ItemContainer itemContainer) {
+    private void addRandomTutorialItems( ItemContainer itemContainer) {
         for (int i = 0; i < NUMBER_OF_TUTORIAL_ITEM_ADD_ATTEMPTS; i++) {
             if (itemContainer.groupCount() > MAX_NUMBER_OF_TUTORIAL_ITEM_GROUPS) {
                 return;
@@ -90,24 +90,24 @@ public class PlayerCreator {
         return !(it instanceof Gun) && it.getIcon() != null;
     }
 
-    private void addAndEquipRespawnItems(Hero hero, RespawnState respawnState, ItemContainer itemContainer, SolGame game) {
+    private void addAndEquipRespawnItems(Hero hero, RespawnState respawnState, ItemContainer itemContainer) {
         for (SolItem item : respawnState.getRespawnItems()) {
             itemContainer.add(item);
             ensurePreviouslyEquippedItemStaysEquipped(item, hero, game);
         }
     }
 
-    private void ensurePreviouslyEquippedItemStaysEquipped(SolItem item, Hero hero, SolGame game) {
+    private void ensurePreviouslyEquippedItemStaysEquipped(SolItem item, Hero hero) {
         if (item.isEquipped() > 0) {
             if (item instanceof Gun) {
-                hero.maybeEquip(game, item, item.isEquipped() == 2, true);
+                hero.maybeEquip(item, item.isEquipped() == 2, true);
             } else {
-                hero.maybeEquip(game, item, true);
+                hero.maybeEquip(item, true);
             }
         }
     }
 
-    private Hero createHero(Vector2 position, Pilot pilot, float money, HullConfig hull, String items, boolean giveAmmo, SolGame game) {
+    private Hero createHero(Vector2 position, Pilot pilot, float money, HullConfig hull, String items, boolean giveAmmo) {
         FarShip farShip = game.getShipBuilder().buildNewFar(
                 new Vector2(position),
                 null,
@@ -142,7 +142,7 @@ public class PlayerCreator {
         return shipConfig.getHull();
     }
 
-    private float grantPlayerMoney(ShipConfig shipConfig, RespawnState respawnState, SolGame game) {
+    private float grantPlayerMoney(ShipConfig shipConfig, RespawnState respawnState) {
         if (respawnState.getRespawnMoney() != 0) {
             return respawnState.getRespawnMoney();
         }
@@ -152,7 +152,7 @@ public class PlayerCreator {
         return shipConfig.getMoney();
     }
 
-    private Pilot createPilot(SolGame game, boolean isMouseControl) {
+    private Pilot createPilot( boolean isMouseControl) {
         if (isMouseControl) {
             return new AiPilot(new BeaconDestProvider(), true, Faction.LAANI, false, "you", Const.AI_DET_DIST);
         } else {
@@ -160,7 +160,7 @@ public class PlayerCreator {
         }
     }
 
-    private Vector2 findPlayerSpawnPosition(ShipConfig shipConfig, boolean shouldSpawnOnGalaxySpawnPosition, SolGame game) {
+    private Vector2 findPlayerSpawnPosition(ShipConfig shipConfig, boolean shouldSpawnOnGalaxySpawnPosition) {
         if (shouldSpawnOnGalaxySpawnPosition) {
             return game.getGalaxyFiller().getPlayerSpawnPos(game);
         } else {

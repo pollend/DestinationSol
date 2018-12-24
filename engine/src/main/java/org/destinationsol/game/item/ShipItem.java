@@ -18,7 +18,6 @@ package org.destinationsol.game.item;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import org.destinationsol.game.SolGame;
 import org.destinationsol.game.ship.hulls.HullConfig;
 
 public class ShipItem implements SolItem {

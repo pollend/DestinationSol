@@ -18,7 +18,6 @@ package org.destinationsol.assets.audio;
 import com.badlogic.gdx.math.Vector2;
 import org.destinationsol.Const;
 import org.destinationsol.game.DmgType;
-import org.destinationsol.game.SolGame;
 import org.destinationsol.game.SolObject;
 
 import java.util.Arrays;

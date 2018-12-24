@@ -18,7 +18,6 @@ package org.destinationsol.game.screens;
 import com.badlogic.gdx.math.Vector2;
 import org.destinationsol.Const;
 import org.destinationsol.game.Hero;
-import org.destinationsol.game.SolGame;
 
 public class SunWarnDrawer extends WarnDrawer {
 

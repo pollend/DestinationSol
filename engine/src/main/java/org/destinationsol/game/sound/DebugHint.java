@@ -20,7 +20,6 @@ import com.badlogic.gdx.utils.TimeUtils;
 import org.destinationsol.common.DebugCol;
 import org.destinationsol.game.GameDrawer;
 import org.destinationsol.game.SolCam;
-import org.destinationsol.game.SolGame;
 import org.destinationsol.game.SolObject;
 
 import java.util.HashMap;
