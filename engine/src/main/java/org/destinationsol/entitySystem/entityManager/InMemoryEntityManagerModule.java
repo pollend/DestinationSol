@@ -26,14 +26,12 @@ import org.terasology.entitysystem.transaction.TransactionManager;
 @Module(includes = InMemoryEntityManagerModule.BindInMemoryEntityManager.class)
 public class InMemoryEntityManagerModule {
     private final ComponentManager componentManager;
-    private final TransactionManager transactionManager;
-    public InMemoryEntityManagerModule(ComponentManager componentManager,TransactionManager transactionManager){
+    public InMemoryEntityManagerModule(ComponentManager componentManager){
         this.componentManager = componentManager;
-        this.transactionManager = transactionManager;
     }
 
     @Provides
-    public InMemoryEntityManager provideInMemoryEntityManager(){
+    public InMemoryEntityManager provideInMemoryEntityManager(TransactionManager transactionManager){
         return new InMemoryEntityManager(componentManager,transactionManager);
     }
 

@@ -16,7 +16,8 @@
 package org.destinationsol.entitySystem.entityManager;
 
 import dagger.Component;
+import org.destinationsol.entitySystem.transactionManager.TransactionManagerComponent;
 
-@Component(modules = InMemoryEntityManagerModule.class)
+@Component(modules = InMemoryEntityManagerModule.class,dependencies = TransactionManagerComponent.class)
 public interface InMemoryEntityManagerComponent extends EntityManagerComponent {
 }

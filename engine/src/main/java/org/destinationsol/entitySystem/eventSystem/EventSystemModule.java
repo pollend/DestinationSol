@@ -15,15 +15,28 @@
  */
 package org.destinationsol.entitySystem.eventSystem;
 
-import dagger.Component;
-import org.destinationsol.entitySystem.transactionManager.TransactionManagerComponent;
-import org.terasology.entitysystem.event.EventSystem;
+import dagger.Module;
+import dagger.Provides;
 import org.terasology.entitysystem.event.impl.DelayedEventSystem;
+import org.terasology.entitysystem.event.impl.EventProcessor;
 import org.terasology.entitysystem.event.impl.ImmediateEventSystem;
 import org.terasology.entitysystem.transaction.TransactionManager;
 
-@Component(modules = EventSystemModule.class,dependencies = TransactionManagerComponent.class)
-public interface EventSystemComponent {
-    DelayedEventSystem eventSystem();
-    ImmediateEventSystem immediateEventSystem();
+@Module
+public class EventSystemModule {
+    private final EventProcessor eventProcessor;
+
+    public EventSystemModule(EventProcessor processor){
+        this.eventProcessor = processor;
+    }
+
+    @Provides
+    public DelayedEventSystem providDelayedEventSystem(TransactionManager transactionManager){
+        return new DelayedEventSystem(transactionManager,eventProcessor);
+    }
+
+    @Provides
+    public ImmediateEventSystem providImmediateEventSystem(TransactionManager transactionManager){
+        return new ImmediateEventSystem(transactionManager,eventProcessor);
+    }
 }

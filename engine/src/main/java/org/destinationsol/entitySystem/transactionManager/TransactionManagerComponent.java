@@ -13,17 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.destinationsol.entitySystem.eventSystem;
+package org.destinationsol.entitySystem.transactionManager;
 
 import dagger.Component;
-import org.destinationsol.entitySystem.transactionManager.TransactionManagerComponent;
-import org.terasology.entitysystem.event.EventSystem;
-import org.terasology.entitysystem.event.impl.DelayedEventSystem;
-import org.terasology.entitysystem.event.impl.ImmediateEventSystem;
 import org.terasology.entitysystem.transaction.TransactionManager;
 
-@Component(modules = EventSystemModule.class,dependencies = TransactionManagerComponent.class)
-public interface EventSystemComponent {
-    DelayedEventSystem eventSystem();
-    ImmediateEventSystem immediateEventSystem();
+@Component(modules = TransactionModule.class)
+public interface TransactionManagerComponent {
+    TransactionManager transactionManager();
 }

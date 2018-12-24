@@ -13,7 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.destinationsol.entitySystem.eventSystem;
+package org.destinationsol.entitySystem.transactionManager;
 
-public class DelayedEventSystemComponent {
+import dagger.Module;
+import dagger.Provides;
+import org.terasology.entitysystem.transaction.TransactionManager;
+
+@Module
+public class TransactionModule {
+    @Provides
+    static TransactionManager provideTransactionManager(){
+        return new TransactionManager();
+    }
 }
