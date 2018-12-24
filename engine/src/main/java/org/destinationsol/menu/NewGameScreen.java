@@ -57,12 +57,12 @@ public class NewGameScreen extends SolUiBaseScreen {
     }
 
     @Override
-    public void onAdd(SolApplication solApplication) {
+    public void onAdd() {
         continueControl.setEnabled(SaveManager.hasPrevShip("prevShip.ini"));
     }
 
     @Override
-    public void updateCustom(SolApplication solApplication, SolInputManager.InputPointer[] inputPointers, boolean clickedOutside) {
+    public void updateCustom(SolInputManager.InputPointer[] inputPointers, boolean clickedOutside) {
         MenuScreens screens = solApplication.getMenuScreens();
         SolInputManager im = solApplication.getInputManager();
         if (backControl.isJustOff()) {
@@ -84,7 +84,7 @@ public class NewGameScreen extends SolUiBaseScreen {
     }
 
     @Override
-    public void drawBackground(UiDrawer uiDrawer, SolApplication solApplication) {
+    public void drawBackground(UiDrawer uiDrawer) {
         uiDrawer.draw(backgroundTexture, displayDimensions.getRatio(), 1, displayDimensions.getRatio() / 2, 0.5f, displayDimensions.getRatio() / 2, 0.5f, 0, SolColor.WHITE);
     }
 }

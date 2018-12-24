@@ -13,35 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.destinationsol.game.screens;
+package org.destinationsol.di.components.screens;
 
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import org.destinationsol.SolApplication;
+import dagger.Provides;
+import org.destinationsol.di.scope.ActivityScope;
+import org.destinationsol.game.screens.RightPaneLayout;
+import org.destinationsol.menu.MenuLayout;
+import org.destinationsol.ui.SolUiScreen;
 
-public interface ShipUiControl {
-    default void update(boolean enabled) {
-        // Intentionally left blank
+public class BaseScreenModule<T extends SolUiScreen> {
+
+    protected final T screen;
+
+    public BaseScreenModule(T screen){
+        this.screen = screen;
     }
 
-    boolean isLeft();
-
-    boolean isRight();
-
-    boolean isUp();
-
-    boolean isDown();
-
-    boolean isShoot();
-
-    boolean isShoot2();
-
-    boolean isAbility();
-
-    default TextureAtlas.AtlasRegion getInGameTex() {
-        return null;
-    }
-
-    default void blur() {
-        // Intentionally left blank
+    @Provides
+    @ActivityScope
+    public T provideScreen(){
+        return screen;
     }
 }

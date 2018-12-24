@@ -57,7 +57,7 @@ public class ResolutionScreen extends SolUiBaseScreen {
     }
 
     @Override
-    public void updateCustom(SolApplication solApplication, SolInputManager.InputPointer[] inputPointers, boolean clickedOutside) {
+    public void updateCustom(SolInputManager.InputPointer[] inputPointers, boolean clickedOutside) {
         SolInputManager inputManager = solApplication.getInputManager();
         GameOptions options = solApplication.getOptions();
 
@@ -79,12 +79,12 @@ public class ResolutionScreen extends SolUiBaseScreen {
     }
 
     @Override
-    public void drawBackground(UiDrawer uiDrawer, SolApplication solApplication) {
+    public void drawBackground(UiDrawer uiDrawer) {
         uiDrawer.draw(backgroundTexture, displayDimensions.getRatio(), 1, displayDimensions.getRatio() / 2, 0.5f, displayDimensions.getRatio() / 2, 0.5f, 0, SolColor.WHITE);
     }
 
     @Override
-    public void drawText(UiDrawer uiDrawer, SolApplication solApplication) {
+    public void drawText(UiDrawer uiDrawer) {
         uiDrawer.drawString("Click 'Back' to apply changes", .5f * displayDimensions.getRatio(), .3f, FontSize.MENU, true, SolColor.WHITE);
     }
 }

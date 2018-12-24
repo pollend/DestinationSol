@@ -21,7 +21,6 @@ import org.destinationsol.Const;
 import org.destinationsol.game.HardnessCalc;
 import org.destinationsol.game.ObjectManager;
 import org.destinationsol.game.SolCam;
-import org.destinationsol.game.SolGame;
 
 public class Maze {
     private final MazeConfig config;

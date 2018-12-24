@@ -22,8 +22,8 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.BoundingBox;
 import com.badlogic.gdx.utils.Array;
+import com.google.gson.JsonObject;
 import org.destinationsol.game.SolTime;
-import org.json.JSONObject;
 import com.google.common.base.Preconditions;
 import org.destinationsol.assets.audio.OggSoundSet;
 import org.destinationsol.common.NotNull;
@@ -31,7 +31,6 @@ import org.destinationsol.common.SolMath;
 import org.destinationsol.common.SolRandom;
 import org.destinationsol.game.GameColors;
 import org.destinationsol.game.GameDrawer;
-import org.destinationsol.game.SolGame;
 import org.destinationsol.game.SolObject;
 import org.destinationsol.game.drawables.Drawable;
 import org.destinationsol.game.drawables.DrawableLevel;
@@ -73,7 +72,7 @@ public class DSParticleEmitter {
     private BoundingBox boundingBox;
     private LightSource light;
 
-    public DSParticleEmitter(@NotNull Vector2 position, @NotNull String trigger, float angleOffset, boolean hasLight, JSONObject effectConfigNode, List<String> sounds) {
+    public DSParticleEmitter(@NotNull Vector2 position, @NotNull String trigger, float angleOffset, boolean hasLight, JsonObject effectConfigNode, List<String> sounds) {
         Preconditions.checkNotNull(position, "position cannot be null");
         this.position = new Vector2(position);
         this.trigger = Preconditions.checkNotNull(trigger, "trigger cannot be null");

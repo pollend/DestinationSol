@@ -31,6 +31,7 @@ import org.destinationsol.assets.audio.OggSoundManager;
 import org.destinationsol.assets.audio.PlayableSound;
 import org.destinationsol.common.SolColor;
 import org.destinationsol.common.SolMath;
+import org.destinationsol.di.Qualifier.Mobile;
 import org.destinationsol.game.SolGame;
 
 import javax.inject.Inject;
@@ -63,6 +64,10 @@ public class SolInputManager {
     private float warnPercentage;
     private boolean warnPercGrows;
     private Boolean scrolledUp;
+
+    @Inject
+    @Mobile
+    boolean isMobile;
 
     @Inject
     public SolInputManager(OggSoundManager soundManager) {
@@ -136,38 +141,35 @@ public class SolInputManager {
 
     }
 
-    public void setScreen(SolApplication solApplication, SolUiScreen screen) {
+    public void setScreen(SolUiScreen screen) {
         for (SolUiScreen oldScreen : screens) {
-            removeScreen(oldScreen, solApplication);
+            removeScreen(oldScreen);
         }
-        addScreen(solApplication, screen);
+        addScreen(screen);
     }
 
-    public void addScreen(SolApplication solApplication, SolUiScreen screen) {
+    public void addScreen( SolUiScreen screen) {
         screensToAdd.add(screen);
-        screen.onAdd(solApplication);
+        screen.onAdd();
     }
 
-    private void removeScreen(SolUiScreen screen, SolApplication solApplication) {
+    private void removeScreen(SolUiScreen screen) {
         screenToRemove.add(screen);
         List<SolUiControl> controls = screen.getControls();
         for (SolUiControl control : controls) {
             control.blur();
         }
-        screen.blurCustom(solApplication);
+        screen.blurCustom();
     }
 
     public boolean isScreenOn(SolUiScreen screen) {
         return screens.contains(screen);
     }
 
-    public void update(SolApplication solApplication) {
-        boolean mobile = solApplication.isMobile();
-        SolGame game = solApplication.getGame();
-
+    public void update() {
         // This keeps the mouse within the window, but only when playing the game with the mouse.
         // All other times the mouse can freely leave and return.
-        if (!mobile && solApplication.getOptions().controlType == GameOptions.ControlType.MIXED && game != null && getTopScreen() != game.getScreens().menuScreen) {
+        if (!isMobile && solApplication.getOptions().controlType == GameOptions.ControlType.MIXED && game != null && getTopScreen() != game.getScreens().menuScreen) {
             if (!Gdx.input.isCursorCatched()) {
                 Gdx.input.setCursorCatched(true);
             }

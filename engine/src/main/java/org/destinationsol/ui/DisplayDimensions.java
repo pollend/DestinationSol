@@ -25,8 +25,8 @@ public class DisplayDimensions {
     private int height;
     private float ratio;
 
-    public DisplayDimensions(int width, int height) {
-        set(width, height);
+    public DisplayDimensions() {
+        set(0,0);
     }
 
     public void set(int width, int height) {

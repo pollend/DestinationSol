@@ -17,19 +17,22 @@ package org.destinationsol.game.screens;
 
 import com.badlogic.gdx.math.Rectangle;
 import org.destinationsol.GameOptions;
-import org.destinationsol.SolApplication;
 import org.destinationsol.game.MapDrawer;
-import org.destinationsol.game.SolGame;
 import org.destinationsol.ui.SolInputManager;
 import org.destinationsol.ui.SolUiBaseScreen;
 import org.destinationsol.ui.SolUiControl;
+
+import javax.inject.Inject;
 
 public class MapScreen extends SolUiBaseScreen {
     private final SolUiControl zoomOutControl;
     public final SolUiControl closeControl;
     public final SolUiControl zoomInControl;
 
-    MapScreen(RightPaneLayout rightPaneLayout, boolean mobile, GameOptions gameOptions) {
+    @Inject
+    RightPaneLayout rightPaneLayout;
+
+    MapScreen(boolean mobile, GameOptions gameOptions) {
         Rectangle closeArea = mobile ? MainGameScreen.btn(0, MainGameScreen.HELPER_ROW_1, true) : rightPaneLayout.buttonRect(1);
         closeControl = new SolUiControl(closeArea, true, gameOptions.getKeyMap(), gameOptions.getKeyClose());
         closeControl.setDisplayName("Close");
@@ -47,7 +50,7 @@ public class MapScreen extends SolUiBaseScreen {
     }
 
     @Override
-    public void updateCustom(SolApplication solApplication, SolInputManager.InputPointer[] inputPointers, boolean clickedOutside) {
+    public void updateCustom( SolInputManager.InputPointer[] inputPointers, boolean clickedOutside) {
         SolGame game = solApplication.getGame();
         GameOptions gameOptions = solApplication.getOptions();
         boolean justClosed = closeControl.isJustOff();

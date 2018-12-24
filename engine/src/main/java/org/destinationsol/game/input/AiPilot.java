@@ -73,7 +73,7 @@ public class AiPilot implements Pilot {
     }
 
     @Override
-    public void update(SolGame game, SolShip ship, SolShip nearestEnemy) {
+    public void update(SolShip ship, SolShip nearestEnemy) {
         myAbilityUpdater.update(ship, nearestEnemy);
         myPlanetBind = null;
         Vector2 shipPos = ship.getPosition();
@@ -120,7 +120,7 @@ public class AiPilot implements Pilot {
             }
         }
 
-        myMover.update(game, ship, dest, np, maxIdleDist, hasEngine, avoidBigObjs, desiredSpeedLen, shouldStopNearDest, destSpeed);
+        myMover.update(ship, dest, np, maxIdleDist, hasEngine, avoidBigObjs, desiredSpeedLen, shouldStopNearDest, destSpeed);
         boolean moverActive = myMover.isActive();
 
         Vector2 enemyPos = nearestEnemy == null ? null : nearestEnemy.getPosition();

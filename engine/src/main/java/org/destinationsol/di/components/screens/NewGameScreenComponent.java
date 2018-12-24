@@ -13,35 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.destinationsol.game.screens;
+package org.destinationsol.di.components.screens;
 
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import org.destinationsol.SolApplication;
+import dagger.Module;
+import dagger.Subcomponent;
+import org.destinationsol.di.scope.ActivityScope;
+import org.destinationsol.menu.NewGameScreen;
 
-public interface ShipUiControl {
-    default void update(boolean enabled) {
-        // Intentionally left blank
-    }
+@ActivityScope
+@Subcomponent(
+        modules = NewGameScreenComponent.NewGameScreenModule.class
+)
+public interface NewGameScreenComponent {
 
-    boolean isLeft();
+    NewGameScreen screen();
 
-    boolean isRight();
-
-    boolean isUp();
-
-    boolean isDown();
-
-    boolean isShoot();
-
-    boolean isShoot2();
-
-    boolean isAbility();
-
-    default TextureAtlas.AtlasRegion getInGameTex() {
-        return null;
-    }
-
-    default void blur() {
-        // Intentionally left blank
+    @Module
+    class NewGameScreenModule extends BaseScreenModule<NewGameScreen>{
+        public NewGameScreenModule (NewGameScreen screen) {
+            super(screen);
+        }
     }
 }

@@ -36,7 +36,7 @@ public class BuyItemsScreen extends InventoryOperationsScreen {
     }
 
     @Override
-    public ItemContainer getItems(SolGame game) {
+    public ItemContainer getItems() {
         return game.getScreens().talkScreen.getTarget().getTradeContainer().getItems();
     }
 
@@ -46,7 +46,7 @@ public class BuyItemsScreen extends InventoryOperationsScreen {
     }
 
     @Override
-    public void updateCustom(SolApplication solApplication, SolInputManager.InputPointer[] inputPointers, boolean clickedOutside) {
+    public void updateCustom(SolInputManager.InputPointer[] inputPointers, boolean clickedOutside) {
         SolGame game = solApplication.getGame();
         InventoryScreen is = game.getScreens().inventoryScreen;
         Hero hero = game.getHero();

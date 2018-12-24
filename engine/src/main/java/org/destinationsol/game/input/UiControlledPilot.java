@@ -19,6 +19,7 @@ package org.destinationsol.game.input;
 import org.destinationsol.Const;
 import org.destinationsol.game.Faction;
 import org.destinationsol.game.SolGame;
+import org.destinationsol.game.SolTime;
 import org.destinationsol.game.screens.MainGameScreen;
 import org.destinationsol.game.ship.FarShip;
 import org.destinationsol.game.ship.SolShip;
@@ -32,7 +33,7 @@ public class UiControlledPilot implements Pilot {
     }
 
     @Override
-    public void update(SolGame game, SolShip ship, SolShip nearestEnemy) {
+    public void update(SolTime time, SolShip ship, SolShip nearestEnemy) {
     }
 
     @Override
@@ -91,7 +92,7 @@ public class UiControlledPilot implements Pilot {
     }
 
     @Override
-    public void updateFar(SolGame game, FarShip farShip) {
+    public void updateFar(FarShip farShip) {
     }
 
     @Override

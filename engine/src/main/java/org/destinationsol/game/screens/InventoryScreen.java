@@ -143,7 +143,7 @@ public class InventoryScreen extends SolUiBaseScreen {
     }
 
     @Override
-    public void updateCustom(SolApplication solApplication, SolInputManager.InputPointer[] inputPointers, boolean clickedOutside) {
+    public void updateCustom(SolInputManager.InputPointer[] inputPointers, boolean clickedOutside) {
         if (clickedOutside) {
             closeControl.maybeFlashPressed(solApplication.getOptions().getKeyClose());
             return;
@@ -243,7 +243,7 @@ public class InventoryScreen extends SolUiBaseScreen {
     }
 
     @Override
-    public void onAdd(SolApplication solApplication) {
+    public void onAdd() {
         if (myOperations != null) {
             solApplication.getInputManager().addScreen(solApplication, myOperations);
         }
@@ -252,12 +252,12 @@ public class InventoryScreen extends SolUiBaseScreen {
     }
 
     @Override
-    public void drawBackground(UiDrawer uiDrawer, SolApplication solApplication) {
+    public void drawBackground(UiDrawer uiDrawer) {
         uiDrawer.draw(myArea, SolColor.UI_BG);
     }
 
     @Override
-    public void drawImages(UiDrawer uiDrawer, SolApplication solApplication) {
+    public void drawImages(UiDrawer uiDrawer) {
         SolGame game = solApplication.getGame();
         ItemContainer itemContainer = myOperations.getItems(game);
         if (itemContainer == null) {
@@ -287,7 +287,7 @@ public class InventoryScreen extends SolUiBaseScreen {
     }
 
     @Override
-    public void drawText(UiDrawer uiDrawer, SolApplication solApplication) {
+    public void drawText(UiDrawer uiDrawer) {
         SolGame game = solApplication.getGame();
         ItemContainer itemContainer = myOperations.getItems(game);
         if (itemContainer == null) {
@@ -341,7 +341,7 @@ public class InventoryScreen extends SolUiBaseScreen {
     }
 
     @Override
-    public void blurCustom(SolApplication solApplication) {
+    public void blurCustom() {
         if (!showingHeroItems(solApplication)) {
             return;
         }
@@ -351,7 +351,7 @@ public class InventoryScreen extends SolUiBaseScreen {
         }
     }
 
-    private boolean showingHeroItems(SolApplication application) {
+    private boolean showingHeroItems() {
         return application.getGame().getHero().getShip() == showInventory.getTarget() || myOperations == sellItems;
     }
 

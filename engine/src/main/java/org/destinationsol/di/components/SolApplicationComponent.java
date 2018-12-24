@@ -15,7 +15,6 @@
  */
 package org.destinationsol.di.components;
 
-import dagger.BindsInstance;
 import dagger.Component;
 import org.destinationsol.CommonDrawer;
 import org.destinationsol.GameOptions;
@@ -24,9 +23,10 @@ import org.destinationsol.assets.audio.OggMusicManager;
 import org.destinationsol.assets.audio.OggSoundManager;
 import org.destinationsol.di.AppModule;
 import org.destinationsol.di.Qualifier.Mobile;
+import org.destinationsol.di.components.screens.*;
 import org.destinationsol.game.WorldConfig;
-import org.destinationsol.game.context.Context;
 import org.destinationsol.menu.MenuScreens;
+import org.destinationsol.ui.DisplayDimensions;
 import org.destinationsol.ui.SolInputManager;
 import org.terasology.module.ModuleEnvironment;
 
@@ -44,13 +44,20 @@ public interface SolApplicationComponent {
     OggMusicManager musicManager();
     CommonDrawer commonDrawer();
     GameOptions gameOptions();
-
+    DisplayDimensions displayDimensions();
     MenuScreens menuScreens();
 
     WorldConfig worldConfig();
-    Context context();
 
     SolApplication solApplication();
+
+    CreditsScreenComponent plus(CreditsScreenComponent.CreditsScreenModule module);
+    InputMapScreenComponent plus(InputMapScreenComponent.InputMapScreenModule module);
+    LoadingScreenComponent plus(LoadingScreenComponent.LoadingScreenModule module);
+    MainMenuScreenComponent plus(MainMenuScreenComponent.MainMenuScreenModule module);
+    NewGameScreenComponent plus(NewGameScreenComponent.NewGameScreenModule module);
+    OptionScreenComponent plus(OptionScreenComponent.OptionScreenModule module);
+    ResolutionScreenComponent plus(ResolutionScreenComponent.ResolutionScreenModule module);
 
 
     @Mobile

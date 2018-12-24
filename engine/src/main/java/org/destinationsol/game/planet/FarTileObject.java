@@ -18,8 +18,8 @@ package org.destinationsol.game.planet;
 import com.badlogic.gdx.math.Vector2;
 import org.destinationsol.common.SolMath;
 import org.destinationsol.game.FarObject;
-import org.destinationsol.game.SolGame;
 import org.destinationsol.game.SolObject;
+import org.destinationsol.game.SolTime;
 
 public class FarTileObject implements FarObject {
     private final Planet myPlanet;
@@ -46,12 +46,12 @@ public class FarTileObject implements FarObject {
     }
 
     @Override
-    public SolObject toObject(SolGame game) {
-        return new TileObjBuilder().build(game, mySize, myToPlanetAngle, myDist, myTile, myPlanet);
+    public SolObject toObject() {
+        return new TileObjBuilder().build(mySize, myToPlanetAngle, myDist, myTile, myPlanet);
     }
 
     @Override
-    public void update(SolGame game) {
+    public void update(SolTime solTime) {
         if (game.getPlanetManager().getNearestPlanet() == myPlanet) {
             SolMath.fromAl(position, myPlanet.getAngle() + myToPlanetAngle, myDist);
             position.add(myPlanet.getPosition());

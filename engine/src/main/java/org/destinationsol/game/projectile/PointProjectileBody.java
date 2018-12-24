@@ -64,7 +64,7 @@ public class PointProjectileBody implements ProjectileBody {
     }
 
     @Override
-    public void receiveForce(Vector2 force, SolGame game, boolean acc) {
+    public void receiveForce(Vector2 force, boolean acc) {
         force.scl(game.getTimeStep());
         if (!acc) {
             force.scl(10f);
@@ -78,7 +78,7 @@ public class PointProjectileBody implements ProjectileBody {
     }
 
     @Override
-    public void onRemove(SolGame game) {
+    public void onRemove() {
     }
 
     @Override

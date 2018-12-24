@@ -29,7 +29,6 @@ import org.destinationsol.game.FactionManager;
 import org.destinationsol.game.FarObject;
 import org.destinationsol.game.GameDrawer;
 import org.destinationsol.game.SolCam;
-import org.destinationsol.game.SolGame;
 import org.destinationsol.game.SolObject;
 import org.destinationsol.game.SolTime;
 import org.destinationsol.game.drawables.Drawable;
@@ -184,7 +183,7 @@ public class Projectile implements SolObject {
     }
 
     @Override
-    public void receiveDmg(float dmg, SolGame game, Vector2 position, DmgType dmgType) {
+    public void receiveDmg(float dmg, Vector2 position, DmgType dmgType) {
         if (config.density > 0) {
             return;
         }
@@ -270,7 +269,7 @@ public class Projectile implements SolObject {
         return true;
     }
 
-    public void setObstacle(SolObject object, SolGame game) {
+    public void setObstacle(SolObject object) {
         if (!shouldCollide(object, null, game.getFactionMan())) {
             return; // happens for some reason when projectile is just created
         }

@@ -21,7 +21,6 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.RayCastCallback;
 import com.badlogic.gdx.physics.box2d.World;
 import org.destinationsol.common.SolMath;
-import org.destinationsol.game.SolGame;
 import org.destinationsol.game.SolObject;
 import org.destinationsol.game.planet.Planet;
 import org.destinationsol.game.ship.SolShip;
@@ -39,7 +38,7 @@ public class SmallObjAvoider {
         myDest = new Vector2();
     }
 
-    public float avoid(SolGame game, SolShip ship, float toDestAngle, Planet np) {
+    public float avoid(SolShip ship, float toDestAngle, Planet np) {
         myShip = ship;
         Vector2 shipPos = ship.getPosition();
         float shipSpeedLen = ship.getSpeed().len();

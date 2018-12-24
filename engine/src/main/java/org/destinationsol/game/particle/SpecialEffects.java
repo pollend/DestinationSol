@@ -22,7 +22,6 @@ import org.destinationsol.assets.audio.OggSoundManager;
 import org.destinationsol.assets.json.Json;
 import org.destinationsol.game.GameColors;
 import org.destinationsol.game.SolCam;
-import org.destinationsol.game.SolGame;
 import org.destinationsol.game.SolTime;
 import org.destinationsol.game.drawables.DrawableLevel;
 import org.destinationsol.game.planet.PlanetManager;

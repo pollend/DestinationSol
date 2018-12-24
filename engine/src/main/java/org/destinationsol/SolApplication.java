@@ -33,10 +33,7 @@ import org.destinationsol.di.components.SolApplicationComponent;
 import org.destinationsol.di.components.SolGameComponent;
 import org.destinationsol.game.DebugOptions;
 import org.destinationsol.game.SaveManager;
-import org.destinationsol.game.SolGame;
 import org.destinationsol.game.WorldConfig;
-import org.destinationsol.game.context.Context;
-import org.destinationsol.game.context.internal.ContextImpl;
 import org.destinationsol.menu.MenuScreens;
 import org.destinationsol.ui.DebugCollector;
 import org.destinationsol.ui.DisplayDimensions;
@@ -77,9 +74,6 @@ public class SolApplication implements ApplicationListener {
     private String fatalErrorMsg;
     private String fatalErrorTrace;
 
-    // TODO: Make this non-static.
-    public static DisplayDimensions displayDimensions;
-
     private float timeAccumulator = 0;
 
     private SolApplicationComponent applicationComponent;
@@ -97,16 +91,13 @@ public class SolApplication implements ApplicationListener {
     @Override
     public void create() {
         resizeSubscribers = new HashSet<>();
-        displayDimensions = new DisplayDimensions(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
-        Context context = new ContextImpl();
-        context.put(SolApplication.class, this);
         this.applicationComponent = DaggerSolApplicationComponent.builder()
-                .appModule(new AppModule(this,context,null))
+                .appModule(new AppModule(this,null))
                 .build();
         Assets.initialize(applicationComponent.moduleEnviroment());
         applicationComponent.inject(this);
-
+        this.applicationComponent.displayDimensions().set(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
         boolean isMobile = Gdx.app.getType() == Application.ApplicationType.Android || Gdx.app.getType() == Application.ApplicationType.iOS;
         if (isMobile) {
@@ -122,7 +113,8 @@ public class SolApplication implements ApplicationListener {
 
     @Override
     public void resize(int newWidth, int newHeight) {
-        displayDimensions.set(newWidth, newHeight);
+
+        applicationComponent.displayDimensions().set(newWidth, newHeight);
 
         for (ResizeSubscriber resizeSubscriber : resizeSubscribers) {
             resizeSubscriber.resize();
@@ -176,7 +168,7 @@ public class SolApplication implements ApplicationListener {
             DebugCollector.debug("Fps", Gdx.graphics.getFramesPerSecond());
         }
 
-        inputManager.update(this);
+        inputManager.update();
 
         if (solGame != null) {
             solGame.update();

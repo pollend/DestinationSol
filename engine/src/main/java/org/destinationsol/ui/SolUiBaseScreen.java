@@ -33,12 +33,12 @@ public abstract class SolUiBaseScreen implements SolUiScreen, ResizeSubscriber {
     }
 
     @Override
-    public void onAdd(SolApplication solApplication) {
+    public void onAdd() {
         // Intentionally left blank
     }
 
     @Override
-    public void updateCustom(SolApplication solApplication, SolInputManager.InputPointer[] inputPointers, boolean clickedOutside) {
+    public void updateCustom( SolInputManager.InputPointer[] inputPointers, boolean clickedOutside) {
         // Intentionally left blank
     }
 
@@ -48,22 +48,22 @@ public abstract class SolUiBaseScreen implements SolUiScreen, ResizeSubscriber {
     }
 
     @Override
-    public void blurCustom(SolApplication solApplication) {
+    public void blurCustom() {
         // Intentionally left blank
     }
 
     @Override
-    public void drawBackground(UiDrawer uiDrawer, SolApplication solApplication) {
+    public void drawBackground(UiDrawer uiDrawer) {
         // Intentionally left blank
     }
 
     @Override
-    public void drawImages(UiDrawer uiDrawer, SolApplication solApplication) {
+    public void drawImages(UiDrawer uiDrawer) {
         // Intentionally left blank
     }
 
     @Override
-    public void drawText(UiDrawer uiDrawer, SolApplication solApplication) {
+    public void drawText(UiDrawer uiDrawer) {
         // Intentionally left blank
     }
 

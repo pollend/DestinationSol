@@ -34,19 +34,21 @@ import org.destinationsol.ui.UiDrawer;
 import java.util.ArrayList;
 
 public class CreditsScreen extends SolUiBaseScreen {
+    private final DisplayDimensions displayDimensions;
+
     private static final float MAX_AWAIT = 6f;
     private final TextureAtlas.AtlasRegion backgroundTexture;
     private final SolUiControl closeControl;
-
-    private DisplayDimensions displayDimensions;
 
     private final ArrayList<String> myPages = new ArrayList<>();
     private final Color myColor;
     private int pageIndex;
     private float pageProgressPercent;
 
-    CreditsScreen(GameOptions gameOptions) {
-        displayDimensions = SolApplication.displayDimensions;
+
+
+    CreditsScreen(GameOptions gameOptions,DisplayDimensions displayDimensions) {
+        this.displayDimensions = displayDimensions;
 
         closeControl = new SolUiControl(MenuLayout.bottomRightFloatingButton(displayDimensions), true, gameOptions.getKeyEscape());
         closeControl.setDisplayName("Close");
@@ -119,14 +121,14 @@ public class CreditsScreen extends SolUiBaseScreen {
     }
 
     @Override
-    public void onAdd(SolApplication solApplication) {
+    public void onAdd() {
         pageIndex = 0;
         pageProgressPercent = 0;
         myColor.a = 0;
     }
 
     @Override
-    public void updateCustom(SolApplication solApplication, SolInputManager.InputPointer[] inputPointers, boolean clickedOutside) {
+    public void updateCustom(SolInputManager.InputPointer[] inputPointers, boolean clickedOutside) {
         if (closeControl.isJustOff()) {
             solApplication.getInputManager().setScreen(solApplication, solApplication.getMenuScreens().main);
             return;
@@ -148,12 +150,12 @@ public class CreditsScreen extends SolUiBaseScreen {
     }
 
     @Override
-    public void drawBackground(UiDrawer uiDrawer, SolApplication solApplication) {
+    public void drawBackground(UiDrawer uiDrawer) {
         uiDrawer.draw(backgroundTexture, displayDimensions.getRatio(), 1, displayDimensions.getRatio() / 2, 0.5f, displayDimensions.getRatio() / 2, 0.5f, 0, SolColor.WHITE);
     }
 
     @Override
-    public void drawText(UiDrawer uiDrawer, SolApplication solApplication) {
+    public void drawText(UiDrawer uiDrawer) {
         uiDrawer.drawString(myPages.get(pageIndex), displayDimensions.getRatio() / 2, .5f, FontSize.MENU, true, myColor);
     }
 }

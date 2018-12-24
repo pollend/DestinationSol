@@ -21,23 +21,41 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.ChainShape;
 import com.badlogic.gdx.physics.box2d.Fixture;
+import dagger.Module;
+import dagger.Provides;
 import org.destinationsol.Const;
 import org.destinationsol.common.SolColor;
 import org.destinationsol.common.SolMath;
-import org.destinationsol.game.SolGame;
+import org.destinationsol.game.ObjectManager;
 import org.destinationsol.game.drawables.DrawableLevel;
 import org.destinationsol.game.drawables.RectSprite;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class TileObjBuilder {
-    public TileObject build(float size, float toPlanetRelAngle, float distance, Tile tile, Planet planet) {
+@Module
+public class TileObjectModule {
+    public final float size;
+    public final float toPlanetRelAngle;
+    public final float distance;
+    public final Tile tile;
+    public  final Planet planet;
+
+    public TileObjectModule(float size, float toPlanetRelAngle, float distance, Tile tile, Planet planet){
+        this.size = size;
+        this.toPlanetRelAngle = toPlanetRelAngle;
+        this.distance = distance;
+        this.tile = tile;
+        this.planet = planet;
+    }
+
+    @Provides
+    public TileObject provideTileObject(ObjectManager objectManager) {
         float spriteSize = size * 2;
         RectSprite sprite = new RectSprite(tile.tex, spriteSize, 0, 0, new Vector2(), DrawableLevel.GROUND, 0, 0f, SolColor.WHITE, false);
         Body body = null;
         if (tile.points.size() > 0) {
-            body = buildBody(game, toPlanetRelAngle, distance, tile, planet, spriteSize);
+            body = buildBody(objectManager,toPlanetRelAngle, distance, tile, planet, spriteSize);
         }
         TileObject res = new TileObject(planet, toPlanetRelAngle, distance, size, sprite, body, tile);
         if (body != null) {
@@ -46,7 +64,7 @@ public class TileObjBuilder {
         return res;
     }
 
-    private Body buildBody(SolGame game, float toPlanetRelAngle, float dist, Tile tile, Planet planet, float spriteSize) {
+    private Body buildBody(ObjectManager objectManager,float toPlanetRelAngle, float dist, Tile tile, Planet planet, float spriteSize) {
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.KinematicBody;
         float toPlanetAngle = planet.getAngle() + toPlanetRelAngle;
@@ -54,7 +72,7 @@ public class TileObjBuilder {
         bodyDef.position.add(planet.getPosition());
         bodyDef.angle = (toPlanetAngle + 90) * MathUtils.degRad;
         bodyDef.angularDamping = 0;
-        Body body = game.getObjectManager().getWorld().createBody(bodyDef);
+        Body body = objectManager.getWorld().createBody(bodyDef);
         ChainShape shape = new ChainShape();
         List<Vector2> points = new ArrayList<>();
         for (Vector2 curr : tile.points) {

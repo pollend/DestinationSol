@@ -19,7 +19,6 @@ import com.badlogic.gdx.math.Vector2;
 import org.destinationsol.GameOptions;
 import org.destinationsol.SolApplication;
 import org.destinationsol.game.Hero;
-import org.destinationsol.game.SolGame;
 import org.destinationsol.game.item.Engine;
 import org.destinationsol.game.item.Gun;
 import org.destinationsol.game.item.ItemContainer;

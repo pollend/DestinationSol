@@ -25,7 +25,7 @@ public class DmgWarnDrawer extends WarnDrawer {
     }
 
     @Override
-    protected boolean shouldWarn(SolGame game) {
+    protected boolean shouldWarn() {
         Hero hero = game.getHero();
         if (hero.isTranscendent()) {
             return false;

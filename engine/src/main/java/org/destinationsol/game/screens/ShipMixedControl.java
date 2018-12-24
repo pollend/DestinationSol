@@ -24,7 +24,6 @@ import org.destinationsol.SolApplication;
 import org.destinationsol.assets.Assets;
 import org.destinationsol.common.SolMath;
 import org.destinationsol.game.Hero;
-import org.destinationsol.game.SolGame;
 import org.destinationsol.game.input.Mover;
 import org.destinationsol.game.input.Shooter;
 import org.destinationsol.ui.SolInputManager;
@@ -43,7 +42,7 @@ public class ShipMixedControl implements ShipUiControl {
     private boolean myRight;
     private boolean myLeft;
 
-    ShipMixedControl(SolApplication solApplication, List<SolUiControl> controls) {
+    ShipMixedControl(List<SolUiControl> controls) {
         GameOptions gameOptions = solApplication.getOptions();
         myCursor = Assets.getAtlasRegion("engine:uiCursorTarget");
         myMouseWorldPos = new Vector2();
@@ -60,7 +59,7 @@ public class ShipMixedControl implements ShipUiControl {
     }
 
     @Override
-    public void update(SolApplication solApplication, boolean enabled) {
+    public void update(boolean enabled) {
         GameOptions gameOptions = solApplication.getOptions();
         blur();
         if (!enabled) {

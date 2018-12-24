@@ -54,7 +54,7 @@ public class MenuScreen extends SolUiBaseScreen {
     }
 
     @Override
-    public void updateCustom(SolApplication solApplication, SolInputManager.InputPointer[] inputPointers, boolean clickedOutside) {
+    public void updateCustom(SolInputManager.InputPointer[] inputPointers, boolean clickedOutside) {
         SolGame game = solApplication.getGame();
         game.setPaused(true);
         SolInputManager im = solApplication.getInputManager();
@@ -88,7 +88,7 @@ public class MenuScreen extends SolUiBaseScreen {
     }
 
     @Override
-    public void drawBackground(UiDrawer uiDrawer, SolApplication solApplication) {
+    public void drawBackground(UiDrawer uiDrawer) {
         uiDrawer.draw(uiDrawer.filler, SolColor.UI_BG);
     }
 

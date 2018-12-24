@@ -66,7 +66,7 @@ public class TalkScreen extends SolUiBaseScreen {
     }
 
     @Override
-    public void updateCustom(SolApplication solApplication, SolInputManager.InputPointer[] inputPointers, boolean clickedOutside) {
+    public void updateCustom(SolInputManager.InputPointer[] inputPointers, boolean clickedOutside) {
         if (clickedOutside) {
             closeControl.maybeFlashPressed(solApplication.getOptions().getKeyClose());
             return;
@@ -104,7 +104,7 @@ public class TalkScreen extends SolUiBaseScreen {
     }
 
     @Override
-    public void drawBackground(UiDrawer uiDrawer, SolApplication solApplication) {
+    public void drawBackground(UiDrawer uiDrawer) {
         uiDrawer.draw(background, SolColor.UI_BG);
     }
 

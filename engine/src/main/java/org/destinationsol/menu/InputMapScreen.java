@@ -68,9 +68,7 @@ public class InputMapScreen extends SolUiBaseScreen {
     private int page;
     private int selectedIndex;
 
-    InputMapScreen(GameOptions gameOptions) {
-        displayDimensions = SolApplication.displayDimensions;
-
+    InputMapScreen(GameOptions gameOptions,DisplayDimensions displayDimensions) {
         float contentW = .8f;
         float col0 = displayDimensions.getRatio() / 2 - contentW / 2;
         float row = 0.2f;
@@ -138,7 +136,7 @@ public class InputMapScreen extends SolUiBaseScreen {
     }
 
     @Override
-    public void updateCustom(SolApplication cmp, SolInputManager.InputPointer[] inputPointers, boolean clickedOutside) {
+    public void updateCustom( SolInputManager.InputPointer[] inputPointers, boolean clickedOutside) {
         GameOptions gameOptions = cmp.getOptions();
         SolInputManager im = cmp.getInputManager();
         MenuScreens screens = cmp.getMenuScreens();
@@ -253,7 +251,7 @@ public class InputMapScreen extends SolUiBaseScreen {
     }
 
     @Override
-    public void drawText(UiDrawer uiDrawer, SolApplication solApplication) {
+    public void drawText(UiDrawer uiDrawer) {
         GameOptions gameOptions = solApplication.getOptions();
         List<InputConfigItem> list = operations.getItems(gameOptions);
 
@@ -289,7 +287,7 @@ public class InputMapScreen extends SolUiBaseScreen {
     }
 
     @Override
-    public void onAdd(SolApplication solApplication) {
+    public void onAdd() {
         // Add any extra screen information as required by the input screens. E.g. buttons
         if (operations != null) {
             solApplication.getInputManager().addScreen(solApplication, operations);

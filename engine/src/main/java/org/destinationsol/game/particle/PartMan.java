@@ -74,7 +74,7 @@ public class PartMan {
         }
     }
 
-    public void shieldSpark(SolGame game, Vector2 collPos, Hull hull, TextureAtlas.AtlasRegion shieldTexture, float perc) {
+    public void shieldSpark(Vector2 collPos, Hull hull, TextureAtlas.AtlasRegion shieldTexture, float perc) {
         if (perc <= 0) {
             return;
         }

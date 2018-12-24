@@ -29,7 +29,7 @@ import org.destinationsol.assets.audio.OggSoundManager;
 import org.destinationsol.di.Qualifier.Mobile;
 import org.destinationsol.game.DebugOptions;
 import org.destinationsol.game.WorldConfig;
-import org.destinationsol.game.context.Context;
+import org.destinationsol.ui.DisplayDimensions;
 import org.destinationsol.ui.SolInputManager;
 import org.destinationsol.ui.SolLayouts;
 import org.destinationsol.ui.UiDrawer;
@@ -49,12 +49,10 @@ import java.util.Set;
 
 @dagger.Module
 public class AppModule {
-    private final Context context;
     private final SolFileReader reader;
 
 
-    public AppModule(Context context, SolFileReader solFileReader){
-        this.context = context;
+    public AppModule( SolFileReader solFileReader){
         this.reader = solFileReader;
     }
 
@@ -74,13 +72,6 @@ public class AppModule {
     @Singleton
     static OggSoundManager proivdeOggSoundManager(GameOptions gameOptions) {
         return new OggSoundManager(gameOptions);
-    }
-
-
-    @Provides
-    @Singleton
-    public Context provideContext(){
-        return context;
     }
 
     @Provides
@@ -133,8 +124,13 @@ public class AppModule {
 
     @Provides
     @Singleton
-    public ModuleEnvironment provideModuleEnviroment(ModuleRegistry registry) {
+    static DisplayDimensions provideDispalyDimensions(){
+        return new DisplayDimensions();
+    }
 
+    @Provides
+    @Singleton
+    public ModuleEnvironment provideModuleEnviroment(ModuleRegistry registry) {
         try {
             URI engineClasspath = getClass().getProtectionDomain().getCodeSource().getLocation().toURI();
             org.terasology.module.Module engineModule = new ModuleFactory().createModule(Paths.get(engineClasspath));

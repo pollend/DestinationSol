@@ -22,7 +22,6 @@ import org.destinationsol.common.SolRandom;
 import org.destinationsol.game.Faction;
 import org.destinationsol.game.Hero;
 import org.destinationsol.game.ShipConfig;
-import org.destinationsol.game.SolGame;
 import org.destinationsol.game.input.AiPilot;
 import org.destinationsol.game.input.Guardian;
 import org.destinationsol.game.item.MercItem;
@@ -39,7 +38,7 @@ public class MercenaryUtils {
      * @param mercItem The mercenary item to build everything else off of
      * @return true if the ship could be created, false if not
      */
-    public static boolean createMerc(SolGame game, Hero hero, MercItem mercItem) {
+    public static boolean createMerc( Hero hero, MercItem mercItem) {
         ShipConfig config = mercItem.getConfig();
         Guardian guardian = new Guardian(game, config.hull, hero.getPilot(), hero.getPosition(), hero.getHull().config, SolRandom.randomFloat(180));
         AiPilot pilot = new AiPilot(guardian, true, Faction.LAANI, false, "Merc", Const.AI_DET_DIST);
@@ -65,7 +64,7 @@ public class MercenaryUtils {
      * @param hull The hull of the mercenary in question
      * @return The position to spawn the mercenary at, or null for no available position
      */
-    private static Vector2 getPos(SolGame game, Hero hero, HullConfig hull) {
+    private static Vector2 getPos(Hero hero, HullConfig hull) {
         Vector2 position = new Vector2();
         float dist = hero.getHull().config.getApproxRadius() + Guardian.DIST + hull.getApproxRadius();
         Vector2 heroPos = hero.getPosition();

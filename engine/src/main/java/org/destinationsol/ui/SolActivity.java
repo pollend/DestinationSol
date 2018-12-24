@@ -13,35 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.destinationsol.game.screens;
+package org.destinationsol.ui;
 
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import org.destinationsol.SolApplication;
+public class SolActivity {
 
-public interface ShipUiControl {
-    default void update(boolean enabled) {
-        // Intentionally left blank
+    @Override
+    public boolean reactsToClickOutside() {
+        return false;
     }
 
-    boolean isLeft();
-
-    boolean isRight();
-
-    boolean isUp();
-
-    boolean isDown();
-
-    boolean isShoot();
-
-    boolean isShoot2();
-
-    boolean isAbility();
-
-    default TextureAtlas.AtlasRegion getInGameTex() {
-        return null;
+    @Override
+    public void resize() {
+        for (SolUiControl control : controls) {
+            control.computePosition();
+        }
     }
-
-    default void blur() {
-        // Intentionally left blank
-    }
+    
 }

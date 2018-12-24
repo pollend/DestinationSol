@@ -36,13 +36,13 @@ public class GiveItemsScreen extends InventoryOperationsScreen {
     }
 
     @Override
-    public ItemContainer getItems(SolGame game) {
+    public ItemContainer getItems() {
         Hero hero = game.getHero();
         return hero.getItemContainer();
     }
 
     @Override
-    public boolean isUsing(SolGame game, SolItem item) {
+    public boolean isUsing( SolItem item) {
         Hero hero = game.getHero();
         return hero.isNonTranscendent() && hero.maybeUnequip(game, item, false);
     }
@@ -53,7 +53,7 @@ public class GiveItemsScreen extends InventoryOperationsScreen {
     }
 
     @Override
-    public void updateCustom(SolApplication solApplication, SolInputManager.InputPointer[] inputPointers, boolean clickedOutside) {
+    public void updateCustom( SolInputManager.InputPointer[] inputPointers, boolean clickedOutside) {
         SolGame game = solApplication.getGame();
         InventoryScreen inventoryScreen = game.getScreens().inventoryScreen;
         Hero hero = game.getHero();

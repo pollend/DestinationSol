@@ -21,8 +21,8 @@ import com.badlogic.gdx.physics.box2d.Body;
 import org.destinationsol.common.SolMath;
 import org.destinationsol.game.DmgType;
 import org.destinationsol.game.FarObject;
-import org.destinationsol.game.SolGame;
 import org.destinationsol.game.SolObject;
+import org.destinationsol.game.SolTime;
 import org.destinationsol.game.drawables.Drawable;
 import org.destinationsol.game.drawables.RectSprite;
 
@@ -61,11 +61,11 @@ public class TileObject implements SolObject {
     }
 
     @Override
-    public void update(SolGame game) {
+    public void update(SolTime solTime) {
         setDependentParams();
 
         if (body != null) {
-            float timeStep = game.getTimeStep();
+            float timeStep = solTime.getTimeStep();
             Vector2 speed = SolMath.getVec(position);
             speed.sub(body.getPosition());
             speed.scl(1f / timeStep);
@@ -90,14 +90,14 @@ public class TileObject implements SolObject {
     }
 
     @Override
-    public void onRemove(SolGame game) {
+    public void onRemove() {
         if (body != null) {
             body.getWorld().destroyBody(body);
         }
     }
 
     @Override
-    public void receiveDmg(float dmg, SolGame game, Vector2 position, DmgType dmgType) {
+    public void receiveDmg(float dmg, Vector2 position, DmgType dmgType) {
         game.getSpecialSounds().playHit(game, this, position, dmgType);
     }
 
@@ -107,7 +107,7 @@ public class TileObject implements SolObject {
     }
 
     @Override
-    public void receiveForce(Vector2 force, SolGame game, boolean acc) {
+    public void receiveForce(Vector2 force, boolean acc) {
     }
 
     @Override
@@ -136,7 +136,7 @@ public class TileObject implements SolObject {
     }
 
     @Override
-    public void handleContact(SolObject other, float absImpulse, SolGame game, Vector2 collPos) {
+    public void handleContact(SolObject other, float absImpulse, Vector2 collPos) {
     }
 
     @Override

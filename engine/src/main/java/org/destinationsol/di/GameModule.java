@@ -59,15 +59,6 @@ public class GameModule {
 
     @GameScope
     @Provides
-    static SolGame provideSolGame(SolGameComponent gameComponent,
-                                  @ShipName String shipName,
-                                  @Tutorial boolean tut,
-                                  @NewGame boolean isNewGame) {
-        return new SolGame(gameComponent, shipName, tut, isNewGame);
-    }
-
-    @GameScope
-    @Provides
     static ItemManager provideItemManager(OggSoundManager oggSoundManager, EffectTypes effectTypes, GameColors colors) {
         return new ItemManager(oggSoundManager, effectTypes, colors);
     }

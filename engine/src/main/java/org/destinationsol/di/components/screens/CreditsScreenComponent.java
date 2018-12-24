@@ -13,35 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.destinationsol.game.screens;
+package org.destinationsol.di.components.screens;
 
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import org.destinationsol.SolApplication;
+import dagger.Module;
+import dagger.Subcomponent;
+import org.destinationsol.di.scope.ActivityScope;
+import org.destinationsol.menu.CreditsScreen;
 
-public interface ShipUiControl {
-    default void update(boolean enabled) {
-        // Intentionally left blank
-    }
+@ActivityScope
+@Subcomponent(
+        modules = CreditsScreenComponent.CreditsScreenModule.class
+)
+public interface CreditsScreenComponent {
+    CreditsScreen screen();
 
-    boolean isLeft();
-
-    boolean isRight();
-
-    boolean isUp();
-
-    boolean isDown();
-
-    boolean isShoot();
-
-    boolean isShoot2();
-
-    boolean isAbility();
-
-    default TextureAtlas.AtlasRegion getInGameTex() {
-        return null;
-    }
-
-    default void blur() {
-        // Intentionally left blank
+    @Module
+    class CreditsScreenModule extends BaseScreenModule<CreditsScreen>{
+        public CreditsScreenModule(CreditsScreen screen) {
+            super(screen);
+        }
     }
 }

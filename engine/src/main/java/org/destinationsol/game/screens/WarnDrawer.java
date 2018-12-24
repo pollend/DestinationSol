@@ -21,7 +21,6 @@ import org.destinationsol.Const;
 import org.destinationsol.SolApplication;
 import org.destinationsol.common.SolColor;
 import org.destinationsol.common.SolMath;
-import org.destinationsol.game.SolGame;
 import org.destinationsol.ui.DisplayDimensions;
 import org.destinationsol.ui.FontSize;
 import org.destinationsol.ui.UiDrawer;
@@ -57,8 +56,8 @@ public abstract class WarnDrawer {
         }
     }
 
-    public void update(SolGame game) {
-        if (shouldWarn(game)) {
+    public void update() {
+        if (shouldWarn()) {
             drawPercentage = 1;
         } else {
             drawPercentage = SolMath.approach(drawPercentage, 0, Const.REAL_TIME_STEP / FADE_TIME);
@@ -67,7 +66,7 @@ public abstract class WarnDrawer {
         textColor.a = drawPercentage;
     }
 
-    protected abstract boolean shouldWarn(SolGame game);
+    protected abstract boolean shouldWarn();
 
     public void draw(UiDrawer uiDrawer, int drawIndex) {
         if(drawIndex >= rectangles.size()) return;

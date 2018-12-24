@@ -24,10 +24,7 @@ import org.destinationsol.common.SolMath;
 import org.destinationsol.game.projectile.Projectile;
 
 public class SolContactListener implements ContactListener {
-    private final SolGame myGame;
-
-    public SolContactListener(SolGame game) {
-        myGame = game;
+    public SolContactListener() {
     }
 
     @Override

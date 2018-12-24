@@ -43,21 +43,19 @@ public interface SolUiScreen {
      * This method can be considered kind of constructor, as it can be used to set up some inner variables, change
      * playing music and perform all other sorts of custom initialization.
      *
-     * @param solApplication {@code SolApplication} displaying this window.
      */
     //TODO maybe rename to onFocus() ? Inspect more whether name is completely fitting.
-    void onAdd(SolApplication solApplication);
+    void onAdd();
 
     /**
      * Updates the screen.
      *
      * Called on active screens for every game frame, allowing arbitrary logic to be executed.
      *
-     * @param solApplication {@code SolApplication} displaying this window.
      * @param inputPointers Input pointers employed by the input manager.
      * @param clickedOutside True if click outside of the screen area happened since the last call, false otherwise
      */
-    void updateCustom(SolApplication solApplication, SolInputManager.InputPointer[] inputPointers, boolean clickedOutside);
+    void updateCustom( SolInputManager.InputPointer[] inputPointers, boolean clickedOutside);
 
     /**
      * Return true if cursor is in the screen area, false otherwise.
@@ -75,10 +73,9 @@ public interface SolUiScreen {
      *
      * Can be used for clean-up of sorts, as well as other things (marking all items as seen when exiting inventory).
      *
-     * @param solApplication {@code SolApplication} displaying this window.
      */
     //TODO maybe rename to onClose()/onUnfocus() ? Inspect more whether name is completely fitting.
-    void blurCustom(SolApplication solApplication);
+    void blurCustom();
 
     /**
      * Draws a background of the screen using supplied {@link UiDrawer}.
@@ -87,9 +84,8 @@ public interface SolUiScreen {
      * text ({@link #drawText(UiDrawer, SolApplication)}).
      *
      * @param uiDrawer Drawer to draw with
-     * @param solApplication {@code SolApplication} displaying this window.
      */
-    void drawBackground(UiDrawer uiDrawer, SolApplication solApplication);
+    void drawBackground(UiDrawer uiDrawer);
 
     /**
      * Draws additional images screen might be employing.
@@ -101,9 +97,8 @@ public interface SolUiScreen {
      * but before text ({@link #drawText(UiDrawer, SolApplication)}).
      *
      * @param uiDrawer Drawer to draw with
-     * @param solApplication {@code SolApplication} displaying this window.
      */
-    default void drawImages(UiDrawer uiDrawer, SolApplication solApplication) {
+    default void drawImages(UiDrawer uiDrawer) {
         // Intentionally left blank
     }
 
@@ -116,7 +111,7 @@ public interface SolUiScreen {
      * @param uiDrawer Drawer to draw with
      * @param solApplication {@code SolApplication} displaying this window.
      */
-    void drawText(UiDrawer uiDrawer, SolApplication solApplication);
+    void drawText(UiDrawer uiDrawer);
 
     /**
      * Returns true if the screen reacts to clicking outside (inventory screens -> closed on outside click), false

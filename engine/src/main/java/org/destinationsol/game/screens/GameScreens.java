@@ -28,7 +28,7 @@ public class GameScreens {
     public final TalkScreen talkScreen;
     public final Console console;
 
-    public GameScreens(SolApplication cmp, Context context) {
+    public GameScreens(SolApplication cmp) {
         SolLayouts layouts = cmp.getLayouts();
         RightPaneLayout rightPaneLayout = layouts.rightPaneLayout;
         mainGameScreen = new MainGameScreen(rightPaneLayout, context);

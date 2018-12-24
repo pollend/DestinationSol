@@ -57,7 +57,7 @@ public class Mover {
         return relAngle > 0;
     }
 
-    public void update(SolGame game, SolShip ship, Vector2 dest, Planet np,
+    public void update(SolShip ship, Vector2 dest, Planet np,
                        float maxIdleDist, boolean hasEngine, boolean avoidBigObjs, float desiredSpeedLen, boolean stopNearDest,
                        Vector2 destSpeed) {
         myUp = false;

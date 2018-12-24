@@ -16,8 +16,6 @@
 package org.destinationsol.game.screens;
 
 import org.destinationsol.GameOptions;
-import org.destinationsol.SolApplication;
-import org.destinationsol.game.SolGame;
 import org.destinationsol.game.item.ItemContainer;
 import org.destinationsol.game.item.MercItem;
 import org.destinationsol.game.item.SolItem;
@@ -46,7 +44,7 @@ public class ChooseMercenaryScreen extends InventoryOperationsScreen {
     }
 
     @Override
-    public void updateCustom(SolApplication solApplication, SolInputManager.InputPointer[] inputPointers, boolean clickedOutside) {
+    public void updateCustom( SolInputManager.InputPointer[] inputPointers, boolean clickedOutside) {
         SolGame game = solApplication.getGame();
         InventoryScreen is = game.getScreens().inventoryScreen;
         SolInputManager inputMan = solApplication.getInputManager();
@@ -80,7 +78,7 @@ public class ChooseMercenaryScreen extends InventoryOperationsScreen {
     }
 
     @Override
-    public ItemContainer getItems(SolGame game) {
+    public ItemContainer getItems() {
         ItemContainer mercs = game.getHero().getMercs();
         return mercs != null ? mercs : EMPTY_ITEM_CONTAINER;
     }

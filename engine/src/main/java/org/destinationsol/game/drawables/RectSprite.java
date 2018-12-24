@@ -45,13 +45,11 @@ public class RectSprite implements Drawable {
     private float angle;
     private boolean isEnabled;
 
-    private final SolCam solCam;
-
     /**
      * consumes relPos, doesn't consume Color
      */
     public RectSprite(TextureAtlas.AtlasRegion tex, float texSz, float origPercX, float origPercY, @Consumed Vector2 relativePosition,
-                      DrawableLevel level, float relativeAngle, float rotationSpeed, Color tint, boolean additive,SolCam solCam) {
+                      DrawableLevel level, float relativeAngle, float rotationSpeed, Color tint, boolean additive) {
         if (tex == null) {
             throw new AssertionError("tex is null");
         }
@@ -72,7 +70,6 @@ public class RectSprite implements Drawable {
         setTextureSize(texSz);
         isAdditive = additive;
 
-        this.solCam = solCam;
     }
 
     public void setTextureSize(float textureSize) {

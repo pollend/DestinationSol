@@ -33,12 +33,12 @@ import org.destinationsol.ui.SolUiControl;
 import org.destinationsol.ui.UiDrawer;
 import org.terasology.assets.ResourceUrn;
 
+import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 public class NewShipScreen extends SolUiBaseScreen {
-    private DisplayDimensions displayDimensions;
 
     private final TextureAtlas.AtlasRegion backgroundTexture;
 
@@ -50,9 +50,12 @@ public class NewShipScreen extends SolUiBaseScreen {
     private List<String> playerSpawnConfigNames = new ArrayList<>();
     private int numberOfSystems = SystemsBuilder.DEFAULT_SYSTEM_COUNT;
 
-    NewShipScreen(MenuLayout menuLayout, GameOptions gameOptions) {
-        displayDimensions = SolApplication.displayDimensions;
+    @Inject
+    DisplayDimensions displayDimensions;
+    @Inject
+    MenuLayout menuLayout;
 
+    NewShipScreen() {
         loadPlayerSpawnConfigs();
 
         int row = 1;
@@ -73,17 +76,21 @@ public class NewShipScreen extends SolUiBaseScreen {
         controls.add(cancelControl);
 
         backgroundTexture = Assets.getAtlasRegion("engine:mainMenuBg", Texture.TextureFilter.Linear);
+
     }
 
+
+
     @Override
-    public void updateCustom(SolApplication solApplication, SolInputManager.InputPointer[] inputPointers, boolean clickedOutside) {
+    public void updateCustom(SolInputManager.InputPointer[] inputPointers, boolean clickedOutside) {
         if (okControl.isJustOff()) {
             solApplication.play(false, playerSpawnConfigNames.get(playerSpawnConfigIndex), true);
             return;
         }
 
+
         if (cancelControl.isJustOff()) {
-            solApplication.getInputManager().setScreen(solApplication, solApplication.getMenuScreens().newGame);
+            solApplication.getInputManager().setScreen(solApplication.getMenuScreens().newGame);
             return;
         }
 
@@ -103,12 +110,12 @@ public class NewShipScreen extends SolUiBaseScreen {
     }
 
     @Override
-    public void drawText(UiDrawer uiDrawer, SolApplication solApplication) {
+    public void drawText(UiDrawer uiDrawer) {
         uiDrawer.drawString("Warning: This will erase any old ship you might have had!", .5f * displayDimensions.getRatio(), .3f, FontSize.MENU, true, SolColor.WHITE);
     }
 
     @Override
-    public void drawBackground(UiDrawer uiDrawer, SolApplication solApplication) {
+    public void drawBackground(UiDrawer uiDrawer) {
         uiDrawer.draw(backgroundTexture, displayDimensions.getRatio(), 1, displayDimensions.getRatio() / 2, 0.5f, displayDimensions.getRatio() / 2, 0.5f, 0, SolColor.WHITE);
     }
 
@@ -130,4 +137,5 @@ public class NewShipScreen extends SolUiBaseScreen {
     public int getNumberOfSystems() {
         return numberOfSystems;
     }
+
 }

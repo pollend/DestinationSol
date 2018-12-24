@@ -184,24 +184,24 @@ public class Hero {
         isDead = true;
     }
 
-    public boolean maybeEquip(SolGame game, SolItem item, boolean equip) {
+    public boolean maybeEquip(SolItem item, boolean equip) {
         assertNonTranscendent();
-        return shipHero.maybeEquip(game, item, equip);
+        return shipHero.maybeEquip(item, equip);
     }
 
-    public boolean maybeEquip(SolGame game, SolItem item, boolean secondarySlot, boolean equip) {
+    public boolean maybeEquip(SolItem item, boolean secondarySlot, boolean equip) {
         assertNonTranscendent();
-        return shipHero.maybeEquip(game, item, secondarySlot, equip);
+        return shipHero.maybeEquip(item, secondarySlot, equip);
     }
 
-    public boolean maybeUnequip(SolGame game, SolItem item, boolean equip) {
+    public boolean maybeUnequip(SolItem item, boolean equip) {
         assertNonTranscendent();
-        return shipHero.maybeUnequip(game, item, equip);
+        return shipHero.maybeUnequip(item, equip);
     }
 
-    public boolean maybeUnequip(SolGame game, SolItem item, boolean secondarySlot, boolean equip) {
+    public boolean maybeUnequip(SolItem item, boolean secondarySlot, boolean equip) {
         assertNonTranscendent();
-        return shipHero.maybeUnequip(game, item, secondarySlot, equip);
+        return shipHero.maybeUnequip(item, secondarySlot, equip);
     }
 
     private void assertNonTranscendent() {

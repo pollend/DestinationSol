@@ -95,7 +95,7 @@ public class FactionManager {
         return nearestEnemyShip;
     }
 
-    private boolean hasObstacles(SolGame game, SolShip shipFrom, SolShip shipTo) {
+    private boolean hasObstacles(SolShip shipFrom, SolShip shipTo) {
         myRayBack.shipFrom = shipFrom;
         myRayBack.shipTo = shipTo;
         myRayBack.hasObstacle = false;

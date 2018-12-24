@@ -19,7 +19,6 @@ import com.badlogic.gdx.math.Rectangle;
 import org.destinationsol.GameOptions;
 import org.destinationsol.SolApplication;
 import org.destinationsol.common.SolColor;
-import org.destinationsol.game.SolGame;
 import org.destinationsol.game.SolTime;
 import org.destinationsol.game.UpdateAwareSystem;
 import org.destinationsol.game.item.SolItem;
@@ -29,6 +28,7 @@ import org.destinationsol.game.screens.MainGameScreen;
 import org.destinationsol.game.screens.ShipKbControl;
 import org.destinationsol.game.screens.ShipMixedControl;
 
+import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,8 +39,8 @@ public class TutorialManager implements UpdateAwareSystem {
 
     private int stepIndex;
 
-    public TutorialManager(GameScreens screens, boolean mobile, GameOptions gameOptions) {
-        displayDimensions = SolApplication.displayDimensions;
+
+    public TutorialManager(GameScreens screens, boolean mobile, GameOptions gameOptions,DisplayDimensions displayDimensions) {
 
         float backgroundW = displayDimensions.getRatio() * .5f;
         float backgroundH = .2f;
@@ -140,7 +140,7 @@ public class TutorialManager implements UpdateAwareSystem {
         if (screens.inventoryScreen.getSelectedItem() == null ||
             (screens.inventoryScreen.getSelectedItem() != null && screens.inventoryScreen.getSelectedItem().isEquipped() == 0)) {
             addStep(new SelectEquippedItemStep(
-                    "Select an equipped item\n(note the text \"using\")", screens.inventoryScreen, game));
+                    "Select an equipped item\n(note the text \"using\")", screens.inventoryScreen));
         }
 
         if (mobile) {

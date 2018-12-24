@@ -27,7 +27,7 @@ public class MenuScreens {
     public final OptionsScreen options;
     public final InputMapScreen inputMapScreen;
     public final ResolutionScreen resolutionScreen;
-    public final CreditsScreen credits;
+    public final CreditsScreenActivity credits;
     public final LoadingScreen loading;
     public final NewGameScreen newGame;
     public final NewShipScreen newShip;
@@ -39,7 +39,7 @@ public class MenuScreens {
         options = new OptionsScreen(menuLayout, gameOptions);
         inputMapScreen = new InputMapScreen(gameOptions);
         resolutionScreen = new ResolutionScreen(menuLayout, gameOptions);
-        credits = new CreditsScreen(gameOptions);
+        credits = new CreditsScreenActivity(gameOptions);
         loading = new LoadingScreen();
         newGame = new NewGameScreen(menuLayout, gameOptions);
         newShip = new NewShipScreen(menuLayout, gameOptions);

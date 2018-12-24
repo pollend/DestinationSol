@@ -76,7 +76,7 @@ public class BeaconHandler implements UpdateAwareSystem{
         speed = new Vector2();
     }
 
-    public void init(SolGame game, Vector2 position) {
+    public void init(Vector2 position) {
         ArrayList<Drawable> drawables = new ArrayList<>();
         drawables.add(attackSprite);
         drawables.add(followSprite);
@@ -219,9 +219,9 @@ public class BeaconHandler implements UpdateAwareSystem{
         throw new AssertionError();
     }
 
-    public Action processMouse(SolGame game, Vector2 position, boolean clicked, boolean onMap) {
+    public Action processMouse(Vector2 position, boolean clicked, boolean onMap) {
         Action action;
-        Pilot targetPilot = findPilotInPos(game, position, onMap, clicked);
+        Pilot targetPilot = findPilotInPos(position, onMap, clicked);
         if (targetPilot != null) {
             boolean enemies = game.getFactionMan().areEnemies(targetPilot.getFaction(), game.getHero().getPilot().getFaction());
             if (enemies) {
@@ -264,7 +264,7 @@ public class BeaconHandler implements UpdateAwareSystem{
         }
     }
 
-    private Pilot findPilotInPos(SolGame game, Vector2 position, boolean onMap, boolean clicked) {
+    private Pilot findPilotInPos(Vector2 position, boolean onMap, boolean clicked) {
         ObjectManager objectManager = game.getObjectManager();
         Hero hero = game.getHero();
         float iconRad = onMap ? game.getMapDrawer().getIconRadius(game.getCam()) : 0;

@@ -13,35 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.destinationsol.game.screens;
+package org.destinationsol.di.scope;
 
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import org.destinationsol.SolApplication;
+import javax.inject.Scope;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
-public interface ShipUiControl {
-    default void update(boolean enabled) {
-        // Intentionally left blank
-    }
-
-    boolean isLeft();
-
-    boolean isRight();
-
-    boolean isUp();
-
-    boolean isDown();
-
-    boolean isShoot();
-
-    boolean isShoot2();
-
-    boolean isAbility();
-
-    default TextureAtlas.AtlasRegion getInGameTex() {
-        return null;
-    }
-
-    default void blur() {
-        // Intentionally left blank
-    }
+@Scope
+@Retention(RetentionPolicy.RUNTIME)
+public @interface ActivityScope {
 }

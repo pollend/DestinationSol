@@ -17,8 +17,10 @@ package org.destinationsol.game.screens;
 
 import com.badlogic.gdx.math.Rectangle;
 import org.destinationsol.SolApplication;
+import org.destinationsol.di.scope.ActivityScope;
 import org.destinationsol.ui.DisplayDimensions;
 
+@ActivityScope
 public class RightPaneLayout {
     private final float btnH;
     private final float btnW;
@@ -26,14 +28,12 @@ public class RightPaneLayout {
     private final float rowH;
     private final float col0;
 
-    public RightPaneLayout() {
-        DisplayDimensions displayDimensions = SolApplication.displayDimensions;
-
+    public RightPaneLayout(DisplayDimensions display) {
         btnH = .07f;
         rowH = 1.1f * btnH;
         row0 = .1f;
         btnW = 3 * btnH;
-        col0 = displayDimensions.getRatio() - btnW;
+        col0 = display.getRatio() - btnW;
     }
 
     public Rectangle buttonRect(int row) {

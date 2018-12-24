@@ -152,7 +152,7 @@ public class BorderDrawer {
         mapDrawer.drawObjIcon(size, myTmpVec, objAngle - camAngle, factionManager, hero, objFac, heroDmgCap, shipHack, icon, drawer);
     }
 
-    private void drawPlanetProximityIndicators(UiDrawer drawer, SolGame game, SolCam cam, Vector2 camPosition) {
+    private void drawPlanetProximityIndicators(UiDrawer drawer, SolCam cam, Vector2 camPosition) {
         PlanetManager planetManager = game.getPlanetManager();
         Planet nearestPlanet = planetManager.getNearestPlanet();
         if (nearestPlanet != null && nearestPlanet.getPosition().dst(camPosition) < nearestPlanet.getFullHeight()) {
