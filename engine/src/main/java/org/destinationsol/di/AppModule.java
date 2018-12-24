@@ -21,7 +21,6 @@ import com.google.common.collect.Sets;
 import dagger.Provides;
 import org.destinationsol.CommonDrawer;
 import org.destinationsol.GameOptions;
-import org.destinationsol.ModuleManager;
 import org.destinationsol.SolApplication;
 import org.destinationsol.SolFileReader;
 import org.destinationsol.assets.audio.OggMusicManager;
@@ -30,6 +29,7 @@ import org.destinationsol.di.Qualifier.Mobile;
 import org.destinationsol.game.DebugOptions;
 import org.destinationsol.game.WorldConfig;
 import org.destinationsol.game.context.Context;
+import org.destinationsol.modules.ModuleManager;
 import org.destinationsol.ui.SolInputManager;
 import org.destinationsol.ui.SolLayouts;
 import org.destinationsol.ui.UiDrawer;
@@ -68,8 +68,8 @@ public class AppModule {
 
     @Provides
     @Singleton
-    static OggMusicManager proivdeOggMusicManager() {
-        return new OggMusicManager();
+    static OggMusicManager proivdeOggMusicManager(GameOptions options) {
+        return new OggMusicManager(options);
     }
 
     @Provides
@@ -129,7 +129,7 @@ public class AppModule {
     @Provides
     @Singleton
     static ModuleManager provideModuleManager(ModuleEnvironment moduleEnvironment, ModuleRegistry moduleRegistry) {
-        return new ModuleManager(moduleEnvironment, moduleRegistry);
+        return new ModuleManager();
     }
 
     @Provides

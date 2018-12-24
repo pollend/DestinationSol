@@ -38,7 +38,7 @@ public class InMemoryEntityManagerModule {
     }
 
     @Module
-    interface BindInMemoryEntityManager {
+    public interface BindInMemoryEntityManager {
         @Binds
         EntityManager bindEntityManager(InMemoryEntityManager entityManager);
     }

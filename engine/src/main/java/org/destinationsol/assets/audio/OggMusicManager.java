@@ -18,12 +18,18 @@ package org.destinationsol.assets.audio;
 import com.badlogic.gdx.audio.Music;
 import org.destinationsol.GameOptions;
 import org.destinationsol.assets.Assets;
+import org.destinationsol.assets.json.Json;
+import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.terasology.assets.ResourceUrn;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Class responsible for playing all music throughout the game.
@@ -36,6 +42,8 @@ public class OggMusicManager {
     public static final String GAME_MUSIC_SET = "game";
     private final Map<String, List<Music>> musicMap;
     private Music currentlyPlaying;
+    private String currentlyRegisteredModule;
+    private Logger logger = LoggerFactory.getLogger(OggMusicManager.class);
 
 
     /**
@@ -43,12 +51,13 @@ public class OggMusicManager {
      * TODO Make music registerable from modules, and then register this music through the new way.
      */
     @Inject
-    public OggMusicManager() {
+    public OggMusicManager(GameOptions options) {
         musicMap = new HashMap<>();
-        registerMusic(MENU_MUSIC_SET, "engine:dreadnaught");
         registerMusic(GAME_MUSIC_SET, "engine:cimmerianDawn");
         registerMusic(GAME_MUSIC_SET, "engine:intoTheDark");
         registerMusic(GAME_MUSIC_SET, "engine:spaceTheatre");
+
+        registerAllMenuMusic(options);
     }
 
     /**
@@ -137,5 +146,86 @@ public class OggMusicManager {
      */
     public void changeVolume(GameOptions options) {
         currentlyPlaying.setVolume(options.musicVolume.getVolume());
+    }
+
+    /**
+     * Registers all music from the module of shipName
+     *
+     * @param moduleName Name of the module of ship that is loaded when creating a new game
+     */
+    public void registerModuleMusic(String moduleName, final GameOptions options) {
+        if (currentlyRegisteredModule != null) {
+            if (moduleName.equals(currentlyRegisteredModule)) {
+                //Skips directly to module music
+                stopMusic();
+                playMusicTrack(this.musicMap.get(GAME_MUSIC_SET).get(2), options);
+                return;
+            } else {
+                unregisterModuleMusic();
+                currentlyRegisteredModule = null;
+            }
+        }
+
+        if (Assets.getAssetHelper().list(Json.class, moduleName + ":musicConfig").isEmpty()) {
+            return;
+        } else {
+            logger.info("Music Config found for module " + moduleName);
+        }
+
+        Json musicJson = Assets.getJson(moduleName + ":musicConfig");
+
+        MusicConfig musicConfig = MusicConfig.load(moduleName, musicJson.getJsonValue());
+        Map<String, List<String>> musicSets = musicConfig.getMusicMap();
+
+        for (String music : musicSets.get(GAME_MUSIC_SET)) {
+            registerMusic(GAME_MUSIC_SET, music);
+            logger.info("Registered " + music);
+        }
+
+        currentlyRegisteredModule = moduleName;
+
+        //Skips directly to module music
+        stopMusic();
+        playMusicTrack(this.musicMap.get(GAME_MUSIC_SET).get(2), options);
+    }
+
+    /**
+     * Registers all module menu music
+     */
+    public void registerAllMenuMusic(GameOptions options) {
+        Set<ResourceUrn> configUrnList = Assets.getAssetHelper().list(Json.class, "[a-zA-Z]*:musicConfig");
+
+        for (ResourceUrn configUrn : configUrnList) {
+            String urnString = configUrn.toString();
+            Json musicJson = Assets.getJson(urnString);
+            JSONObject musicNode = musicJson.getJsonValue();
+
+            for (Object musicFileName : musicNode.getJSONArray("menuMusic")) {
+                if (!(musicFileName instanceof String)) {
+                    break;
+                }
+                String music = (String) musicFileName;
+                registerMusic(MENU_MUSIC_SET, urnString.split(":")[0] + ":" + music);
+            }
+        }
+
+        registerMusic(MENU_MUSIC_SET, "engine:dreadnaught");
+        //Skips to module music
+        playMusicTrack(musicMap.get(MENU_MUSIC_SET).get(0), options);
+    }
+
+    /**
+     * Unregisters all Module Music
+     */
+    public void unregisterModuleMusic() {
+        musicMap.get(GAME_MUSIC_SET).clear();
+        registerMusic(GAME_MUSIC_SET, "engine:cimmerianDawn");
+        registerMusic(GAME_MUSIC_SET, "engine:intoTheDark");
+        registerMusic(GAME_MUSIC_SET, "engine:spaceTheatre");
+
+    }
+
+    public void resetMusic() {
+        musicMap.put(GAME_MUSIC_SET, new ArrayList<>());
     }
 }
