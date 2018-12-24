@@ -13,17 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.destinationsol.game.component;
+package org.destinationsol.entitySystem.eventSystem;
 
-import com.badlogic.gdx.math.Vector2;
-import org.terasology.entitysystem.core.Component;
-
-public class LocationComponent implements Component {
-    public Vector2 position;
-
-
-    @Override
-    public Class<? extends Component> getType() {
-        return LocationComponent.class;
-    }
+public class DelayedEventSystemComponent {
 }
