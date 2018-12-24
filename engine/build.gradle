@@ -1,12 +1,3 @@
-apply from: '../config/gradle/common.gradle'
-
-[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
-
-import org.reflections.Reflections;
-import org.reflections.scanners.SubTypesScanner;
-import org.reflections.scanners.TypeAnnotationsScanner;
-import org.reflections.util.ConfigurationBuilder;
-
 // Dependencies needed for what our Gradle scripts themselves use. It cannot be included via an external Gradle file :-(
 buildscript {
     repositories {
@@ -22,6 +13,21 @@ buildscript {
     }
 }
 
+plugins {
+    id "net.ltgt.apt" version "0.18"
+    id 'net.ltgt.apt-idea' version "0.18"
+}
+
+apply from: '../config/gradle/common.gradle'
+
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+
+import org.reflections.Reflections;
+import org.reflections.scanners.SubTypesScanner;
+import org.reflections.scanners.TypeAnnotationsScanner;
+import org.reflections.util.ConfigurationBuilder;
+
+
 dependencies {
     compile "com.badlogicgames.gdx:gdx:$gdxVersion"
     compile "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
@@ -30,6 +36,8 @@ dependencies {
     compile "org.terasology:gestalt-module:6.0.0"
     compile "org.terasology:gestalt-asset-core:6.0.0"
     compile "org.terasology:gestalt-entity-system:6.0.0"
+    compile 'com.google.dagger:dagger:2.17'
+    annotationProcessor 'com.google.dagger:dagger-compiler:2.17'
     compile "com.github.everit-org.json-schema:org.everit.json.schema:1.9.2"
 
     //TODO inserted by someone who has no idea how the gradle thing works. Inspect whether necessary (for tests). Copied rom desktop build.gradle. May break things with android (maybe)
@@ -38,7 +46,6 @@ dependencies {
     testCompile "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-desktop"
     testCompile "com.badlogicgames.gdx:gdx-controllers-desktop:$gdxVersion"
     testCompile "com.badlogicgames.gdx:gdx-controllers-platform:$gdxVersion:natives-desktop"
-
 
     // Test lib dependencies
     testCompile group: 'junit', name: 'junit', version: '4.12'

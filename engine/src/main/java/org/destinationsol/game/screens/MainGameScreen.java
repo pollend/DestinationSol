@@ -279,7 +279,6 @@ public class MainGameScreen extends SolUiBaseScreen {
             if (!isOn) {
                 is.setOperations(is.chooseMercenaryScreen);
                 inputMan.addScreen(solApplication, is);
-                
                 game.getHero().getMercs().markAllAsSeen();
             }
         }
@@ -679,4 +678,3 @@ public class MainGameScreen extends SolUiBaseScreen {
         }
     }
 }
-
