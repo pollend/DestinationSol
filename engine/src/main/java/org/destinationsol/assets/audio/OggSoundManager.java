@@ -81,14 +81,13 @@ public class OggSoundManager implements UpdateAwareSystem {
      * "Do the operations now".
      */
     private float myLoopAwait;
-    private final SolApplication solApplication;
+    private float globalVolumeMultiplier = 1.0f;
 
 
-    public OggSoundManager(Context context) {
+    public OggSoundManager() {
         soundMap = new HashMap<>();
         loopedSoundMap = new HashMap<>();
         debugHintDrawer = new DebugHintDrawer();
-        solApplication = context.get(SolApplication.class);
 
     }
 
@@ -188,6 +187,10 @@ public class OggSoundManager implements UpdateAwareSystem {
         gdxSound.play(volume, pitch, 0);
     }
 
+    public void setVolumeMultiplier(float value){
+        this.globalVolumeMultiplier = value;
+    }
+
     /**
      * Calculates the volume a sound should be played at.
      * This method takes several factors in account, more exactly: global game's volume, spreading of sound in vacuum
@@ -201,8 +204,6 @@ public class OggSoundManager implements UpdateAwareSystem {
      * @return Volume the sound should play at.
      */
     private float getVolume(SolGame game, Vector2 position, float volumeMultiplier, OggSound sound) {
-        float globalVolumeMultiplier = solApplication.getOptions().sfxVolume.getVolume();
-
         Vector2 cameraPosition = game.getCam().getPosition();
         Planet nearestPlanet = game.getPlanetManager().getNearestPlanet();
 
@@ -222,7 +223,7 @@ public class OggSoundManager implements UpdateAwareSystem {
         float distance = position.dst(cameraPosition) - soundRadius;
         float distanceMultiplier = SolMath.clamp(1 - distance / maxSoundDist);
 
-        return sound.getBaseVolume() * volumeMultiplier * distanceMultiplier * globalVolumeMultiplier;
+        return sound.getBaseVolume() * volumeMultiplier * distanceMultiplier * globalVolumeMultiplier ;
     }
 
     /**

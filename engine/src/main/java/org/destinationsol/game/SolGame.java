@@ -18,7 +18,7 @@ package org.destinationsol.game;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Timer;
-import org.destinationsol.CommonDrawer;
+import org.destinationsol.rendering.CanvasRenderer;
 import org.destinationsol.Const;
 import org.destinationsol.GameOptions;
 import org.destinationsol.SolApplication;
@@ -97,9 +97,9 @@ public class SolGame {
     private List<UpdateAwareSystem> onPausedUpdateSystems;
     private List<UpdateAwareSystem> updateSystems;
 
-    public SolGame(String shipName, boolean tut, boolean isNewGame, CommonDrawer commonDrawer, Context context, WorldConfig worldConfig) {
+    public SolGame(String shipName, boolean tut, boolean isNewGame, CanvasRenderer CanvasRenderer, Context context, WorldConfig worldConfig) {
         solApplication = context.get(SolApplication.class);
-        GameDrawer drawer = new GameDrawer(commonDrawer);
+        GameDrawer drawer = new GameDrawer(CanvasRenderer);
         gameColors = new GameColors();
         soundManager = solApplication.getSoundManager();
         specialSounds = new SpecialSounds(soundManager);

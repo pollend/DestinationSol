@@ -20,17 +20,17 @@ import com.badlogic.gdx.graphics.g2d.ParticleEmitter;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-import org.destinationsol.CommonDrawer;
+import org.destinationsol.rendering.CanvasRenderer;
 import org.destinationsol.assets.Assets;
 
 public class GameDrawer {
     public final TextureAtlas.AtlasRegion debugWhiteTexture;
-    private final CommonDrawer myDrawer;
+    private final CanvasRenderer myDrawer;
 
     private boolean myCurrAdditive;
 
-    public GameDrawer(CommonDrawer commonDrawer) {
-        myDrawer = commonDrawer;
+    public GameDrawer(CanvasRenderer CanvasRenderer) {
+        myDrawer = CanvasRenderer;
         debugWhiteTexture = Assets.getAtlasRegion("engine:uiWhiteTex");
     }
 

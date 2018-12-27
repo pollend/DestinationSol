@@ -88,7 +88,7 @@ public class Console extends SolUiBaseScreen {
      */
     private final List<String> linesOfOutput;
     /**
-     * Basically the same font as {@link org.destinationsol.CommonDrawer#font}.
+     * Basically the same font as {@link org.destinationsol.CanvasRenderer#font}.
      *
      * Required for figuring out char widths.
      */

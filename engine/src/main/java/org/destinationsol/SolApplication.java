@@ -38,6 +38,8 @@ import org.destinationsol.game.WorldConfig;
 import org.destinationsol.game.context.Context;
 import org.destinationsol.game.context.internal.ContextImpl;
 import org.destinationsol.menu.MenuScreens;
+import org.destinationsol.modes.MainMenuState;
+import org.destinationsol.rendering.CanvasRenderer;
 import org.destinationsol.ui.DebugCollector;
 import org.destinationsol.ui.DisplayDimensions;
 import org.destinationsol.ui.FontSize;
@@ -65,7 +67,7 @@ public class SolApplication implements ApplicationListener {
     // TODO: Make this non-static.
     private static MenuScreens menuScreens;
     private GameOptions options;
-    private CommonDrawer commonDrawer;
+    private CanvasRenderer CanvasRenderer;
     private String fatalErrorMsg;
     private String fatalErrorTrace;
     private SolGame solGame;
@@ -96,37 +98,24 @@ public class SolApplication implements ApplicationListener {
     @Override
     public void create() {
         resizeSubscribers = new HashSet<>();
-
-        this.solEngine = new SolEngine(new DefaultEngine());
-
-
-
-        context = new ContextImpl();
-        context.put(SolApplication.class, this);
-        worldConfig = new WorldConfig();
         isMobile = Gdx.app.getType() == Application.ApplicationType.Android || Gdx.app.getType() == Application.ApplicationType.iOS;
         if (isMobile) {
             DebugOptions.read(null);
         }
-        options = new GameOptions(isMobile(), null);
+
+        this.solEngine = new SolEngine(new DefaultEngine(isMobile,null));
+        solEngine.context().put(SolApplication.class,this);
+        uiDrawer = new UiDrawer(solEngine.context().get(CanvasRenderer.class));
+        solEngine.context().put(UiDrawer.class,uiDrawer);
+        this.options = solEngine.context().get(GameOptions.class);
+        solEngine.changeState(new MainMenuState());
+
+
         addResizeSubscriber(options);
 
-        moduleManager = new ModuleManager();
-
-        logger.info("\n\n ------------------------------------------------------------ \n");
-        moduleManager.printAvailableModules();
-
-        musicManager = new OggMusicManager();
-        soundManager = new OggSoundManager(context);
-        inputManager = new SolInputManager(soundManager);
-
-        musicManager.playMusic(OggMusicManager.MENU_MUSIC_SET, options);
-
         displayDimensions = new DisplayDimensions(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        commonDrawer = new CommonDrawer();
-        uiDrawer = new UiDrawer(commonDrawer);
-        menuScreens = new MenuScreens(isMobile(), options);
 
+        menuScreens = new MenuScreens(isMobile(), options);
         inputManager.changeScreen(menuScreens.mainScreen);
     }
 
@@ -143,7 +132,35 @@ public class SolApplication implements ApplicationListener {
         timeAccumulator += Gdx.graphics.getDeltaTime();
 
         while (timeAccumulator > Const.REAL_TIME_STEP) {
-            safeUpdate();
+            if (fatalErrorMsg != null) {
+                return;
+            }
+
+            try {
+                solEngine.update();
+
+                DebugCollector.update();
+
+                if (DebugOptions.SHOW_FPS) {
+                    DebugCollector.debug("Fps", Gdx.graphics.getFramesPerSecond());
+                }
+
+                inputManager.update(this);
+
+            } catch (Throwable t) {
+                logger.error("Fatal Error:", t);
+                fatalErrorMsg = "A fatal error occurred:\n" + t.getMessage();
+                StringWriter sw = new StringWriter();
+                PrintWriter pw = new PrintWriter(sw);
+                t.printStackTrace(pw);
+                fatalErrorTrace = sw.toString();
+
+                if (!isMobile) {
+                    throw t;
+                }
+            }
+
+            SolMath.checkVectorsTaken(null);
             timeAccumulator -= Const.REAL_TIME_STEP;
         }
 
@@ -158,46 +175,10 @@ public class SolApplication implements ApplicationListener {
     public void resume() {
     }
 
-    private void safeUpdate() {
-        if (fatalErrorMsg != null) {
-            return;
-        }
-
-        try {
-            update();
-        } catch (Throwable t) {
-            logger.error("Fatal Error:", t);
-            fatalErrorMsg = "A fatal error occurred:\n" + t.getMessage();
-            StringWriter sw = new StringWriter();
-            PrintWriter pw = new PrintWriter(sw);
-            t.printStackTrace(pw);
-            fatalErrorTrace = sw.toString();
-
-            if (!isMobile) {
-                throw t;
-            }
-        }
-    }
-
-    private void update() {
-        DebugCollector.update();
-
-        if (DebugOptions.SHOW_FPS) {
-            DebugCollector.debug("Fps", Gdx.graphics.getFramesPerSecond());
-        }
-
-        inputManager.update(this);
-
-        if (solGame != null) {
-            solGame.update();
-        }
-
-        SolMath.checkVectorsTaken(null);
-    }
 
     private void draw() {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        commonDrawer.begin();
+        CanvasRenderer.begin();
         if (solGame != null) {
             solGame.draw();
         }
@@ -215,7 +196,7 @@ public class SolApplication implements ApplicationListener {
         if (solGame == null) {
             uiDrawer.drawString("v" + Const.VERSION, 0.01f, .974f, FontSize.DEBUG, UiDrawer.TextAlignment.LEFT, false, SolColor.WHITE);
         }
-        commonDrawer.end();
+        CanvasRenderer.end();
     }
 
     public void loadGame(boolean tut, String shipName, boolean isNewGame) {
@@ -235,7 +216,7 @@ public class SolApplication implements ApplicationListener {
             beforeLoadGame();
         }
 
-        solGame = new SolGame(shipName, tut, isNewGame, commonDrawer, context, worldConfig);
+        solGame = new SolGame(shipName, tut, isNewGame, CanvasRenderer, context, worldConfig);
         inputManager.changeScreen(solGame.getScreens().mainGameScreen);
         musicManager.playMusic(OggMusicManager.GAME_MUSIC_SET, options);
     }
@@ -267,7 +248,7 @@ public class SolApplication implements ApplicationListener {
 
     @Override
     public void dispose() {
-        commonDrawer.dispose();
+        CanvasRenderer.dispose();
 
         if (solGame != null) {
             solGame.onGameEnd();

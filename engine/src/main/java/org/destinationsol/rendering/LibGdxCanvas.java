@@ -32,9 +32,10 @@ import org.destinationsol.SolApplication;
 import org.destinationsol.assets.Assets;
 import org.destinationsol.common.SolMath;
 import org.destinationsol.ui.DisplayDimensions;
+import org.destinationsol.ui.ResizeSubscriber;
 import org.destinationsol.ui.UiDrawer;
 
-public class LibGdxCanvas implements CanvasRenderer {
+public class LibGdxCanvas implements CanvasRenderer, ResizeSubscriber {
     private final SpriteBatch spriteBatch;
     private final BitmapFont font;
     private final float originalFontHeight;
@@ -193,9 +194,9 @@ public class LibGdxCanvas implements CanvasRenderer {
         int dstFunc = additive ? GL20.GL_ONE : GL20.GL_ONE_MINUS_SRC_ALPHA;
         spriteBatch.setBlendFunction(GL20.GL_SRC_ALPHA, dstFunc);
     }
-//
-//    @Override
-//    public void resize() {
-//        screenViewport.update(displayDimensions.getWidth(), displayDimensions.getHeight(), true);
-//    }
+
+    @Override
+    public void resize() {
+        screenViewport.update(displayDimensions.getWidth(), displayDimensions.getHeight(), true);
+    }
 }

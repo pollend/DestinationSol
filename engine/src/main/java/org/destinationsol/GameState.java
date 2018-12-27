@@ -31,6 +31,8 @@ public interface GameState {
 
     void update(float delta);
 
+    void draw();
+
     void render();
 
     /**

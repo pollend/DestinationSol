@@ -16,6 +16,11 @@
 package org.destinationsol.engine;
 
 import org.destinationsol.GameState;
+import org.destinationsol.assets.audio.OggMusicManager;
+import org.destinationsol.assets.audio.OggSoundManager;
+import org.destinationsol.game.context.Context;
+import org.destinationsol.ui.SolInputManager;
+import org.terasology.entitysystem.core.EntityManager;
 
 public interface GameEngine {
 
@@ -23,9 +28,9 @@ public interface GameEngine {
 
     void changeState(GameState state);
 
-    void update();
+    boolean update();
 
-    void draw();
+    boolean draw();
 
     /**
      * Request the engine to stop running
@@ -37,5 +42,5 @@ public interface GameEngine {
      */
     GameState getState();
 
-
+    Context context();
 }

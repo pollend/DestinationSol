@@ -21,9 +21,9 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import org.destinationsol.CommonDrawer;
 import org.destinationsol.SolApplication;
 import org.destinationsol.assets.Assets;
+import org.destinationsol.rendering.CanvasRenderer;
 import org.destinationsol.ui.responsiveUi.UiAbsolutePosition;
 import org.destinationsol.ui.responsiveUi.UiPosition;
 
@@ -42,7 +42,7 @@ public class UiDrawer implements ResizeSubscriber {
     public static float fontSize;
     public static final TextureRegion whiteTexture = Assets.getAtlasRegion("engine:uiWhiteTex");
     public Rectangle filler;
-    private final CommonDrawer drawer;
+    private final CanvasRenderer drawer;
 
     private DisplayDimensions displayDimensions;
 
@@ -56,9 +56,9 @@ public class UiDrawer implements ResizeSubscriber {
     public static UiPosition UI_POSITION_TOP_LEFT;
     public static UiPosition UI_POSITION_CENTER;
 
-    public UiDrawer(CommonDrawer commonDrawer) {
+    public UiDrawer(CanvasRenderer CanvasRenderer) {
         displayDimensions = SolApplication.displayDimensions;
-        drawer = commonDrawer;
+        drawer = CanvasRenderer;
 
         uiLineWidth = 1.0f / displayDimensions.getHeight();
 

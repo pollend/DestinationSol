@@ -15,10 +15,13 @@
  */
 package org.destinationsol.engine;
 
+import org.destinationsol.GameOptions;
+import org.destinationsol.assets.audio.OggMusicManager;
+import org.destinationsol.assets.audio.OggSoundManager;
 import org.destinationsol.game.context.Context;
 import org.destinationsol.rendering.CanvasRenderer;
+import org.destinationsol.ui.SolInputManager;
 import org.terasology.assets.management.AssetTypeManager;
-import org.terasology.assets.module.ModuleAwareAssetTypeManager;
 import org.terasology.entitysystem.core.EntityManager;
 
 public interface EngineFactory {
@@ -27,4 +30,13 @@ public interface EngineFactory {
     EntityManager entityManager();
     AssetTypeManager assetTypeManager();
     Context context();
+
+    // TODO: Remove
+    OggMusicManager musicManager();
+    // TODO: Remove
+    OggSoundManager soundManager();
+    // TODO: Remove
+    SolInputManager inputManager();
+
+    GameOptions options();
 }

@@ -15,11 +15,15 @@
  */
 package org.destinationsol.engine;
 
+import org.destinationsol.GameOptions;
 import org.destinationsol.ModuleManager;
+import org.destinationsol.SolFileReader;
 import org.destinationsol.assets.audio.OggMusic;
 import org.destinationsol.assets.audio.OggMusicFileFormat;
+import org.destinationsol.assets.audio.OggMusicManager;
 import org.destinationsol.assets.audio.OggSound;
 import org.destinationsol.assets.audio.OggSoundFileFormat;
+import org.destinationsol.assets.audio.OggSoundManager;
 import org.destinationsol.assets.emitters.Emitter;
 import org.destinationsol.assets.emitters.EmitterFileFormat;
 import org.destinationsol.assets.fonts.Font;
@@ -32,6 +36,7 @@ import org.destinationsol.game.context.Context;
 import org.destinationsol.game.context.internal.ContextImpl;
 import org.destinationsol.rendering.CanvasRenderer;
 import org.destinationsol.rendering.LibGdxCanvas;
+import org.destinationsol.ui.SolInputManager;
 import org.terasology.assets.format.producer.AssetFileDataProducer;
 import org.terasology.assets.management.AssetTypeManager;
 import org.terasology.assets.module.ModuleAwareAssetTypeManager;
@@ -49,21 +54,48 @@ public class DefaultEngine implements EngineFactory {
     private final TransactionManager transactionManager;
     private final ComponentManager componentManager;
     private final EventProcessor eventProcessor;
-    public DefaultEngine(){
-        componentManager = new CodeGenComponentManager(new TypeLibrary());
-        transactionManager = new TransactionManager();
-        eventProcessor =   new EventProcessorBuilder().build();
-    }
+    private final OggSoundManager oggSoundManager;
+    private final OggMusicManager oggMusicManager;
+    private final SolInputManager inputManager;
+    private final boolean isMobile;
+    private final SolFileReader fileReader;
+    private final Context context;
+    private final EntityManager entityManager;
+    private final CanvasRenderer canvas;
+    private final GameOptions gameOptions;
 
+    public DefaultEngine(boolean isMobile, SolFileReader solFileReader){
+        this.fileReader = solFileReader;
+        this.isMobile = isMobile;
+        this.componentManager = new CodeGenComponentManager(new TypeLibrary());
+        this.transactionManager = new TransactionManager();
+        this.eventProcessor =   new EventProcessorBuilder().build();
+        this.oggSoundManager = new OggSoundManager();
+        this.oggMusicManager = new OggMusicManager();
+        this.inputManager = new SolInputManager(oggSoundManager);
+        this.entityManager = new InMemoryEntityManager(componentManager,transactionManager);
+        this.canvas = new LibGdxCanvas();
+        this.gameOptions = new GameOptions(isMobile,solFileReader);
+
+        // configure context
+        this.context = new ContextImpl();
+        context.put(SolInputManager.class,inputManager);
+        context.put(OggSoundManager.class,oggSoundManager);
+        context.put(OggMusicManager.class,oggMusicManager);
+        context.put(EntityManager.class,entityManager);
+        context.put(CanvasRenderer.class,canvas);
+        context.put(GameOptions.class,gameOptions);
+
+    }
 
     @Override
     public CanvasRenderer canvas() {
-        return new LibGdxCanvas();
+        return canvas;
     }
 
     @Override
     public EntityManager entityManager() {
-        return new InMemoryEntityManager(componentManager,transactionManager);
+        return entityManager;
     }
 
     @Override
@@ -80,6 +112,29 @@ public class DefaultEngine implements EngineFactory {
 
     @Override
     public Context context() {
-        return new ContextImpl();
+        return context;
     }
+
+
+    @Override
+    public OggMusicManager musicManager() {
+        return this.oggMusicManager;
+    }
+
+    @Override
+    public OggSoundManager soundManager() {
+        return this.oggSoundManager;
+    }
+
+    @Override
+    public SolInputManager inputManager() {
+        return this.inputManager;
+    }
+
+
+    @Override
+    public GameOptions options() {
+        return gameOptions;
+    }
+
 }

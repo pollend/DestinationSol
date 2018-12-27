@@ -17,16 +17,25 @@ package org.destinationsol.engine;
 
 import org.destinationsol.GameState;
 import org.destinationsol.ModuleManager;
+import org.destinationsol.assets.audio.OggMusicManager;
+import org.destinationsol.assets.audio.OggSoundManager;
 import org.destinationsol.game.context.Context;
+import org.destinationsol.ui.SolInputManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.terasology.assets.management.AssetTypeManager;
 import org.terasology.entitysystem.core.EntityManager;
 
 public class SolEngine implements GameEngine {
 
-    private final EntityManager entityManager;
+    private static final Logger logger = LoggerFactory.getLogger(SolEngine.class);
+
+    private GameState currentState;
+
+    //TODO: remove
     private final Context context;
+
     public SolEngine(EngineFactory engineFactory){
-        this.entityManager = engineFactory.entityManager();
         this.context = engineFactory.context();
         configureModules(engineFactory.assetTypeManager());
     }
@@ -42,18 +51,31 @@ public class SolEngine implements GameEngine {
     }
 
     @Override
-    public void changeState(GameState state) {
+    public void changeState(GameState newState) {
+        if (currentState != null) {
+            currentState.dispose();
+        }
+        currentState = newState;
+        newState.init(this);
 
     }
 
     @Override
-    public void update() {
-
+    public boolean update() {
+        if(currentState == null){
+            return false;
+        }
+        currentState.update(0);
+        return true;
     }
 
     @Override
-    public void draw() {
-
+    public boolean draw() {
+        if(currentState == null){
+            return false;
+        }
+        currentState.draw();
+        return true;
     }
 
     @Override
@@ -64,6 +86,11 @@ public class SolEngine implements GameEngine {
     @Override
     public GameState getState() {
         return null;
+    }
+
+    @Override
+    public Context context() {
+        return context;
     }
 
 
